@@ -62,21 +62,19 @@ when the branch goal is reached, it can be merged with main branch in github.
 
 `git switch main`
 
-`git merge branch-name`)
+`git merge branch-name`
 
 Merged branch can now be deleted if not anymore needed:
-`git branch -d branch-name`
+`git branch -d branch-name`)
 
-after the branch was merged with main in github, the branch can be deleted locally or directly on github.
+After the branch was merged with main in github, the branch can be deleted directly on github. After that, update your local copy of the repo.
 
 # Handling pull requests
 
 to test proposed changes locally:
 [https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/checking-out-pull-requests-locally](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/checking-out-pull-requests-locally)
 
-git ID of pull request from github webpage
-
-fetch pull request and create new branch:
+git ID of pull request from github webpage, then fetch pull request and create new branch:
 
 `git fetch origin pull/ID/head:BRANCH_NAME`
 
@@ -84,11 +82,7 @@ switch to new branch:
 
 `git switch BRANCH_NAME`
 
-or
-
-`git checkout BRANCH_NAME`
-
-now do all necessary tests and modifications; when done, push the branch up:
+now do all necessary tests and modifications; when done, push the branch up to github:
 
 `git push origin BRANCH_NAME`
 
