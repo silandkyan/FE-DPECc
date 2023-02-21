@@ -9,42 +9,43 @@ in order to access github remotely via git from the local machine, it was not an
 
 4. configure git locally:
 
-`git config --global user.email "your.mail@server.de`
+`git config --global user.email "your.mail@server.de"`
 
 `git config --global user.name "your name"`
 
 
-# download public repository to local machine ("clone")
-download repo to pwd:
+# download public/remote repository to your local machine ("clone")
+download repo from github to pwd:
 
 `git clone https-to-repo`
 
-move to new repo folder:
+move pwd to new repo folder:
 
 `cd folder-of-repo`
 
-check repo status:
+check status of local repo:
 
 `git status`
 
 
 # workflow for creating a new feature branch
 
-update repo to newest state:
+You do this if you want to create new functionality, correct or improve the code, etc. Such changes must not be developed within the main branch. Instead, open a new feature branch and do the development there.
+Go to correct folder, then update repo to newest state:
 
 `git pull`
 
-open a new branch to work on:
+open a new feature branch (here called "branch-name") to work on:
 
 `git branch branch-name`
 
-if not there already, change to the new branch and check if correct:
+change to the new branch and check if all is correct:
 
 `git switch branch-name`
 
 `git status`
 
-after some changes were made, add (-a = all) and commit your changes:
+after some changes were made, add them (-A = all) to the commit list and commit your changes:
 
 `git add -A`
 
@@ -55,14 +56,15 @@ publish the modifications in the central remote repo (will be reviewed before me
 
 `git push -u origin branch-name`
 
-when the branch goal is reached, it can be merged with main in github.
-Alternatively, merging with main can be performed locally:
+when the branch goal is reached, it can be merged with main branch in github.
+
+(Avoid merging with main locally:
 
 `git switch main`
 
-`git merge branch-name`
+`git merge branch-name`)
 
-merged branch can now be deleted if not anymore needed:
+Merged branch can now be deleted if not anymore needed:
 `git branch -d branch-name`
 
 after the branch was merged with main in github, the branch can be deleted locally or directly on github.
