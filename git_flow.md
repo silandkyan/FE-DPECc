@@ -35,6 +35,10 @@ Go to correct folder, then update repo to newest state:
 
 `git pull`
 
+switch to the branch (usually main) from which you want to create a new branch:
+
+`git switch main`
+
 open a new feature branch (here called "branch-name") to work on:
 
 `git branch branch-name`
