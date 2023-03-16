@@ -90,7 +90,8 @@ class Window(QMainWindow, Ui_MainWindow):
         print(str(self.multistep_numberBox.value()), 'steps right with', str(self.rpmBox.value()), 'rpm')
         
     def perm_rot_left(self):
-        motor.rotate(round(-self.rpmBox.value()*64*800/60))
+        #motor.rotate(round(-self.rpmBox.value()*64*800/60))
+        motor.rotate(32000)
         print('Rotating left with', str(self.rpmBox.value()), 'rpm')
         
     def perm_rot_right(self):

@@ -50,15 +50,24 @@ def init_drive_settings(motor_list):
         motor.drive_settings.standby_current = 0
         motor.drive_settings.boost_current = 0
         # Microstep resolution:
-        motor.drive_settings.microstep_resolution = motor.ENUM.MicrostepResolution4Microsteps
+        motor.drive_settings.microstep_resolution = motor.ENUM.MicrostepResolution16Microsteps
+        # Toggle step interpolation (works only with 16 microsteps):
+        motor.set_axis_parameter(ap_type=TMCM1260._MotorType.AP.Intpol, value=1)
         #print(motor, motor.drive_settings)
     
 def init_ramp_settings(motor_list):
     '''Set initial motor ramp settings. Values are in pps and must
     be scaled to microstep resolution.'''
     for motor in motor_list:
-        motor.linear_ramp.max_velocity = 200
-        motor.linear_ramp.max_acceleration = 400
+        # get microstep resolution:
+        microstep_res_factor = motor.drive_settings.microstep_resolution
+        # calculate microsteps/revolution
+        fullsteps_per_rev = 200
+        microsteps_per_rev = 2 ** microstep_res_factor * fullsteps_per_rev
+        print(microsteps_per_rev)
+        # set max values for ramp. trailing factors were tested for 16 microsteps.
+        motor.linear_ramp.max_velocity = microsteps_per_rev * 10
+        motor.linear_ramp.max_acceleration = microsteps_per_rev * 5
         #print(motor, motor.linear_ramp)
 
 def assign_motors(module_list, motor_list):
