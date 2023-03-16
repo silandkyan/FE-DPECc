@@ -14,3 +14,6 @@ from modules.gui.gui import run_app
 if __name__ == "__main__":
     # Start main program with event handling loop:
     app = run_app()
+    
+    # add a method to close all motor connections if the program exits or 
+    # in case of error

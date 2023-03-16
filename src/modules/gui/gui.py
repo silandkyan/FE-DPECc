@@ -9,7 +9,14 @@ Created on Thu Feb 23 16:37:43 2023
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
 from modules.gui.main_window_ui import Ui_MainWindow
+from modules.motor_init import setup_motors, assign_motors
 
+
+### Motor setup and assignment ###
+port_list, module_list, motor_list = setup_motors()
+motor_L, motor_R = assign_motors(module_list, motor_list)
+
+motor = motor_L
 
 class Window(QMainWindow, Ui_MainWindow):
     '''This custom class inherits from QMainWindow class and the custom 
@@ -17,6 +24,7 @@ class Window(QMainWindow, Ui_MainWindow):
     from main_window.ui using the pyuic5 command line program, e.g.:
     pyuic5 -x main_window.ui -o main_window_ui.py
     '''
+    
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
@@ -82,12 +90,15 @@ class Window(QMainWindow, Ui_MainWindow):
         print(str(self.multistep_numberBox.value()), 'steps right with', str(self.rpmBox.value()), 'rpm')
         
     def perm_rot_left(self):
+        motor.rotate(round(-self.rpmBox.value()*64*800/60))
         print('Rotating left with', str(self.rpmBox.value()), 'rpm')
         
     def perm_rot_right(self):
+        motor.rotate(round(self.rpmBox.value()*64*800/60))
         print('Rotating right with', str(self.rpmBox.value()), 'rpm')
         
     def stop_motor(self):
+        motor.stop()
         print('Motor stopped!')
         
     def select_motor(self, motorID):
