@@ -52,22 +52,21 @@ def init_drive_settings(motor_list):
         # Microstep resolution:
         motor.drive_settings.microstep_resolution = motor.ENUM.MicrostepResolution16Microsteps
         # Toggle step interpolation (works only with 16 microsteps):
-        motor.set_axis_parameter(ap_type=TMCM1260._MotorType.AP.Intpol, value=1)
+        motor.set_axis_parameter(motor.AP.Intpol, value=1)
         #print(motor, motor.drive_settings)
     
 def init_ramp_settings(motor_list):
-    '''Set initial motor ramp settings. Values are in pps and must
-    be scaled to microstep resolution.'''
+    '''Set initial motor ramp settings. Values are in pps and are now scaled 
+    to microstep resolution.'''
     for motor in motor_list:
-        # get microstep resolution:
-        microstep_res_factor = motor.drive_settings.microstep_resolution
-        # calculate microsteps/revolution
-        fullsteps_per_rev = 200
-        microsteps_per_rev = 2 ** microstep_res_factor * fullsteps_per_rev
-        print(microsteps_per_rev)
-        # set max values for ramp. trailing factors were tested for 16 microsteps.
-        motor.linear_ramp.max_velocity = microsteps_per_rev * 10
-        motor.linear_ramp.max_acceleration = microsteps_per_rev * 5
+        # get mstep resolution factor:
+        mstep_res_factor = motor.drive_settings.microstep_resolution
+        # calculate msteps/revolution
+        fsteps_per_rev = 200
+        msteps_per_rev = 2 ** mstep_res_factor * fsteps_per_rev
+        # set max values for ramp. trailing factors were tested for 16 msteps.
+        motor.linear_ramp.max_velocity = 2000#msteps_per_rev * 10
+        motor.linear_ramp.max_acceleration = msteps_per_rev * 5
         #print(motor, motor.linear_ramp)
 
 def assign_motors(module_list, motor_list):
@@ -79,7 +78,7 @@ def assign_motors(module_list, motor_list):
     names (e.g. motor_L) in the if-elif statement below; adjust if needed.'''
     for i in range(0, len(module_list)):
         # Get the moduleID from the Trinamic module global parameters:
-        moduleID = TMCLModule.get_global_parameter(module_list[i], gp_type=TMCM1260.GP0.SerialAddress, bank=0)
+        moduleID = TMCLModule.get_global_parameter(module_list[i], module_list[i].GP0.SerialAddress, bank=0)
         # Assign motor variable names to modulIDs:
         if moduleID == 1:
             motor_L = motor_list[i]
