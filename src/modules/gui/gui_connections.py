@@ -34,12 +34,13 @@ Created on Tue Feb 21 17:38:27 2023
 
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
-from modules.gui import Ui_MainWindow
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QShortcut
+from modules.gui.main_window_ui import Ui_MainWindow
+
 
 class Window(QMainWindow, Ui_MainWindow):
     '''This custom class inherits from QMainWindow class and the custom 
