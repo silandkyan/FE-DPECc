@@ -7,30 +7,14 @@ Created on Tue Feb 21 17:38:27 2023
 
 # Fragen:
     
-# - Wie kann man einen Variablen output gestalten?
-# - Wie kann die Wählbarkeit der Motoren und gleichzeitige Speicherung der Positionen und RPM funktionieren: wie kann ein pushButton 
-# einen Tab mastern?
 # - Control Übersicht: welche Motoren sind mit welchen parametern am laufen?
-# - Startbuttons für pos control und permanent?
-# - wie merkt man sich (im falle, dass das interface für alle Motoren gleich bleibt), bei welchem Motor welche Positon A bzw. B,C,D ist?
-# (-> also elegante Lösung?)
-# - wie muss man die statusabfrage rev verstehen? im falle, dass die Umdrehungen stets hoch gezählt werden ist ja nicht eine rev Anzahl gespeichert
-# für eine besitmmte Position.
-
-
-# interface mit drei Tabs und settings am besten als Untertabs in den jeweiligen Funktionen
-# invert motor direction ist falls falsch angeschlossen: dann werden alle forwards Funktionen zu backwards Funktionen 
-# Revolutions bzw. deg / mm ist ein entweder oder: manche Motoren sollen in deg fahren (Probenwechsler, Drehkranz) manche in Distanz
-# start button für permanent
-# einen counter hinzufügen der mit den schirtten nach oben zählt: für permanent wenn start button da ist, für when pushed und für pos control 
 
 # Zu beheben:
     
-# - Tabs sollen einen Namen anzeigen: main und settings 
-# - Die checkBoxen für pos overwrite werden nicht richtig als gecheckt angezeigt -> allg keine gute Lösung pushButton wäre besser geeignet 
-# - Die forwards Funktion bei Permanent muss am anfang beim checken der checkBox ein forwards signal emittieren -> oder mit start button!
 # - Elegantere Lösung für exklusive groupBoxen
-# - label ändern nur konstant die Farbe einen timer einzustellen nach welchem die Farbe wieder geändert wird geht noch nicht?!
+# - Die stacked Widgets werden nicht richtig angezeigt obwohl sie im code drin stehen?!
+# - bei all leg betrieb: wie viel RPM wird eingestellt?! und wie wirds realisiert?
+# - set allowed ranges für die normalen RPM spin Boxen noch anpassen
 
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
@@ -55,27 +39,58 @@ class Window(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setWindowTitle('FE_DPECc_GUI')
         # setup functions:
-        self.set_allowed_ranges()
+        self.setup()
         self.connectSignalsSlots()
-        self.timer = QTimer()
         self.show()
         
+    def setup(self):
+    # because radioButton for all legs is checked by default, 
+    # checkBoxes for motorselection are disabled in the setup 
+        self.checkB_zbr.setCheckable(False)
+        self.checkB_zbc.setCheckable(False)
+        self.checkB_zdr.setCheckable(False)
+        self.checkB_zdc.setCheckable(False)
+    # if a max RPM spinBox changes its value, the maximum of the mastered spinBoxes change accordingly
+        # connect if a master RPM spinBox from legs changes 
+        self.spinB_zdc_max_RPM.valueChanged.connect(self.RPM_master)
+        self.spinB_zdr_max_RPM.valueChanged.connect(self.RPM_master)
+        self.spinB_zbc_max_RPM.valueChanged.connect(self.RPM_master)
+        self.spinB_zbr_max_RPM.valueChanged.connect(self.RPM_master)
+        # connect if a master RPM spinBox from x changes
+        self.spinB_x_max_RPM.valueChanged.connect(self.RPM_master)
+        # connect if a master RPM spinBox from pr/cr changes
+        self.spinB_pr_max_RPM.valueChanged.connect(self.RPM_master)
+        # (cr and switch are not mentioned, since they dont have RPM spinBoxes)
+        self.save_show_stats(1)
         
+        # global RPM_permanent
+        # RPM_permanent = self.spinB_RPM_permanent_leg.value()
+        # global RPM_when_pushed
+        # RPM_when_pushed = self.spinB_RPM_when_pushed_leg.value()
+        # global lcd_up
+        # lcd_up = self.lcd_pos_up.value()
+        # global lcd_down
+        # lcd_down = self.lcd_pos_down.value()
 
-            
         
-    def set_allowed_ranges(self):
-        pass
+        
         
     def RPM_master(self):
-        current = self.spinB_max_RPM.value()
-        self.spinB_RPM_pos_control.setMaximum(current)
-        self.spinB_RPM_permanent.setMaximum(current)
-        self.spinB_RPM_when_pushed.setMaximum(current)
-        self.spinB_RPM_settings.setMaximum(current)
         
+        # max_legs = self.spinB_zdc_max_RPM.value()
+        # self.spinB_RPM_permanent.setMaximum(max_legs)
+        # self.spinB_RPM_when_pushed_leg.setMaximum(max_legs)
         
-            
+        max_x = self.spinB_x_max_RPM.value()
+        self.spinB_RPM_permanent_x.setMaximum(max_x)
+        self.spinB_RPM_when_pushed_x.setMaximum(max_x)
+        self.spinB_RPM_pos_control_x.setMaximum(max_x)
+        
+        max_pr = self.spinB_pr_max_RPM.value()
+        self.spinB_RPM_when_pushed_pr.setMaximum(max_pr)
+        self.spinB_RPM_pr_pos_control.setMaximum(max_pr)
+        
+    
     def connectSignalsSlots(self): 
         
     # connections for enabling group boxes exclusively
@@ -100,6 +115,19 @@ class Window(QMainWindow, Ui_MainWindow):
         # set exclusive for switch:
         self.groupB_switch.clicked.connect(lambda: self.groupB_manager(15))
         self.groupB_key_control_switch.clicked.connect(lambda: self.groupB_manager(16))
+        
+    # checkboxes for individual motors are only be checkable if single motor radioButton is enabled
+        # enables checkability for the motor checkBoxes
+        self.radioB_single_motor.clicked.connect(self.enable_motorselection)
+        # disables checkability and changes values to unchecked 
+        self.radioB_all_motors.clicked.connect(self.all_legs_setup)
+        
+        self.checkB_zbr.toggled.connect(lambda: self.save_show_stats(1))
+        self.checkB_zbc.toggled.connect(lambda: self.save_show_stats(2))
+        self.checkB_zdc.toggled.connect(lambda: self.save_show_stats(3))
+        self.checkB_zdr.toggled.connect(lambda: self.save_show_stats(4))
+
+        
         
         
     # # connections for position control:
@@ -151,21 +179,21 @@ class Window(QMainWindow, Ui_MainWindow):
     
     def groupB_manager(self, gbox):
         if gbox == 1:
-            self.groupB_permanent.setChecked(False)
-            self.groupB_when_pushed.setChecked(False)
-            self.groupB_key_control.setChecked(False)
+            self.groupB_permanent_leg.setChecked(False)
+            self.groupB_when_pushed_leg.setChecked(False)
+            self.groupB_key_control_leg.setChecked(False)
         if gbox == 2:
-            self.groupB_pos_control.setChecked(False)
-            self.groupB_when_pushed.setChecked(False)
-            self.groupB_key_control.setChecked(False)
+            self.groupB_mselection_leg.setChecked(False)
+            self.groupB_when_pushed_leg.setChecked(False)
+            self.groupB_key_control_leg.setChecked(False)
         if gbox == 3:
-            self.groupB_permanent.setChecked(False)
-            self.groupB_pos_control.setChecked(False)
-            self.groupB_key_control.setChecked(False)
+            self.groupB_permanent_leg.setChecked(False)
+            self.groupB_mselection_leg.setChecked(False)
+            self.groupB_key_control_leg.setChecked(False)
         if gbox == 4:
-            self.groupB_permanent.setChecked(False)
-            self.groupB_when_pushed.setChecked(False)
-            self.groupB_pos_control.setChecked(False) 
+            self.groupB_permanent_leg.setChecked(False)
+            self.groupB_when_pushed_leg.setChecked(False)
+            self.groupB_mselection_leg.setChecked(False) 
             
         if gbox == 5:
             self.groupB_permanent_x.setChecked(False)
@@ -185,28 +213,107 @@ class Window(QMainWindow, Ui_MainWindow):
             self.groupB_when_pushed_x.setChecked(False)
             
         if gbox == 9:
-            self.groupB_permanent_pr.setChecked(False)
             self.groupB_when_pushed_pr.setChecked(False)
             self.groupB_key_control_pr.setChecked(False)
         if gbox == 11:
             self.groupB_pos_control_pr.setChecked(False)
-            self.groupB_permanent_pr.setChecked(False)
             self.groupB_key_control_pr.setChecked(False)
         if gbox == 12:
             self.groupB_pos_control_pr.setChecked(False)
-            self.groupB_permanent_pr.setChecked(False)
             self.groupB_when_pushed_pr.setChecked(False)
             
         if gbox == 13:
-            self.groupB_key_control_pr.setChecked(False)
+            self.groupB_key_control_cr.setChecked(False)
         if gbox == 14:
-            self.groupB_pos_control_pr.setChecked(False)
+            self.groupB_pos_control_cr.setChecked(False)
             
         if gbox == 15:
             self.groupB_key_control_switch.setChecked(False)
         if gbox == 16:
             self.groupB_switch.setChecked(False)
-
+            
+    # functions for enabling checkability and checked state 
+    def enable_motorselection(self):
+        self.checkB_zbr.setCheckable(True)
+        self.checkB_zbc.setCheckable(True)
+        self.checkB_zdr.setCheckable(True)
+        self.checkB_zdc.setCheckable(True)
+        
+    def all_legs_setup(self):
+        self.checkB_zbr.setChecked(False)
+        self.checkB_zbc.setChecked(False)
+        self.checkB_zdr.setChecked(False)
+        self.checkB_zdc.setChecked(False)
+        self.checkB_zbr.setCheckable(False)
+        self.checkB_zbc.setCheckable(False)
+        self.checkB_zdr.setCheckable(False)
+        self.checkB_zdc.setCheckable(False)
+        
+    def save_show_stats(self, motor):
+        if motor == 1:
+            checkB_zbr = self.checkB_zbr.isChecked()
+            if checkB_zbr == False:
+                global RPM_permanent
+                RPM_permanent = self.spinB_RPM_permanent_leg.value()
+                global RPM_when_pushed
+                RPM_when_pushed = self.spinB_RPM_when_pushed_leg.value()
+                global lcd_up
+                lcd_up = self.lcd_pos_up.value()
+                global lcd_down
+                lcd_down = self.lcd_pos_down.value()
+            else: 
+                self.spinB_RPM_permanent_leg.setValue(RPM_permanent)
+                self.spinB_RPM_when_pushed_leg.setValue(RPM_when_pushed)
+                self.lcd_pos_up.display(lcd_up)
+                self.lcd_pos_down.display(lcd_down)
+        if motor == 2:
+            checkB_zbc = self.checkB_zbc.isChecked()
+            if checkB_zbc == False:
+                global RPM_permanent_zbc
+                RPM_permanent_zbc = self.spinB_RPM_permanent_leg.value()
+                global RPM_when_pushed_zbc
+                RPM_when_pushed_zbc = self.spinB_RPM_when_pushed_leg.value()
+                global lcd_up_zbc
+                lcd_up_zbc = self.lcd_pos_up.value()
+                global lcd_down_zbc
+                lcd_down_zbc = self.lcd_pos_down.value()
+            else: 
+                self.spinB_RPM_permanent_leg.setValue(RPM_permanent_zbc)
+                self.spinB_RPM_when_pushed_leg.setValue(RPM_when_pushed_zbc)
+                self.lcd_pos_up.display(lcd_up_zbc)
+                self.lcd_pos_down.display(lcd_down_zbc)
+        if motor == 3:
+            checkB_zdr = self.checkB_zdr.isChecked()
+            if checkB_zdr == False:
+                global RPM_permanent_zdr
+                RPM_permanent_zdr = self.spinB_RPM_permanent_leg.value()
+                global RPM_when_pushed_zdr
+                RPM_when_pushed_zdr = self.spinB_RPM_when_pushed_leg.value()
+                global lcd_up_zdr
+                lcd_up_zdr = self.lcd_pos_up.value()
+                global lcd_down_zdr
+                lcd_down_zdr = self.lcd_pos_down.value()
+            else: 
+                self.spinB_RPM_permanent_leg.setValue(RPM_permanent_zdr)
+                self.spinB_RPM_when_pushed_leg.setValue(RPM_when_pushed_zdr)
+                self.lcd_pos_up.display(lcd_up_zdr)
+                self.lcd_pos_down.display(lcd_down_zdr)
+        if motor == 4:
+            checkB_zdc = self.checkB_zdc.isChecked()
+            if checkB_zdc == False:
+                global RPM_permanent_zdc
+                RPM_permanent_zdc = self.spinB_RPM_permanent_leg.value()
+                global RPM_when_pushed_zdc
+                RPM_when_pushed_zdc = self.spinB_RPM_when_pushed_leg.value()
+                global lcd_up_zdc
+                lcd_up_zdc = self.lcd_pos_up.value()
+                global lcd_down_zdc
+                lcd_down_zdc = self.lcd_pos_down.value()
+            else: 
+                self.spinB_RPM_permanent_leg.setValue(RPM_permanent_zdc)
+                self.spinB_RPM_when_pushed_leg.setValue(RPM_when_pushed_zdc)
+                self.lcd_pos_up.display(lcd_up_zdc)
+                self.lcd_pos_down.display(lcd_down_zdc)
      
     # functions for position control: 
         
