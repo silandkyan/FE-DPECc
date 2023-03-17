@@ -8,9 +8,8 @@ Created on Thu Feb 23 16:37:43 2023
 
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
-from modules.gui.main_window_ui import Ui_MainWindow
-from modules.motor_control.motor_init import (setup_motors, assign_motors)
-from modules.motor_control.motor_actions import move_by
+from .main_window_ui import Ui_MainWindow
+from ..motor_control import (setup_motors, assign_motors, move_by)
 
 
 ### Motor setup and assignment ###

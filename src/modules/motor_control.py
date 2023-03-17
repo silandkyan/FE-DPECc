@@ -12,6 +12,8 @@ from pytrinamic.modules import TMCLModule
 import time
 
 
+#####   MOTOR SETUP   #####
+
 def setup_motors():
     '''Aggregate function that goes through the entire motor setup.'''
     print('Connecting motors...')
@@ -26,6 +28,7 @@ def setup_motors():
     print('Setting up motors... done!')
     return port_list, module_list, motor_list
 
+
 def connect_modules_usb(port_list):
     '''Establish connection between Trinamic modules and USB ports.'''
     module_list = []
@@ -35,6 +38,7 @@ def connect_modules_usb(port_list):
         module_list.append(module)
     return module_list
 
+
 def connect_motors_modules(module_list):
     '''Activate motors on their respective Trinamic module.'''
     motor_list = []
@@ -42,6 +46,7 @@ def connect_motors_modules(module_list):
         motor = module.motors[0]
         motor_list.append(motor)
     return motor_list
+
 
 def init_drive_settings(motor_list):
     '''Set initial motor drive settings.'''
@@ -54,7 +59,8 @@ def init_drive_settings(motor_list):
         # Toggle step interpolation (works only with 16 microsteps):
         motor.set_axis_parameter(motor.AP.Intpol, value=1)
         #print(motor, motor.drive_settings)
-    
+ 
+
 def init_ramp_settings(motor_list):
     '''Set initial motor ramp settings. Values are in pps and are now scaled 
     to microstep resolution.'''
@@ -68,6 +74,7 @@ def init_ramp_settings(motor_list):
         motor.linear_ramp.max_velocity = 2000#msteps_per_rev * 10
         motor.linear_ramp.max_acceleration = msteps_per_rev * 5
         #print(motor, motor.linear_ramp)
+
 
 def assign_motors(module_list, motor_list):
     '''This function handles the assignment of the physical motors to
@@ -89,4 +96,30 @@ def assign_motors(module_list, motor_list):
     return motor_L, motor_R#, motor_C # add motors here...
 
 
+#####   MOVEMENT CONTROL   #####
+
+def move_by(motor, msteps, velocity):
+    motor.set_axis_parameter(motor.AP.RelativePositioningOption, 1)
+    print('Moving by ' + str(msteps) + ' steps.')
+    motor.move_to(motor.actual_position + msteps, velocity)
+    
+    # wait till position_reached
+    while not motor.get_position_reached():
+        print('Moving...')
+        time.sleep(0.1)
+    
+    print('Moving completed.')
+    
+    
+def move_to(motor, pos, velocity):
+    motor.set_axis_parameter(motor.AP.RelativePositioningOption, 1)
+    print('Moving to position ' + str(pos) + '.')
+    motor.move_to(motor.actual_position + pos, velocity)
+    
+    # wait till position_reached
+    while not motor.get_position_reached():
+        print('Moving...')
+        time.sleep(0.1)
+    
+    print('Moving completed.')
 #

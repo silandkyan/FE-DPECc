@@ -7,7 +7,7 @@ Created on Thu Feb 23 16:38:18 2023
 """
 
 #####   Importing Packages   #####
-from modules.gui.gui import run_app
+from modules.gui.gui_simple import run_app
 
 
 #####   Main GUI program starts here   #####
