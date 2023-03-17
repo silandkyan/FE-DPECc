@@ -35,6 +35,10 @@ Go to correct folder, then update repo to newest state:
 
 `git pull`
 
+switch to the branch (usually main) from which you want to create a new branch:
+
+`git switch main`
+
 open a new feature branch (here called "branch-name") to work on:
 
 `git branch branch-name`
@@ -58,16 +62,17 @@ publish the modifications in the central remote repo (will be reviewed before me
 
 when the branch goal is reached, it can be merged with main branch in github.
 
-(Avoid merging with main locally:
+After the branch was merged with main in github, the branch can be deleted directly on github. After that, update your local copy of the repo. If not needed anymore, the merged branch can now be deleted locally:
+
+`git branch -d branch-name`)
+
+
+(Avoid merging with main locally):
 
 `git switch main`
 
 `git merge branch-name`
 
-Merged branch can now be deleted if not anymore needed:
-`git branch -d branch-name`)
-
-After the branch was merged with main in github, the branch can be deleted directly on github. After that, update your local copy of the repo.
 
 # Handling pull requests
 
