@@ -8,8 +8,15 @@ Created on Thu Feb 23 16:37:43 2023
 
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
-from modules.gui.main_window_ui import Ui_MainWindow
+from .main_window_ui import Ui_MainWindow
+from ..motor_control import (setup_motors, assign_motors, move_by)
 
+
+### Motor setup and assignment ###
+port_list, module_list, motor_list = setup_motors()
+motor_L, motor_R = assign_motors(module_list, motor_list)
+
+motor = motor_L
 
 class Window(QMainWindow, Ui_MainWindow):
     '''This custom class inherits from QMainWindow class and the custom 
@@ -17,6 +24,7 @@ class Window(QMainWindow, Ui_MainWindow):
     from main_window.ui using the pyuic5 command line program, e.g.:
     pyuic5 -x main_window.ui -o main_window_ui.py
     '''
+    
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
@@ -68,26 +76,32 @@ class Window(QMainWindow, Ui_MainWindow):
         self.motor2_radioButton.pressed.connect(lambda: self.select_motor(2))
 
     def single_step_left(self):
-        # dummy functionality
-        print('single step left')
+        move_by(motor, -16, round(self.rpmBox.value()*3200/60))
+        #print('single step left')
         
     def single_step_right(self):
-        # dummy functionality
+        move_by(motor, 16, round(self.rpmBox.value()*3200/60))
         print('single step right')
         
     def multi_step_left(self):
+        move_by(motor, -16 * self.multistep_numberBox.value(), round(self.rpmBox.value()*3200/60))
         print(str(self.multistep_numberBox.value()), 'steps left with', str(self.rpmBox.value()), 'rpm')
         
     def multi_step_right(self):
+        move_by(motor, 16 * self.multistep_numberBox.value(), round(self.rpmBox.value()*3200/60))
         print(str(self.multistep_numberBox.value()), 'steps right with', str(self.rpmBox.value()), 'rpm')
         
     def perm_rot_left(self):
+        # motor speed calculated from: rpmBox * msteps_per_rev / 60sec
+        motor.rotate(-round(self.rpmBox.value()*3200/60))
         print('Rotating left with', str(self.rpmBox.value()), 'rpm')
         
     def perm_rot_right(self):
+        motor.rotate(round(self.rpmBox.value()*3200/60))
         print('Rotating right with', str(self.rpmBox.value()), 'rpm')
         
     def stop_motor(self):
+        motor.stop()
         print('Motor stopped!')
         
     def select_motor(self, motorID):
