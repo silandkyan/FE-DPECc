@@ -920,8 +920,8 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
-        self.stackedW_settings_leg.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(4)
+        self.stackedW_settings_leg.setCurrentIndex(3)
         self.stackedW_settings_pr_cr.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -1047,13 +1047,13 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "Settings"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "X direction"))
         self.groupB_pos_control_pr.setTitle(_translate("MainWindow", " PR position control "))
-        self.pushB_pos_C.setText(_translate("MainWindow", "Position C"))
-        self.pushB_pos_D.setText(_translate("MainWindow", "Position D"))
+        self.pushB_pos_C.setText(_translate("MainWindow", "Position X"))
+        self.pushB_pos_D.setText(_translate("MainWindow", "Position Y"))
         self.label_148.setText(_translate("MainWindow", "saved positions"))
         self.label_149.setText(_translate("MainWindow", "deg on axis"))
         self.label_150.setText(_translate("MainWindow", "overwrite Position"))
-        self.label_overwrite_C.setText(_translate("MainWindow", "Ctrl + C"))
-        self.label_overwrite_D.setText(_translate("MainWindow", "Ctrl + D"))
+        self.label_overwrite_C.setText(_translate("MainWindow", "Ctrl + X"))
+        self.label_overwrite_D.setText(_translate("MainWindow", "Ctrl + Y"))
         self.label_5.setText(_translate("MainWindow", "absolut Position"))
         self.label_6.setText(_translate("MainWindow", "RPM"))
         self.label_151.setText(_translate("MainWindow", "deg on axis"))
@@ -1131,3 +1131,4 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
+

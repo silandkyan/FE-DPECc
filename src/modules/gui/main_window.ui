@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>4</number>
     </property>
     <widget class="QWidget" name="tab_4">
      <attribute name="title">
@@ -422,7 +422,7 @@ button pressed</string>
         <string>Stop</string>
        </property>
       </widget>
-      <widget class="QSpinBox" name="spinB_RPM_permanent">
+      <widget class="QSpinBox" name="spinB_RPM_permanent_leg">
        <property name="geometry">
         <rect>
          <x>140</x>
@@ -529,10 +529,10 @@ For details check setting page. </string>
        </rect>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="page">
-       <widget class="QDoubleSpinBox" name="spinB_m2_mm_per_rev">
+       <widget class="QDoubleSpinBox" name="spinB_zbc_mm_per_rev">
         <property name="geometry">
          <rect>
           <x>120</x>
@@ -561,7 +561,7 @@ For details check setting page. </string>
          <string>fine</string>
         </property>
        </widget>
-       <widget class="QSpinBox" name="spinB_m2_fine">
+       <widget class="QSpinBox" name="spinB_zbc_fine">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -593,7 +593,7 @@ For details check setting page. </string>
          <string>steps per revolutions</string>
         </property>
        </widget>
-       <widget class="QPushButton" name="pushB_m2_invert">
+       <widget class="QPushButton" name="pushB_zbc_invert">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -619,7 +619,7 @@ For details check setting page. </string>
          <string>coarse</string>
         </property>
        </widget>
-       <widget class="QSpinBox" name="spinB_m2_coarse">
+       <widget class="QSpinBox" name="spinB_zbc_coarse">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -651,7 +651,7 @@ For details check setting page. </string>
          <string>ZBC</string>
         </property>
        </widget>
-       <widget class="QSpinBox" name="spinB_m2_max_RPM">
+       <widget class="QSpinBox" name="spinB_zbc_max_RPM">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -685,7 +685,7 @@ press up and down for fine steps
  left and right for coarse steps</string>
         </property>
        </widget>
-       <widget class="QSpinBox" name="spinB_m2_steps_per_rev">
+       <widget class="QSpinBox" name="spinB_zbc_steps_per_rev">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -1164,7 +1164,7 @@ press up and down for fine steps
  left and right for coarse steps</string>
         </property>
        </widget>
-       <widget class="QSpinBox" name="spinB_m1_fine">
+       <widget class="QSpinBox" name="spinB_zbr_fine">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -1183,7 +1183,7 @@ press up and down for fine steps
          <number>1</number>
         </property>
        </widget>
-       <widget class="QSpinBox" name="spinB_m1_coarse">
+       <widget class="QSpinBox" name="spinB_zbr_coarse">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -1215,7 +1215,7 @@ press up and down for fine steps
          <string>coarse</string>
         </property>
        </widget>
-       <widget class="QSpinBox" name="spinB_m1_steps_per_rev">
+       <widget class="QSpinBox" name="spinB_zbr_steps_per_rev">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -1234,7 +1234,7 @@ press up and down for fine steps
          <number>400</number>
         </property>
        </widget>
-       <widget class="QSpinBox" name="spinB_m1_max_RPM">
+       <widget class="QSpinBox" name="spinB_zbr_max_RPM">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -1253,7 +1253,7 @@ press up and down for fine steps
          <number>120</number>
         </property>
        </widget>
-       <widget class="QPushButton" name="pushB_m1_invert">
+       <widget class="QPushButton" name="pushB_zbr_invert">
         <property name="geometry">
          <rect>
           <x>10</x>
@@ -1266,7 +1266,7 @@ press up and down for fine steps
          <string>invert direction</string>
         </property>
        </widget>
-       <widget class="QDoubleSpinBox" name="spinB_m1_mm_per_rev">
+       <widget class="QDoubleSpinBox" name="spinB_zbr_mm_per_rev">
         <property name="geometry">
          <rect>
           <x>124</x>
@@ -2114,7 +2114,7 @@ left and right for coarse steps</string>
         </rect>
        </property>
        <property name="text">
-        <string>Position C</string>
+        <string>Position X</string>
        </property>
       </widget>
       <widget class="QPushButton" name="pushB_pos_D">
@@ -2127,7 +2127,7 @@ left and right for coarse steps</string>
         </rect>
        </property>
        <property name="text">
-        <string>Position D</string>
+        <string>Position Y</string>
        </property>
       </widget>
       <widget class="QLCDNumber" name="lcd_pos_C">
@@ -2208,7 +2208,7 @@ left and right for coarse steps</string>
         </rect>
        </property>
        <property name="text">
-        <string>Ctrl + C</string>
+        <string>Ctrl + X</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_overwrite_D">
@@ -2221,7 +2221,7 @@ left and right for coarse steps</string>
         </rect>
        </property>
        <property name="text">
-        <string>Ctrl + D</string>
+        <string>Ctrl + Y</string>
        </property>
       </widget>
       <widget class="QLabel" name="label_5">
@@ -2545,6 +2545,15 @@ left and right for coarse steps</string>
           <height>25</height>
          </rect>
         </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>32</number>
+        </property>
+        <property name="value">
+         <number>1</number>
+        </property>
        </widget>
        <widget class="QSpinBox" name="spinB_pr_coarse">
         <property name="geometry">
@@ -2554,6 +2563,15 @@ left and right for coarse steps</string>
           <width>51</width>
           <height>25</height>
          </rect>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>124</number>
+        </property>
+        <property name="value">
+         <number>10</number>
         </property>
        </widget>
        <widget class="QLabel" name="label_181">
@@ -2578,6 +2596,15 @@ left and right for coarse steps</string>
           <height>25</height>
          </rect>
         </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>51200</number>
+        </property>
+        <property name="value">
+         <number>400</number>
+        </property>
        </widget>
        <widget class="QSpinBox" name="spinB_pr_max_RPM">
         <property name="geometry">
@@ -2587,6 +2614,15 @@ left and right for coarse steps</string>
           <width>81</width>
           <height>25</height>
          </rect>
+        </property>
+        <property name="minimum">
+         <number>-1</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
+        </property>
+        <property name="value">
+         <number>120</number>
         </property>
        </widget>
        <widget class="QPushButton" name="pushB_pr_invert">
@@ -2602,14 +2638,17 @@ left and right for coarse steps</string>
          <string>invert direction</string>
         </property>
        </widget>
-       <widget class="QSpinBox" name="spinB_pr_mm_per_rev">
+       <widget class="QDoubleSpinBox" name="spinB_pr_mm_per_rev">
         <property name="geometry">
          <rect>
-          <x>140</x>
+          <x>124</x>
           <y>110</y>
-          <width>45</width>
+          <width>61</width>
           <height>25</height>
          </rect>
+        </property>
+        <property name="value">
+         <double>0.500000000000000</double>
         </property>
        </widget>
        <widget class="QLabel" name="label_182">

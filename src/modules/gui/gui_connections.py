@@ -15,6 +15,14 @@ Created on Tue Feb 21 17:38:27 2023
 # - Die stacked Widgets werden nicht richtig angezeigt obwohl sie im code drin stehen?!
 # - bei all leg betrieb: wie viel RPM wird eingestellt?! und wie wirds realisiert?
 # - set allowed ranges für die normalen RPM spin Boxen noch anpassen
+# - die RPM müssten für jeden motor einzeln gepseichert werden aber wenn mehrere Motoren ausgewählt sind
+# welche RPM sollen die Motoren dann annehmen?
+
+# als nächstes:
+    
+# - exklusiv Rechte für die Key control groupBoxen 
+# - einstellen, dass sich jedes mal, wenn sich die spin Box Werte für die RPM ändern, mit dem Motor connected
+# wird und ihm die Änderung mitgeteilt wird 
 
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
@@ -40,6 +48,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.setWindowTitle('FE_DPECc_GUI')
         # setup functions:
         self.setup()
+        self.check()
         self.connectSignalsSlots()
         self.show()
         
@@ -61,19 +70,50 @@ class Window(QMainWindow, Ui_MainWindow):
         # connect if a master RPM spinBox from pr/cr changes
         self.spinB_pr_max_RPM.valueChanged.connect(self.RPM_master)
         # (cr and switch are not mentioned, since they dont have RPM spinBoxes)
-        self.save_show_stats(1)
+    
         
-        # global RPM_permanent
-        # RPM_permanent = self.spinB_RPM_permanent_leg.value()
-        # global RPM_when_pushed
-        # RPM_when_pushed = self.spinB_RPM_when_pushed_leg.value()
-        # global lcd_up
-        # lcd_up = self.lcd_pos_up.value()
-        # global lcd_down
-        # lcd_down = self.lcd_pos_down.value()
+        
+    def check(self):
+    # function is called whenever motors should do something to make sure the selected motors
+    # are running in specified mode
+    # when there is a radioButton group only one of them ahs to be checked since exclusive is enabled
+        # check for direction in permanent mode for legs
+        global check_forwards_leg
+        check_forwards_leg = self.radioB_forwards_leg.isChecked()
+        # check for all or single motors selected in legs 
+        global check_all
+        check_all = self.radioB_all_motors.isChecked()
+        # check for the checkBoxes for the individual motors
+        global check_zbr 
+        check_zbr = self.checkB_zbr.isChecked()
+        global check_zbc
+        check_zbc = self.checkB_zbc.isChecked()
+        global check_zdr
+        check_zdr = self.checkB_zdr.isChecked()
+        global check_zdc
+        check_zdc = self.checkB_zdc.isChecked()
+        # check if key control is enabled for legs
+        global check_groupB_key_leg
+        check_groupB_key_leg = self.groupB_key_control_leg.isChecked()
+        
+        # check for direction in permanent mode for x
+        global check_forwards_x
+        check_forwards_x = self.radioB_forwards_x.isChecked()
+        # check if key control is enabled for x
+        global check_groupB_key_x
+        check_groupB_key_x = self.groupB_key_control_x.isChecked()
+        
+        # check if key control is enabled for pr
+        global check_groupB_key_pr
+        check_groupB_key_pr = self.groupB_key_control_pr.isChecked()
+        # check if key control is enabled for cr
+        global check_groupB_key_cr
+        check_groupB_key_cr = self.groupB_key_control_cr.isChecked()
+        
+        # check if key control is enabled for switch
+        global check_groupB_key_switch
+        check_groupB_key_switch = self.groupB_key_control_switch.isChecked()
 
-        
-        
         
     def RPM_master(self):
         
@@ -122,36 +162,37 @@ class Window(QMainWindow, Ui_MainWindow):
         # disables checkability and changes values to unchecked 
         self.radioB_all_motors.clicked.connect(self.all_legs_setup)
         
-        self.checkB_zbr.toggled.connect(lambda: self.save_show_stats(1))
-        self.checkB_zbc.toggled.connect(lambda: self.save_show_stats(2))
-        self.checkB_zdc.toggled.connect(lambda: self.save_show_stats(3))
-        self.checkB_zdr.toggled.connect(lambda: self.save_show_stats(4))
-
-        
-        
-        
-    # # connections for position control:
-        
-    #     # connections for the position pushButtons:
-    #     self.pushB_pos_A.clicked.connect(lambda: self.position("A"))
-    #     self.pushB_pos_B.clicked.connect(lambda: self.position("B"))
-    #     self.pushB_pos_C.clicked.connect(lambda: self.position("C"))
-    #     self.pushB_pos_D.clicked.connect(lambda: self.position("D"))
-        
-    #     # connections for the overwrite functions:
-    #     self.shortcut_A = QShortcut(QKeySequence('Ctrl+A'), self)
-    #     self.shortcut_A.activated.connect(lambda: self.overwrite(1))
-    #     self.shortcut_B = QShortcut(QKeySequence('Ctrl+B'), self)
-    #     self.shortcut_B.activated.connect(lambda: self.overwrite(2))
-    #     self.shortcut_C = QShortcut(QKeySequence('Ctrl+C'), self)
-    #     self.shortcut_C.activated.connect(lambda: self.overwrite(3))
-    #     self.shortcut_D = QShortcut(QKeySequence('Ctrl+D'), self)
-    #     self.shortcut_D.activated.connect(lambda: self.overwrite(4))
+    # positional pushButtons
+        self.pushB_pos_up.clicked.connect(lambda: self.go_to(1))
+        self.pushB_pos_down.clicked.connect(lambda: self.go_to(2))
     
-    # # connections for permanent:
-        
-    #     self.pushB_stop.clicked.connect(self.stop)
-    #     self.pushB_start.clicked.connect(self.permanent)
+
+        # self.checkB_zbr.toggled.connect(lambda: self.save_show_stats(1))
+        # self.checkB_zbc.toggled.connect(lambda: self.save_show_stats(2))
+        # self.checkB_zdr.toggled.connect(lambda: self.save_show_stats(3))
+        # self.checkB_zdc.toggled.connect(lambda: self.save_show_stats(4))
+
+        # connections for the overwrite functions:
+        self.shortcut_A = QShortcut(QKeySequence('Ctrl+U'), self)
+        self.shortcut_A.activated.connect(lambda: self.overwrite(1))
+        self.shortcut_B = QShortcut(QKeySequence('Ctrl+D'), self)
+        self.shortcut_B.activated.connect(lambda: self.overwrite(2))
+        self.shortcut_A = QShortcut(QKeySequence('Ctrl+A'), self)
+        self.shortcut_A.activated.connect(lambda: self.overwrite(3))
+        self.shortcut_B = QShortcut(QKeySequence('Ctrl+B'), self)
+        self.shortcut_B.activated.connect(lambda: self.overwrite(4))
+        # self.shortcut_C = QShortcut(QKeySequence('Ctrl+X'), self)
+        # self.shortcut_C.activated.connect(lambda: self.overwrite(5))
+        # self.shortcut_D = QShortcut(QKeySequence('Ctrl+Y'), self)
+        # self.shortcut_D.activated.connect(lambda: self.overwrite(6))
+    
+    # connections for permanent: 
+        # connections für permanent legs
+        self.pushB_stop_leg.clicked.connect(lambda: self.stop(1))
+        self.pushB_start_leg.clicked.connect(lambda: self.permanent(1))
+        # connections für permanent x
+        self.pushB_stop_x.clicked.connect(lambda: self.stop(2))
+        self.pushB_start_x.clicked.connect(lambda: self.permanent(2))
 
         
     # # connections for when pushed:
@@ -240,148 +281,241 @@ class Window(QMainWindow, Ui_MainWindow):
         self.checkB_zdc.setCheckable(True)
         
     def all_legs_setup(self):
+        # unchecking the chekBoxes of the individual motor selection
         self.checkB_zbr.setChecked(False)
         self.checkB_zbc.setChecked(False)
         self.checkB_zdr.setChecked(False)
         self.checkB_zdc.setChecked(False)
+        # setting checkBoxes uncheckable 
         self.checkB_zbr.setCheckable(False)
         self.checkB_zbc.setCheckable(False)
         self.checkB_zdr.setCheckable(False)
         self.checkB_zdc.setCheckable(False)
         
+        
     def save_show_stats(self, motor):
-        if motor == 1:
-            checkB_zbr = self.checkB_zbr.isChecked()
-            if checkB_zbr == False:
-                global RPM_permanent
-                RPM_permanent = self.spinB_RPM_permanent_leg.value()
-                global RPM_when_pushed
-                RPM_when_pushed = self.spinB_RPM_when_pushed_leg.value()
-                global lcd_up
-                lcd_up = self.lcd_pos_up.value()
-                global lcd_down
-                lcd_down = self.lcd_pos_down.value()
+        pass
+        
+    def go_to(self, direction):
+        if direction == 1:
+            check_all = self.radioB_all_motors.isChecked()
+            if check_all == True:
+                self.all_motors(1)
             else: 
-                self.spinB_RPM_permanent_leg.setValue(RPM_permanent)
-                self.spinB_RPM_when_pushed_leg.setValue(RPM_when_pushed)
-                self.lcd_pos_up.display(lcd_up)
-                self.lcd_pos_down.display(lcd_down)
-        if motor == 2:
-            checkB_zbc = self.checkB_zbc.isChecked()
-            if checkB_zbc == False:
-                global RPM_permanent_zbc
-                RPM_permanent_zbc = self.spinB_RPM_permanent_leg.value()
-                global RPM_when_pushed_zbc
-                RPM_when_pushed_zbc = self.spinB_RPM_when_pushed_leg.value()
-                global lcd_up_zbc
-                lcd_up_zbc = self.lcd_pos_up.value()
-                global lcd_down_zbc
-                lcd_down_zbc = self.lcd_pos_down.value()
+                self.single_motors(1)
+        else:
+            check_all = self.radioB_all_motors.isChecked()
+            if check_all == True:
+                self.all_motors(2)
             else: 
-                self.spinB_RPM_permanent_leg.setValue(RPM_permanent_zbc)
-                self.spinB_RPM_when_pushed_leg.setValue(RPM_when_pushed_zbc)
-                self.lcd_pos_up.display(lcd_up_zbc)
-                self.lcd_pos_down.display(lcd_down_zbc)
-        if motor == 3:
-            checkB_zdr = self.checkB_zdr.isChecked()
-            if checkB_zdr == False:
-                global RPM_permanent_zdr
-                RPM_permanent_zdr = self.spinB_RPM_permanent_leg.value()
-                global RPM_when_pushed_zdr
-                RPM_when_pushed_zdr = self.spinB_RPM_when_pushed_leg.value()
-                global lcd_up_zdr
-                lcd_up_zdr = self.lcd_pos_up.value()
-                global lcd_down_zdr
-                lcd_down_zdr = self.lcd_pos_down.value()
-            else: 
-                self.spinB_RPM_permanent_leg.setValue(RPM_permanent_zdr)
-                self.spinB_RPM_when_pushed_leg.setValue(RPM_when_pushed_zdr)
-                self.lcd_pos_up.display(lcd_up_zdr)
-                self.lcd_pos_down.display(lcd_down_zdr)
-        if motor == 4:
-            checkB_zdc = self.checkB_zdc.isChecked()
-            if checkB_zdc == False:
-                global RPM_permanent_zdc
-                RPM_permanent_zdc = self.spinB_RPM_permanent_leg.value()
-                global RPM_when_pushed_zdc
-                RPM_when_pushed_zdc = self.spinB_RPM_when_pushed_leg.value()
-                global lcd_up_zdc
-                lcd_up_zdc = self.lcd_pos_up.value()
-                global lcd_down_zdc
-                lcd_down_zdc = self.lcd_pos_down.value()
-            else: 
-                self.spinB_RPM_permanent_leg.setValue(RPM_permanent_zdc)
-                self.spinB_RPM_when_pushed_leg.setValue(RPM_when_pushed_zdc)
-                self.lcd_pos_up.display(lcd_up_zdc)
-                self.lcd_pos_down.display(lcd_down_zdc)
-     
+                self.single_motors(2)
+                
+    def all_motors(self, direction):
+        if direction == 1:
+            # motors go to saved position shown on upper LCD
+            print("ZBC/ZDC/ZBR/ZCR are heading all the way up: {}mm".format(self.lcd_pos_up.value()))
+        else:
+            # motors go to saved position shown on lower LCD
+            print("ZBC/ZDC/ZBR/ZCR are heading all the way down: {}mm".format(self.lcd_pos_down.value()))
+            
+    def single_motors(self, direction):
+        if direction == 1:
+            # selected motors go to saved position shown by LCD
+            if check_zbr == True:
+                print("ZBR going all the way up {}mm".format(self.lcd_pos_up.value()))
+            if check_zbc == True:
+                print("ZBC going all the way up {}mm".format(self.lcd_pos_up.value()))
+            if check_zdr == True:
+                print("ZDR going all the way up {}mm".format(self.lcd_pos_up.value()))
+            if check_zdc == True:
+                print("ZDC going all the way up {}mm".format(self.lcd_pos_up.value()))
+        else:
+            if check_zbr == True:
+                print("ZBR going all the way down {}mm".format(self.lcd_pos_down.value()))
+            if check_zbc == True:
+                print("ZBC going all the way down {}mm".format(self.lcd_pos_down.value()))
+            if check_zdr == True:
+                print("ZDR going all the way down {}mm".format(self.lcd_pos_down.value()))
+            if check_zdc == True:
+                print("ZDC going all the way down {}mm".format(self.lcd_pos_down.value()))
+            
+        
+        
+    
+            
+            
+            
     # functions for position control: 
         
     # def position(self, position):
     #         print("going to position {}".format(position))
             
-    # def overwrite(self, pos):
-    #     if pos == 1:
-    #         self.lcdNumber.display(self.counter)
-    #         print("position A overwritten to parameter shown by LCD")
-    #         self.label_overwrite_A.setStyleSheet("QLabel {color: red;}")
-    #     elif pos == 2:
-    #         self.lcdNumber_3.display(self.counter) 
-    #         print("position B overwritten to parameter shown by LCD")
-    #         self.label_overwrite_B.setStyleSheet("QLabel {color: red;}")
-    #         time.sleep(3)
-    #     elif pos == 3:
-    #         self.lcdNumber_5.display(self.counter)
-    #         print("position C overwritten to parameter shown by LCD") 
-    #         self.label_overwrite_C.setStyleSheet("QLabel {color: red;}")
-    #     elif pos == 4:
-    #         self.lcdNumber_7.display(self.counter) 
-    #         print("position D overwritten to parameter shown by LCD")
-    #         self.label_overwrite_D.setStyleSheet("QLabel {color: red;}")
+    def overwrite(self, pos):
+        if pos == 1:
+            print("position up overwritten to new parameter shown by LCD")
+            self.label_overwrite_up.setStyleSheet("QLabel {color: red;}")
+        elif pos == 2:
+            print("position down overwritten to parameter shown by LCD")
+            self.label_overwrite_down.setStyleSheet("QLabel {color: red;}")
+        elif pos == 3:
+            print("position A overwritten to new parameter shown by LCD")
+            self.label_overwrite_A.setStyleSheet("QLabel {color: red;}")
+        elif pos == 4:
+            print("position B overwritten to parameter shown by LCD")
+            self.label_overwrite_B.setStyleSheet("QLabel {color: red;}")
+        # elif pos == 5:
+        #     print("position X overwritten to parameter shown by LCD") 
+        #     self.label_overwrite_X.setStyleSheet("QLabel {color: red;}")
+        # elif pos == 6:
+        #     print("position Y overwritten to parameter shown by LCD")
+        #     self.label_overwrite_Y.setStyleSheet("QLabel {color: red;}")
             
-    # # functions for permanent:
+    # functions for permanent:
+    def permanent(self, function):
+        # function legs 
+        if function == 1:
+        # run all motors on specified RPM
+            # update which mode is active: single or all motors
+            self.check()
+            if check_all == True:
+                if check_forwards_leg == True:
+                    print("all leg motors are running forwards on {} RPM".format(self.spinB_RPM_permanent_leg.value()))
+                else:
+                    print("all leg motors are running backwards on {} RPM".format(self.spinB_RPM_permanent_leg.value()))
+            # check which motor is selected
+            else:
+                if check_zbr == True:
+                    if check_forwards_leg == True:
+                        print("ZBR is running forwards on {} RPM".format(self.spinB_RPM_permanent_leg.value()))
+                    else:
+                        print("ZBR is running backwards on {} RPM".format(self.spinB_RPM_permanent_leg.value()))
+                if check_zbc == True:
+                    if check_forwards_leg == True:
+                        print("ZBC is running forwards on {} RPM".format(self.spinB_RPM_permanent_leg.value()))
+                    else: 
+                        print("ZBC is running backwards on {} RPM".format(self.spinB_RPM_permanent_leg.value()))
+                if check_zdr == True:
+                    if check_forwards_leg == True:
+                        print("ZDR is running forwards on {} RPM".format(self.spinB_RPM_permanent_leg.value()))
+                    else:
+                        print("ZDR is running backwards on {} RPM".format(self.spinB_RPM_permanent_leg.value()))
+                if check_zdc == True:
+                    if check_forwards_leg == True:
+                        print("ZDC is running forwards on {} RPM".format(self.spinB_RPM_permanent_leg.value()))
+                    else: 
+                        print("ZDC is running backwards on {} RPM".format(self.spinB_RPM_permanent_leg.value()))
+        else:
+            if check_forwards_x == True:
+                print("X is running forwards on {} RPM".format(self.spinB_RPM_permanent_x.value()))
+            else: 
+                print("X is running backwards on {} RPM".format(self.spinB_RPM_permanent_x.value()))
+            
+    def stop(self, function):
+        if function == 1:
+            # stop all motors: doesn't matter if only one or two are selected 
+            print("all leg motors stopped!")
+        else:
+            # stop the x motor
+            print("motor for x movement stopped!")
         
-    # def permanent(self):
-    #     self.timer_interval(1/(self.spinB_RPM_permanent.value() * self.spinB_RPM_when_pushed.value()) * 60000)
-    #     self.timer.start()
-    #     radio_for = self.radioB_forwards.isChecked()
-    #     if radio_for == True:
-    #         self.timer.timeout.connect(lambda: self.count(1))
-    #         print("adjusting to new RMP and direction")
-    #         time.sleep(3)
-    #         self.forwards()
-    #     else: 
-    #         self.timer.timeout.connect(lambda: self.count(2))
-    #         print("adjusting to new RMP and direction")
-    #         time.sleep(3)
-    #         self.backwards()
 
-        
-    # def stop(self):
-    #     self.timer.stop()
-    #     print("motor is stopping, ramp down from {} RPM".format(self.spinB_RPM_permanent.value()))
-    #     time.sleep(3)
-    #     print("motor stopped!")
-        
-    # # functions for keyboard control:
+
+
+
+    # functions for keyboard control:
  
-    # def keyPressEvent(self, event: QKeyEvent) -> None: # pass keys to call the functions 
-    #     key_pressed = event.key()
-    #     key_print = self.groupB_key_control.isChecked() # key_print makes sure, that only steps are made if the key_control groupBox is enabled
-    #     if key_print == True:
-    #         if key_pressed == Qt.Key_Up:
-    #             print("fine step: {} steps done forwards with {} RPM".format(self.spinB_single_steps.value(), self.spinB_RPM_settings.value()))
-    #             self.counter += float((self.spinB_single_steps.value()) / self.spinB_steps_per_revo.value())
-    #         elif key_pressed == Qt.Key_Down:
-    #             print("fine step: {} steps done backwards with {} RPM".format(self.spinB_single_steps.value(), self.spinB_RPM_settings.value()))
-    #             self.counter -= float((self.spinB_single_steps.value()) / self.spinB_steps_per_revo.value())
-    #         elif key_pressed == Qt.Key_Left:
-    #             print("coarse step: {} steps done forwards with {} RPM".format(self.spinB_multi_steps.value(), self.spinB_RPM_settings.value()))
-    #             self.counter += float((self.spinB_multi_steps.value()) / self.spinB_steps_per_revo.value())
-    #         elif key_pressed == Qt.Key_Right:
-    #             print("coarse step: {} steps done backwards with {} RPM".format(self.spinB_multi_steps.value(), self.spinB_RPM_settings.value()))
-    #             self.counter -= float((self.spinB_multi_steps.value()) / self.spinB_steps_per_revo.value())
-            
+    def keyPressEvent(self, event: QKeyEvent) -> None: # pass keys to call the functions 
+        key_pressed = event.key()
+        self.check() #  makes sure, that only steps are made if the key_control groupBox is enabled
+        if check_groupB_key_leg == True:
+            if key_pressed == Qt.Key_Up:
+                if check_all == True:
+                    # if all motors are selected the number of steps from zbr are taken 
+                    print("all motors taking {} fine steps forwards".format(self.spinB_zbr_fine.value()))
+                else:
+                    if check_zbr == True:
+                        print("ZBR: fine step: {} steps done forwards".format(self.spinB_zbr_fine.value()))
+                    if check_zbc == True:
+                        print("ZBC: fine step: {} steps done forwards".format(self.spinB_zbc_fine.value()))
+                    if check_zdr == True:
+                        print("ZDR: fine step: {} steps done forwards".format(self.spinB_zdr_fine.value()))
+                    if check_zdc == True:
+                        print("ZDC: fine step: {} steps done forwards".format(self.spinB_zdc_fine.value()))
+            elif key_pressed == Qt.Key_Down:
+                if check_all == True:
+                    # if all motors are selected the number of steps from zbr are taken 
+                    print("all motors taking {} fine steps backwards".format(self.spinB_zbr_fine.value()))
+                else:
+                    if check_zbr == True:
+                        print("ZBR: fine step: {} steps done backwards".format(self.spinB_zbr_fine.value()))
+                    if check_zbc == True:
+                        print("ZBC: fine step: {} steps done backwards".format(self.spinB_zbc_fine.value()))
+                    if check_zdr == True:
+                        print("ZDR: fine step: {} steps done backwards".format(self.spinB_zdr_fine.value()))
+                    if check_zdc == True:
+                        print("ZDC: fine step: {} steps done backwards".format(self.spinB_zdc_fine.value()))
+            elif key_pressed == Qt.Key_Left:
+                if check_all == True:
+                    # if all motors are selected the number of steps from zbr are taken 
+                    print("all motors taking {} coarse steps forwards".format(self.spinB_zbr_fine.value()))
+                else:
+                    if check_zbr == True:
+                        print("ZBR: coarse step: {} steps done forwards".format(self.spinB_zbr_coarse.value()))
+                    if check_zbc == True:
+                        print("ZBC: coarse step: {} steps done forwards".format(self.spinB_zbc_coarse.value()))
+                    if check_zdr == True:
+                        print("ZDR: coarse step: {} steps done forwards".format(self.spinB_zdr_coarse.value()))
+                    if check_zdc == True:
+                        print("ZDC: coarse step: {} steps done forwards".format(self.spinB_zdc_coarse.value()))
+            elif key_pressed == Qt.Key_Right:
+                if check_all == True:
+                    # if all motors are selected the number of steps from zbr are taken 
+                    print("all motors taking {} coarse steps backwards".format(self.spinB_zbr_fine.value()))
+                else:
+                    if check_zbr == True:
+                        print("ZBR: coarse step: {} steps done backwards".format(self.spinB_zbr_coarse.value()))
+                    if check_zbc == True:
+                        print("ZBC: coarse step: {} steps done backwards".format(self.spinB_zbc_coarse.value()))
+                    if check_zdr == True:
+                        print("ZDR: coarse step: {} steps done backwards".format(self.spinB_zdr_coarse.value()))
+                    if check_zdc == True:
+                        print("ZDC: coarse step: {} steps done backwards".format(self.spinB_zdc_coarse.value()))
+        elif check_groupB_key_x == True:
+            if key_pressed == Qt.Key_Up:
+                print("X takes {} fine steps forwards".format(self.spinB_x_fine.value()))
+            elif key_pressed == Qt.Key_Down:
+                print("X takes {} fine steps backwards".format(self.spinB_x_fine.value()))
+            elif key_pressed == Qt.Key_Left:
+                print("X takes {} coarse steps forwards".format(self.spinB_x_coarse.value()))
+            elif key_pressed == Qt.Key_Right:
+                print("X takes {} coarse steps backwards".format(self.spinB_x_coarse.value()))
+        elif check_groupB_key_pr == True:
+            if key_pressed == Qt.Key_Up:
+                print("PR takes {} fine steps forwards".format(self.spinB_pr_fine.value()))
+            elif key_pressed == Qt.Key_Down:
+                print("PR takes {} fine steps backwards".format(self.spinB_pr_fine.value()))
+            elif key_pressed == Qt.Key_Left:
+                print("PR takes {} coarse steps forwards".format(self.spinB_pr_coarse.value()))
+            elif key_pressed == Qt.Key_Right:
+                print("PR takes {} coarse steps backwards".format(self.spinB_pr_coarse.value()))
+        elif check_groupB_key_cr == True:
+            if key_pressed == Qt.Key_Up:
+                print("CR takes {} fine steps forwards".format(self.spinB_cr_fine.value()))
+            elif key_pressed == Qt.Key_Down:
+                print("CR takes {} fine steps backwards".format(self.spinB_cr_fine.value()))
+            elif key_pressed == Qt.Key_Left:
+                print("CR takes {} coarse steps forwards".format(self.spinB_cr_coarse.value()))
+            elif key_pressed == Qt.Key_Right:
+                print("CR takes {} coarse steps backwards".format(self.spinB_cr_coarse.value()))
+        elif check_groupB_key_switch == True:
+            if key_pressed == Qt.Key_Up:
+                print("S takes {} fine steps forwards".format(self.spinB_s_fine.value()))
+            elif key_pressed == Qt.Key_Down:
+                print("S takes {} fine steps backwards".format(self.spinB_s_fine.value()))
+            elif key_pressed == Qt.Key_Left:
+                print("S takes {} coarse steps forwards".format(self.spinB_s_coarse.value()))
+            elif key_pressed == Qt.Key_Right:
+                print("S takes {} coarse steps backwards".format(self.spinB_s_coarse.value()))
                 
     # # functions for when pushed:
     
@@ -404,7 +538,7 @@ class Window(QMainWindow, Ui_MainWindow):
         
 
           
-def run_app(): 
+def run_app():   
     app = 0
     # Initialize GUI control flow management. Requires passing
     # argument vector (sys.argv) or empty list [] as arg; the former allows
