@@ -16,7 +16,7 @@ from ..motor_control import (setup_motors, assign_motors, move_by)
 port_list, module_list, motor_list = setup_motors()
 motor_L, motor_R = assign_motors(module_list, motor_list)
 
-motor = motor_L
+#motor = motor_L
 
 class Window(QMainWindow, Ui_MainWindow):
     '''This custom class inherits from QMainWindow class and the custom 
@@ -24,6 +24,7 @@ class Window(QMainWindow, Ui_MainWindow):
     from main_window.ui using the pyuic5 command line program, e.g.:
     pyuic5 -x main_window.ui -o main_window_ui.py
     '''
+    
     
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -52,6 +53,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.rpm_maxBox.setValue(300)       # max rpm value
         # Motor selection radio buttons:
         self.motor1_radioButton.setChecked(True) # Motor 1 is default
+        # Set default motor that is active initially:
+        self.motor = motor_L
         
         
     def connectSignalsSlots(self):
@@ -72,40 +75,42 @@ class Window(QMainWindow, Ui_MainWindow):
         self.permstopButton.clicked.connect(self.stop_motor)
         self.multistopButton.clicked.connect(self.stop_motor)
         # Motor selection radio buttons:
-        self.motor1_radioButton.pressed.connect(lambda: self.select_motor(1))
-        self.motor2_radioButton.pressed.connect(lambda: self.select_motor(2))
+        self.motor1_radioButton.pressed.connect(lambda: self.select_motor(motor_L))
+        self.motor2_radioButton.pressed.connect(lambda: self.select_motor(motor_R))
+
+        
+    def select_motor(self, m):
+        self.motor = m
+        print('Selected motor:', self.motor)
 
     def single_step_left(self):
-        move_by(motor, -16, round(self.rpmBox.value()*3200/60))
+        move_by(self.motor, -16, round(self.rpmBox.value()*3200/60))
         #print('single step left')
         
     def single_step_right(self):
-        move_by(motor, 16, round(self.rpmBox.value()*3200/60))
+        move_by(self.motor, 16, round(self.rpmBox.value()*3200/60))
         print('single step right')
         
     def multi_step_left(self):
-        move_by(motor, -16 * self.multistep_numberBox.value(), round(self.rpmBox.value()*3200/60))
+        move_by(self.motor, -16 * self.multistep_numberBox.value(), round(self.rpmBox.value()*3200/60))
         print(str(self.multistep_numberBox.value()), 'steps left with', str(self.rpmBox.value()), 'rpm')
         
     def multi_step_right(self):
-        move_by(motor, 16 * self.multistep_numberBox.value(), round(self.rpmBox.value()*3200/60))
+        move_by(self.motor, 16 * self.multistep_numberBox.value(), round(self.rpmBox.value()*3200/60))
         print(str(self.multistep_numberBox.value()), 'steps right with', str(self.rpmBox.value()), 'rpm')
         
     def perm_rot_left(self):
         # motor speed calculated from: rpmBox * msteps_per_rev / 60sec
-        motor.rotate(-round(self.rpmBox.value()*3200/60))
+        self.motor.rotate(-round(self.rpmBox.value()*3200/60))
         print('Rotating left with', str(self.rpmBox.value()), 'rpm')
         
     def perm_rot_right(self):
-        motor.rotate(round(self.rpmBox.value()*3200/60))
+        self.motor.rotate(round(self.rpmBox.value()*3200/60))
         print('Rotating right with', str(self.rpmBox.value()), 'rpm')
         
     def stop_motor(self):
-        motor.stop()
+        self.motor.stop()
         print('Motor stopped!')
-        
-    def select_motor(self, motorID):
-        print('Selected motor:', motorID)
         
             
     def set_allowed_ranges(self):
