@@ -19,7 +19,8 @@ Created on Tue Feb 21 17:38:27 2023
 # welche RPM sollen die Motoren dann annehmen?
 
 # als nächstes:
-    
+
+# - die invert Buttons verknüpfen und den Probenwechsler 
 # - einstellen, dass sich jedes mal, wenn sich die spin Box Werte für die RPM ändern, mit dem Motor connected
 # wird und ihm die Änderung mitgeteilt wird 
 
@@ -181,8 +182,8 @@ class Window(QMainWindow, Ui_MainWindow):
         
     # absolute position pushButtons:
         # absolute for x
-        self.pushB_start_x.clicked.connect(lambda: self.absolute_pos(1))
-        self.pushB_stop_x.clicked.connect(lambda: self.stop(2))
+        self.pushB_start_x_2.clicked.connect(lambda: self.absolute_pos(1))
+        self.pushB_stop_x_2.clicked.connect(lambda: self.stop(2))
         # ablsolute for pr
         self.pushB_start_pr.clicked.connect(lambda: self.absolute_pos(2))
         self.pushB_stop_pr.clicked.connect(lambda: self.stop(3))
@@ -381,10 +382,10 @@ class Window(QMainWindow, Ui_MainWindow):
         # positon control for pr
         if position == 5:
             # pr is heading for position shown by upper LCD: 15 by default 
-            print("PR is heading for position X: {}".format(self.lcd_pos_C.value()))
+            print("PR is heading for position X: {}".format(self.lcd_pos_X.value()))
         if position == 6:
             # pr is heading for position shown by lower LCD: -15 by default
-            print("PR is heading for position Y: {}".format(self.lcd_pos_D.value()))
+            print("PR is heading for position Y: {}".format(self.lcd_pos_Y.value()))
             
         # positon control for cr
         if position == 7:
@@ -445,10 +446,10 @@ class Window(QMainWindow, Ui_MainWindow):
             self.label_overwrite_B.setStyleSheet("QLabel {color: red;}")
         elif pos == 5:
             print("position X overwritten to parameter shown by LCD") 
-            self.label_overwrite_C.setStyleSheet("QLabel {color: red;}")
+            self.label_overwrite_X.setStyleSheet("QLabel {color: red;}")
         elif pos == 6:
             print("position Y overwritten to parameter shown by LCD")
-            self.label_overwrite_D.setStyleSheet("QLabel {color: red;}")
+            self.label_overwrite_Y.setStyleSheet("QLabel {color: red;}")
             
     # functions for permanent:
     def permanent(self, function):
@@ -465,6 +466,7 @@ class Window(QMainWindow, Ui_MainWindow):
                     print("all leg motors are running backwards on {} RPM".format(self.spinB_RPM_permanent_leg.value()))
             # single mode: check which motor is selected
             else:
+                self.check() # properties have to be checked again in case of directions change 
                 if check_zbr == True:
                     if check_forwards_leg == True:
                         print("ZBR is running forwards on {} RPM".format(self.spinB_RPM_permanent_leg.value()))
@@ -487,6 +489,7 @@ class Window(QMainWindow, Ui_MainWindow):
                         print("ZDC is running backwards on {} RPM".format(self.spinB_RPM_permanent_leg.value()))
         # permanent functions for x
         else:
+            self.check() # properties have to be checked again in case of directions change
             if check_forwards_x == True:
                 print("X is running forwards on {} RPM".format(self.spinB_RPM_permanent_x.value()))
             else: 
@@ -547,7 +550,7 @@ class Window(QMainWindow, Ui_MainWindow):
                 # check if all or single mode is active -> if single is active: which motors
                 if check_all == True:
                     # if all motors are selected the number of steps from zbr are taken 
-                    print("all motors taking {} coarse steps forwards".format(self.spinB_zbr_fine.value()))
+                    print("all motors taking {} coarse steps forwards".format(self.spinB_zbr_coarse.value()))
                 else:
                     if check_zbr == True:
                         print("ZBR: coarse step: {} steps done forwards".format(self.spinB_zbr_coarse.value()))
@@ -562,7 +565,7 @@ class Window(QMainWindow, Ui_MainWindow):
                 # check if all or single mode is active -> if single is active: which motors
                 if check_all == True:
                     # if all motors are selected the number of steps from zbr are taken 
-                    print("all motors taking {} coarse steps backwards".format(self.spinB_zbr_fine.value()))
+                    print("all motors taking {} coarse steps backwards".format(self.spinB_zbr_coarse.value()))
                 else:
                     if check_zbr == True:
                         print("ZBR: coarse step: {} steps done backwards".format(self.spinB_zbr_coarse.value()))
@@ -616,7 +619,6 @@ class Window(QMainWindow, Ui_MainWindow):
                 print("S takes {} coarse steps backwards".format(self.spinB_s_coarse.value()))
                 
     # functions for when pushed:
-    
     # steps_per_min is a variable which calculates the frequence of steps, according to the RPM per revolution (given in settings)
     # and the RPM given in the spin box (factor 60000 is due to scaling from miliseconds to minutes)
     def forwards_when_pushed(self, function):  
@@ -696,9 +698,7 @@ class Window(QMainWindow, Ui_MainWindow):
         
     # function for invert motor direction:
         
-        
-
-          
+                
 def run_app():   
     app = 0
     # Initialize GUI control flow management. Requires passing

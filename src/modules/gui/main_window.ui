@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab_4">
      <attribute name="title">
@@ -529,7 +529,7 @@ For details check setting page. </string>
        </rect>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="page_leg_1">
        <widget class="QLabel" name="label_15">
@@ -2182,7 +2182,7 @@ left and right for coarse steps</string>
         <string>Position Y</string>
        </property>
       </widget>
-      <widget class="QLCDNumber" name="lcd_pos_C">
+      <widget class="QLCDNumber" name="lcd_pos_X">
        <property name="geometry">
         <rect>
          <x>450</x>
@@ -2195,7 +2195,7 @@ left and right for coarse steps</string>
         <double>15.000000000000000</double>
        </property>
       </widget>
-      <widget class="QLCDNumber" name="lcd_pos_D">
+      <widget class="QLCDNumber" name="lcd_pos_Y">
        <property name="geometry">
         <rect>
          <x>450</x>
@@ -2250,7 +2250,7 @@ left and right for coarse steps</string>
         <string>overwrite Position</string>
        </property>
       </widget>
-      <widget class="QLabel" name="label_overwrite_C">
+      <widget class="QLabel" name="label_overwrite_X">
        <property name="geometry">
         <rect>
          <x>580</x>
@@ -2263,7 +2263,7 @@ left and right for coarse steps</string>
         <string>Ctrl + X</string>
        </property>
       </widget>
-      <widget class="QLabel" name="label_overwrite_D">
+      <widget class="QLabel" name="label_overwrite_Y">
        <property name="geometry">
         <rect>
          <x>580</x>
