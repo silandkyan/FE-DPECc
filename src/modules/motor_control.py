@@ -48,6 +48,12 @@ def connect_motors_modules(module_list):
     return motor_list
 
 
+def disconnect_motors():
+    '''Disconnection routine; should be run at the end of the program.'''
+    ConnectionManager().disconnect
+    print('Motors disconnected!')
+
+
 def init_drive_settings(motor_list):
     '''Set initial motor drive settings.'''
     for motor in motor_list:
