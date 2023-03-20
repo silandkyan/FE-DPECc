@@ -8,7 +8,7 @@ Created on Thu Feb 23 16:37:43 2023
 
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
-from .main_window_ui import Ui_MainWindow
+from .main_window_simple_ui import Ui_MainWindow
 from ..motor_control import (setup_motors, assign_motors, move_by)
 
 
@@ -134,10 +134,10 @@ class Window(QMainWindow, Ui_MainWindow):
 
 def run_app():
     app = 0
-    # Initialize GUI control flow management. Requires passing
-    # argument vector (sys.argv) or empty list [] as arg; the former allows
-    # to pass configuration commands on startup to the program from the
-    # command line, if such commands were implemented.
+    '''Initialize GUI control flow management. Requires passing
+    argument vector (sys.argv) or empty list [] as arg; the former allows
+    to pass configuration commands on startup to the program from the
+    command line, if such commands were implemented.'''
     # If app is already open, use that one, otherwise open new app:
     if not QApplication.instance():
         app = QApplication(sys.argv)
