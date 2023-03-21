@@ -9,7 +9,7 @@ Created on Thu Feb 23 16:37:43 2023
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
 from .main_window_simple_ui import Ui_MainWindow
-from ..motor_control import (setup_motors, assign_motors, move_by)
+from ..motor_control import (setup_motors, assign_motors, move_by, motor_status_message)
 
 
 ### Motor setup and assignment ###
@@ -82,6 +82,7 @@ class Window(QMainWindow, Ui_MainWindow):
     def select_motor(self, m):
         self.motor = m
         print('Selected motor:', self.motor)
+        print(motor_status_message(self.motor))
 
     def single_step_left(self):
         move_by(self.motor, -16, round(self.rpmBox.value()*3200/60))
