@@ -5,24 +5,30 @@ Created on Tue Feb 21 17:38:27 2023
 @author: pschw
 """
 
-# Fragen:
-    
-# - Control Übersicht: welche Motoren sind mit welchen parametern am laufen?
-
 # Zu beheben:
     
 # - Elegantere Lösung für exklusive groupBoxen
-# - Die stacked Widgets werden nicht richtig angezeigt obwohl sie im code drin stehen?!
 # - bei all leg betrieb: wie viel RPM wird eingestellt?! und wie wirds realisiert?
-# - set allowed ranges für die normalen RPM spin Boxen noch anpassen
 # - die RPM müssten für jeden motor einzeln gepseichert werden aber wenn mehrere Motoren ausgewählt sind
-# welche RPM sollen die Motoren dann annehmen?
+#   welche RPM sollen die Motoren dann annehmen?
+# - die parameter sind immer überschreibbar auch wenn man in anderem Tab ist: ändern?!
+# - die ganzen globalen Variablen in Klassenvariablen umwandeln?!
+# - Codeabfolge umordnen, sodass die connecitons direkt über den funktionen stehen?!
+# -> lohnt sich das überhaupt je nach dem wie viel noch verändert wird
+# - wie wichitg ist es, dass die spin Boxen den Wert anzeigen den man zuvor eingestellt hat? 
+
+# Fehlt:
+    
+# - Funktionen die den motoren mitteilen wie viele RPM sie machen sollen? 
+# - Funktionen oder variablen die mm bzw. deg mit gegebener RPM Zahl in pps umrechnen 
+# - Die LCD anzeigen für die individuellen Motoren in save und show stat Funktionen 
 
 # als nächstes:
 
-# - die invert Buttons verknüpfen und den Probenwechsler 
+# - die invert Buttons verknüpfen 
 # - einstellen, dass sich jedes mal, wenn sich die spin Box Werte für die RPM ändern, mit dem Motor connected
 # wird und ihm die Änderung mitgeteilt wird 
+# - set allowed ranges für die leg RPM spin Boxen noch anpassen
 
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
@@ -40,7 +46,6 @@ class Window(QMainWindow, Ui_MainWindow):
     pyuic5 -x main_window.ui -o main_window_ui.py
     '''
 
-    
     def __init__(self, parent=None):  
         super().__init__(parent)
         self.setupUi(self)
@@ -69,8 +74,26 @@ class Window(QMainWindow, Ui_MainWindow):
         # connect if a master RPM spinBox from pr/cr changes
         self.spinB_pr_max_RPM.valueChanged.connect(self.RPM_master)
         # (cr and switch are not mentioned, since they dont have RPM spinBoxes)
-    
         
+        global single_RPM_permanent_zbr
+        single_RPM_permanent_zbr = self.spinB_RPM_permanent_leg.value()
+        global single_RPM_when_pushed_zbr
+        single_RPM_when_pushed_zbr = self.spinB_RPM_permanent_leg.value()
+        
+        global single_RPM_permanent_zbc
+        single_RPM_permanent_zbc = self.spinB_RPM_permanent_leg.value()
+        global single_RPM_when_pushed_zbc
+        single_RPM_when_pushed_zbc = self.spinB_RPM_permanent_leg.value()
+        
+        global single_RPM_permanent_zdr
+        single_RPM_permanent_zdr = self.spinB_RPM_permanent_leg.value()
+        global single_RPM_when_pushed_zdr
+        single_RPM_when_pushed_zdr = self.spinB_RPM_permanent_leg.value()
+        
+        global single_RPM_permanent_zdc
+        single_RPM_permanent_zdc = self.spinB_RPM_permanent_leg.value()
+        global single_RPM_when_pushed_zdc
+        single_RPM_when_pushed_zdc = self.spinB_RPM_permanent_leg.value()
         
     def check(self):
     # function is called whenever motors should do something to make sure the selected motors
@@ -198,27 +221,54 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_settings_pr_cr_1.clicked.connect(lambda: self.stackedW_settings_pr_cr.setCurrentIndex(1))
         self.pushB_settings_pr_cr_2.clicked.connect(lambda: self.stackedW_settings_pr_cr.setCurrentIndex(0))
         
+    # connections for specimen switch
+        self.pushB_switch.clicked.connect(self.next_specimen)
         
-    
-    # functions which are supposed to save the motor stats everytime the selected motor gets disabled 
-        # self.checkB_zbr.toggled.connect(lambda: self.save_show_stats(1))
-        # self.checkB_zbc.toggled.connect(lambda: self.save_show_stats(2))
-        # self.checkB_zdr.toggled.connect(lambda: self.save_show_stats(3))
-        # self.checkB_zdc.toggled.connect(lambda: self.save_show_stats(4))
-
-        # connections for the overwrite functions:
-        self.shortcut_A = QShortcut(QKeySequence('Ctrl+U'), self)
-        self.shortcut_A.activated.connect(lambda: self.overwrite(1))
-        self.shortcut_B = QShortcut(QKeySequence('Ctrl+D'), self)
-        self.shortcut_B.activated.connect(lambda: self.overwrite(2))
-        self.shortcut_A = QShortcut(QKeySequence('Ctrl+A'), self)
-        self.shortcut_A.activated.connect(lambda: self.overwrite(3))
-        self.shortcut_B = QShortcut(QKeySequence('Ctrl+B'), self)
-        self.shortcut_B.activated.connect(lambda: self.overwrite(4))
-        self.shortcut_C = QShortcut(QKeySequence('Ctrl+X'), self)
-        self.shortcut_C.activated.connect(lambda: self.overwrite(5))
-        self.shortcut_D = QShortcut(QKeySequence('Ctrl+Y'), self)
-        self.shortcut_D.activated.connect(lambda: self.overwrite(6))
+        
+    # connections for saving the individual stats for the motors 
+        # saves stats for all
+        self.radioB_single_motor.clicked.connect(self.save_stats_all)
+        # shows stats for all 
+        self.radioB_all_motors.clicked.connect(lambda: self.show_stats(1))
+        
+        
+        # saves stats for zbr 
+        self.checkB_zbr.clicked.connect(lambda: self.selected_motor_stats(1))
+        # shows stats for zbr 
+        self.checkB_zbr.clicked.connect(lambda: self.show_stats(2))
+        
+        # saves stats for zbc 
+        self.checkB_zbc.clicked.connect(lambda: self.selected_motor_stats(2))
+        # shows stats for zbc
+        self.checkB_zbc.clicked.connect(lambda: self.show_stats(3))
+        
+        # saves stats for zdr
+        self.checkB_zdr.clicked.connect(lambda: self.selected_motor_stats(3))
+        # shows stats for zdr
+        self.checkB_zdr.clicked.connect(lambda: self.show_stats(4))
+        
+        # saves stats for zdc
+        self.checkB_zdc.clicked.connect(lambda: self.selected_motor_stats(4))
+        # shows stats for zdc
+        self.checkB_zdc.clicked.connect(lambda: self.show_stats(5))
+        
+        
+    # connections for the overwrite functions:
+        # connnecitons for leg  position overwrite 
+        self.shortcut = QShortcut(QKeySequence('Ctrl+U'), self)
+        self.shortcut.activated.connect(lambda: self.overwrite(1))
+        self.shortcut = QShortcut(QKeySequence('Ctrl+D'), self)
+        self.shortcut.activated.connect(lambda: self.overwrite(2))
+        # connections for x position overwrite 
+        self.shortcut = QShortcut(QKeySequence('Ctrl+A'), self)
+        self.shortcut.activated.connect(lambda: self.overwrite(3))
+        self.shortcut = QShortcut(QKeySequence('Ctrl+B'), self)
+        self.shortcut.activated.connect(lambda: self.overwrite(4))
+        # connections for pr position overwrite 
+        self.shortcut = QShortcut(QKeySequence('Ctrl+X'), self)
+        self.shortcut.activated.connect(lambda: self.overwrite(5))
+        self.shortcut = QShortcut(QKeySequence('Ctrl+Y'), self)
+        self.shortcut.activated.connect(lambda: self.overwrite(6))
     
     # connections for permanent: 
         # connections für permanent legs
@@ -240,13 +290,22 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_lefthand.pressed.connect(lambda: self.forwards_when_pushed(3))
         self.pushB_righthand.pressed.connect(lambda: self.backwards_when_pushed(3))
 
-    # # connections for invert motor direction:
+    # connections for invert motor direction:
+        # self.pushB_zbr_invert.clicked.connect(lambda: self.invert(1))
+        # self.pushB_zbc_invert.clicked.connect(lambda: self.invert(2))
+        # self.pushB_zdr_invert.clicked.connect(lambda: self.invert(3))
+        # self.pushB_zdc_invert.clicked.connect(lambda: self.invert(4))
         
-    #     #self.pushB_invert_direction.clicked.connect(self.invert)
+        # self.pushB_x_invert.clicked.connect(lambda: self.invert(5))
+        
+        # self.pushB_pr_invert.clicked.connect(lambda: self.invert(6))
+        
+        # self.pushB_cr_invert.clicked.connect(lambda: self.invert(7))
+        
+        # self.pushB_s_invert.clicked.connect(lambda: self.invert(8))
         
     
     # functions for setting exclusive groupBoxes:
-    
     def groupB_manager(self, gbox):
         if gbox == 1:
             self.groupB_permanent_leg.setChecked(False)
@@ -349,11 +408,75 @@ class Window(QMainWindow, Ui_MainWindow):
         self.checkB_zdc.setCheckable(False)
         
         
-    def save_show_stats(self, motor):
-        # this function is somehow supposed to take the values from the spinBoxes and lcd and save it 
-        # for every motor 
-        pass
+    def save_stats_all(self):
+        # this function saves the values for the RPM spinBoxes (so far) 
+        global all_RPM_permanent
+        all_RPM_permanent = self.spinB_RPM_permanent_leg.value()
+        global all_RPM_when_pushed
+        all_RPM_when_pushed = self.spinB_RPM_when_pushed_leg.value()
+            
+    def show_stats(self, motors):
+    # function always shows the RPM settings of the lastly selected motor, so if multiple motors are selected with different settings, the stats from the one
+    # lastly selected one are shown 
+    # if just one motor should get new RPM settings, remember to uncheck the checkBox of this motor again in order to save the values! 
+        self.check() # for leg motors: check which one is enabled 
+        # shows stats for all motors when radioButton all is selected
+        if motors == 1:
+            self.spinB_RPM_permanent_leg.setValue(all_RPM_permanent)
+            self.spinB_RPM_when_pushed_leg.setValue(all_RPM_when_pushed)
+        
+        # shows stats for zbr if it is now selected 
+        if motors == 2:
+            if check_zbr == True:
+                self.spinB_RPM_permanent_leg.setValue(single_RPM_permanent_zbr)
+                self.spinB_RPM_when_pushed_leg.setValue(single_RPM_when_pushed_zbr)
+                
+        if motors == 3:
+            if check_zbc == True:
+                self.spinB_RPM_permanent_leg.setValue(single_RPM_permanent_zbc)
+                self.spinB_RPM_when_pushed_leg.setValue(single_RPM_when_pushed_zbc)
+
+        if motors == 4:
+            if check_zdr == True:
+                self.spinB_RPM_permanent_leg.setValue(single_RPM_permanent_zdr)
+                self.spinB_RPM_when_pushed_leg.setValue(single_RPM_when_pushed_zdr)
+                
+        if motors == 5:
+            if check_zdc == True:
+                self.spinB_RPM_permanent_leg.setValue(single_RPM_permanent_zdc)
+                self.spinB_RPM_when_pushed_leg.setValue(single_RPM_when_pushed_zdc)
+                
+                
+    def selected_motor_stats(self, motors):
+        self.check() # check which motors are selected and which parameter should get overwritten
+        # variable motors distinguishes between the leg motors
+        if motors == 1:
+            # if the checkBox value of the individual motor changes, check if it is now false and take the shown values for new variable value of motor
+            if check_zbr == False:     
+                global single_RPM_permanent_zbr
+                single_RPM_permanent_zbr = self.spinB_RPM_permanent_leg.value()
+                global single_RPM_when_pushed_zbr
+                single_RPM_when_pushed_zbr = self.spinB_RPM_permanent_leg.value()
+        if motors == 2:
+            if check_zbc == False:     
+                global single_RPM_permanent_zbc
+                single_RPM_permanent_zbc = self.spinB_RPM_permanent_leg.value()
+                global single_RPM_when_pushed_zbc
+                single_RPM_when_pushed_zbc = self.spinB_RPM_permanent_leg.value()
+        if motors == 3:
+            if check_zdr == False:     
+                global single_RPM_permanent_zdr
+                single_RPM_permanent_zdr = self.spinB_RPM_permanent_leg.value()
+                global single_RPM_when_pushed_zdr
+                single_RPM_when_pushed_zdr = self.spinB_RPM_permanent_leg.value()
+        if motors == 4:
+            if check_zdc == False:     
+                global single_RPM_permanent_zdc
+                single_RPM_permanent_zdc = self.spinB_RPM_permanent_leg.value()
+                global single_RPM_when_pushed_zdc
+                single_RPM_when_pushed_zdc = self.spinB_RPM_permanent_leg.value()
     
+                
     # this function lets the motors drive to the position which are shown by the LCDs in microsteps    
     def go_to(self, position):
         # at first direction gets checked and then there is a check for which motors are selected 
@@ -423,7 +546,7 @@ class Window(QMainWindow, Ui_MainWindow):
             if check_zdr == True:
                 print("ZDR going all the way down: {}mm".format(self.lcd_pos_down.value()))
             if check_zdc == True:
-                print("ZDC going all the way down: {}mm".format(self.lcd_pos_down.value()))#
+                print("ZDC going all the way down: {}mm".format(self.lcd_pos_down.value()))
                 
     def absolute_pos(self, pos):
         if pos  == 1:
@@ -432,6 +555,7 @@ class Window(QMainWindow, Ui_MainWindow):
             print("PR is going ot absolute position: {}deg with {} RPM".format(self.dspinBox_deg_on_axis_pr.value(), self.spinB_RPM_pr_pos_control.value()))
             
     def overwrite(self, pos):
+    # this function should feature an output for the motor position in microsteps at the moment and display it in LCDs
         if pos == 1:
             print("position up overwritten to new parameter shown by LCD")
             self.label_overwrite_up.setStyleSheet("QLabel {color: red;}")
@@ -495,7 +619,7 @@ class Window(QMainWindow, Ui_MainWindow):
             else: 
                 print("X is running backwards on {} RPM".format(self.spinB_RPM_permanent_x.value()))
     
-    #stop function for permanent mode in leg and x
+    # stop function for permanent mode in leg and x
     def stop(self, function):
         if function == 1:
             # stop all motors: doesn't matter if only one or two are selected 
@@ -683,7 +807,7 @@ class Window(QMainWindow, Ui_MainWindow):
                 if check_zdc == True:
                     steps_per_min = 1/(self.spinB_zdc_steps_per_rev.value() * self.spinB_RPM_when_pushed_leg.value()) * 60000
                     self.pushB_backwards_leg.setAutoRepeatInterval(steps_per_min)
-                    print("ZDC is running backwards with {} RPM".format(self.spinB_RPM_when_pushed_leg.value()))#
+                    print("ZDC is running backwards with {} RPM".format(self.spinB_RPM_when_pushed_leg.value()))
         # when pushed backwards for x       
         if function == 2:
                 steps_per_min = 1/(self.spinB_x_steps_per_rev.value() * self.spinB_RPM_when_pushed_x.value()) * 60000
@@ -695,9 +819,12 @@ class Window(QMainWindow, Ui_MainWindow):
                 self.pushB_righthand.setAutoRepeatInterval(steps_per_min)
                 print("PR is running righthand with {} RPM".format(self.spinB_RPM_when_pushed_pr.value()))
         
+    # function for specimen switch specimen
+    def next_specimen(self):
+        print("take next specimen from mag")
         
     # function for invert motor direction:
-        
+        # maybe by a simple command from given tmcl 
                 
 def run_app():   
     app = 0
