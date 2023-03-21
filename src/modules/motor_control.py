@@ -132,23 +132,3 @@ def move_to(motor, pos, velocity):
     
     print('Moving completed.')
     
-    
-### Motor setup and assignment ###
-# port_list, module_list, motor_list = setup_motors()
-# motor_L, motor_R = assign_motors(module_list, motor_list)
-
-# motor = motor_L
-
-# class Motor(TMCM1260):
-#     def __init__(self, port, module, motor):
-#         self.port = port
-#         self.module = module
-#         self.motor = motor
-#         self.motorID = TMCLModule.get_global_parameter(self.module, self.module.GP0.SerialAddress, bank=0)
-
-# m0 = Motor(port_list[0], module_list[0], motor_list[0])        
-# m1 = Motor(port_list[1], module_list[1], motor_list[1])
-
-# print(m0.motorID)
-# print(m1.motorID)
-#
