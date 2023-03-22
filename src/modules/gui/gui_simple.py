@@ -8,15 +8,22 @@ Created on Thu Feb 23 16:37:43 2023
 
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
+from pytrinamic.connections import ConnectionManager
 from .main_window_simple_ui import Ui_MainWindow
-from ..motor_control import (setup_motors, assign_motors, move_by, motor_status_message)
+from ..Motor import Motor
+#from ..motor_control import assign_motors
 
 
 ### Motor setup and assignment ###
-port_list, module_list, motor_list = setup_motors()
-motor_L, motor_R = assign_motors(module_list, motor_list)
 
-#motor = motor_L
+port_list = ConnectionManager().list_connections()
+
+motor_L = Motor(port_list[0])        
+motor_R = Motor(port_list[1])
+
+print(motor_L.status_message())
+print(motor_R.status_message())
+
 
 class Window(QMainWindow, Ui_MainWindow):
     '''This custom class inherits from QMainWindow class and the custom 
@@ -24,8 +31,7 @@ class Window(QMainWindow, Ui_MainWindow):
     from main_window.ui using the pyuic5 command line program, e.g.:
     pyuic5 -x main_window.ui -o main_window_ui.py
     '''
-    
-    
+     
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
@@ -36,6 +42,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.connectSignalsSlots()
         self.show()
         
+    
     def set_default_values(self):
         '''User input: Specify default values here.'''
         ### User input values (with allowed min-max ranges)
@@ -81,36 +88,44 @@ class Window(QMainWindow, Ui_MainWindow):
         
     def select_motor(self, m):
         self.motor = m
-        print('Selected motor:', self.motor)
-        print(motor_status_message(self.motor))
+        #print('Selected motor:', self.motor)
+        print(self.motor.status_message())
 
     def single_step_left(self):
-        move_by(self.motor, -16, round(self.rpmBox.value()*3200/60))
-        #print('single step left')
+        pps = round(self.rpmBox.value()*self.motor.msteps_per_rev/60)
+        self.motor.move_by_msteps(-self.motor.msteps_per_fstep, pps)
+        print('single fullstep left')
         
     def single_step_right(self):
-        move_by(self.motor, 16, round(self.rpmBox.value()*3200/60))
-        print('single step right')
+        pps = round(self.rpmBox.value()*self.motor.msteps_per_rev/60)
+        self.motor.move_by_msteps(self.motor.msteps_per_fstep, pps)
+        print('single fullstep right')
         
     def multi_step_left(self):
-        move_by(self.motor, -16 * self.multistep_numberBox.value(), round(self.rpmBox.value()*3200/60))
-        print(str(self.multistep_numberBox.value()), 'steps left with', str(self.rpmBox.value()), 'rpm')
+        msteps =self.motor.msteps_per_fstep * self.multistep_numberBox.value()
+        pps = round(self.rpmBox.value()*self.motor.msteps_per_rev/60)
+        self.motor.move_by_msteps(-msteps, pps)
+        print(str(self.multistep_numberBox.value()), 'fullsteps left with', str(self.rpmBox.value()), 'rpm')
         
     def multi_step_right(self):
-        move_by(self.motor, 16 * self.multistep_numberBox.value(), round(self.rpmBox.value()*3200/60))
-        print(str(self.multistep_numberBox.value()), 'steps right with', str(self.rpmBox.value()), 'rpm')
+        msteps =self.motor.msteps_per_fstep * self.multistep_numberBox.value()
+        pps = round(self.rpmBox.value()*self.motor.msteps_per_rev/60)
+        self.motor.move_by_msteps(msteps, pps)
+        print(str(self.multistep_numberBox.value()), 'fullsteps right with', str(self.rpmBox.value()), 'rpm')
         
-    def perm_rot_left(self):
+    def perm_rot_left(self, motor):
         # motor speed calculated from: rpmBox * msteps_per_rev / 60sec
-        self.motor.rotate(-round(self.rpmBox.value()*3200/60))
+        pps = round(self.rpmBox.value()*self.motor.msteps_per_rev/60)
+        self.motor.motor.rotate(-pps)
         print('Rotating left with', str(self.rpmBox.value()), 'rpm')
         
     def perm_rot_right(self):
-        self.motor.rotate(round(self.rpmBox.value()*3200/60))
+        pps = round(self.rpmBox.value()*self.motor.msteps_per_rev/60)
+        self.motor.motor.rotate(pps)
         print('Rotating right with', str(self.rpmBox.value()), 'rpm')
         
     def stop_motor(self):
-        self.motor.stop()
+        self.motor.motor.stop()
         print('Motor stopped!')
         
             
