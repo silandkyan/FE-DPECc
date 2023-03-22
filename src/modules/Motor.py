@@ -45,13 +45,13 @@ class Motor(TMCM1260):
         '''Set initial motor ramp settings. Values are in pps and are now scaled 
         to microstep resolution.'''
         # get mstep resolution factor:
-        mstep_res_factor = motor.drive_settings.microstep_resolution
+        self.mstep_res_factor = motor.drive_settings.microstep_resolution
         # calculate msteps/revolution
-        fsteps_per_rev = 200
-        msteps_per_rev = 2 ** mstep_res_factor * fsteps_per_rev
+        self.fsteps_per_rev = 200
+        self.msteps_per_rev = 2 ** self.mstep_res_factor * self.fsteps_per_rev
         # set max values for ramp. trailing factors were tested for 16 msteps.
         motor.linear_ramp.max_velocity = 2000#msteps_per_rev * 10
-        motor.linear_ramp.max_acceleration = msteps_per_rev * 5
+        motor.linear_ramp.max_acceleration = self.msteps_per_rev * 5
         #print(motor, motor.linear_ramp)
             
     def setup_motors(self, port):
@@ -68,8 +68,8 @@ class Motor(TMCM1260):
         print('Setting up motor', self.motorID, '... done!')
         return self.interface, self.module, self.motor
     
-    def motor_status_message(self):
-        return str('moduleID: ' + str(self.motorID))
+    def status_message(self):
+        return str('motorID: ' + str(self.motorID))
     
     
     ### MOVEMENT CONTROL ###
@@ -101,11 +101,11 @@ class Motor(TMCM1260):
 
 ### Motor assignment ###
 
-# port_list = ConnectionManager().list_connections()
+port_list = ConnectionManager().list_connections()
 
-# m0 = Motor(port_list[0])        
-# m1 = Motor(port_list[1])
+m1 = Motor(port_list[0])        
+m2 = Motor(port_list[1])
 
-# print(m0.motor_status_message())
-# print(m1.motor_status_message())
+print(m1.status_message())
+print(m2.status_message())
 #

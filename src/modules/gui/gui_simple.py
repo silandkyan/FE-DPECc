@@ -24,8 +24,7 @@ class Window(QMainWindow, Ui_MainWindow):
     from main_window.ui using the pyuic5 command line program, e.g.:
     pyuic5 -x main_window.ui -o main_window_ui.py
     '''
-    
-    
+     
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
