@@ -48,6 +48,12 @@ def connect_motors_modules(module_list):
     return motor_list
 
 
+def disconnect_motors():
+    '''Disconnection routine; should be run at the end of the program.'''
+    ConnectionManager().disconnect
+    print('Motors disconnected!')
+
+
 def init_drive_settings(motor_list):
     '''Set initial motor drive settings.'''
     for motor in motor_list:
@@ -96,6 +102,9 @@ def assign_motors(module_list, motor_list):
     return motor_L, motor_R#, motor_C # add motors here...
 
 
+def motor_status_message(motor):
+    return str('moduleID: ' + motor.GP0.SerialAddress)
+
 #####   MOVEMENT CONTROL   #####
 
 def move_by(motor, msteps, velocity):
@@ -122,4 +131,4 @@ def move_to(motor, pos, velocity):
         time.sleep(0.1)
     
     print('Moving completed.')
-#
+    

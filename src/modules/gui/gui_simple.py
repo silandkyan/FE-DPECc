@@ -8,15 +8,22 @@ Created on Thu Feb 23 16:37:43 2023
 
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
-from .main_window_ui import Ui_MainWindow
-from ..motor_control import (setup_motors, assign_motors, move_by)
+from pytrinamic.connections import ConnectionManager
+from .main_window_simple_ui import Ui_MainWindow
+from ..Motor import Motor
+#from ..motor_control import assign_motors
 
 
 ### Motor setup and assignment ###
-port_list, module_list, motor_list = setup_motors()
-motor_L, motor_R = assign_motors(module_list, motor_list)
 
-motor = motor_L
+port_list = ConnectionManager().list_connections()
+
+motor_L = Motor(port_list[0])        
+motor_R = Motor(port_list[1])
+
+print(motor_L.status_message())
+print(motor_R.status_message())
+
 
 class Window(QMainWindow, Ui_MainWindow):
     '''This custom class inherits from QMainWindow class and the custom 
@@ -24,7 +31,7 @@ class Window(QMainWindow, Ui_MainWindow):
     from main_window.ui using the pyuic5 command line program, e.g.:
     pyuic5 -x main_window.ui -o main_window_ui.py
     '''
-    
+     
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
@@ -35,6 +42,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.connectSignalsSlots()
         self.show()
         
+    
     def set_default_values(self):
         '''User input: Specify default values here.'''
         ### User input values (with allowed min-max ranges)
@@ -52,6 +60,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.rpm_maxBox.setValue(300)       # max rpm value
         # Motor selection radio buttons:
         self.motor1_radioButton.setChecked(True) # Motor 1 is default
+        # Set default motor that is active initially:
+        self.motor = motor_L
         
         
     def connectSignalsSlots(self):
@@ -72,40 +82,51 @@ class Window(QMainWindow, Ui_MainWindow):
         self.permstopButton.clicked.connect(self.stop_motor)
         self.multistopButton.clicked.connect(self.stop_motor)
         # Motor selection radio buttons:
-        self.motor1_radioButton.pressed.connect(lambda: self.select_motor(1))
-        self.motor2_radioButton.pressed.connect(lambda: self.select_motor(2))
+        self.motor1_radioButton.pressed.connect(lambda: self.select_motor(motor_L))
+        self.motor2_radioButton.pressed.connect(lambda: self.select_motor(motor_R))
+
+        
+    def select_motor(self, m):
+        self.motor = m
+        #print('Selected motor:', self.motor)
+        print(self.motor.status_message())
 
     def single_step_left(self):
-        move_by(motor, -16, round(self.rpmBox.value()*3200/60))
-        #print('single step left')
+        pps = round(self.rpmBox.value()*self.motor.msteps_per_rev/60)
+        self.motor.move_by_msteps(-self.motor.msteps_per_fstep, pps)
+        print('single fullstep left')
         
     def single_step_right(self):
-        move_by(motor, 16, round(self.rpmBox.value()*3200/60))
-        print('single step right')
+        pps = round(self.rpmBox.value()*self.motor.msteps_per_rev/60)
+        self.motor.move_by_msteps(self.motor.msteps_per_fstep, pps)
+        print('single fullstep right')
         
     def multi_step_left(self):
-        move_by(motor, -16 * self.multistep_numberBox.value(), round(self.rpmBox.value()*3200/60))
-        print(str(self.multistep_numberBox.value()), 'steps left with', str(self.rpmBox.value()), 'rpm')
+        msteps =self.motor.msteps_per_fstep * self.multistep_numberBox.value()
+        pps = round(self.rpmBox.value()*self.motor.msteps_per_rev/60)
+        self.motor.move_by_msteps(-msteps, pps)
+        print(str(self.multistep_numberBox.value()), 'fullsteps left with', str(self.rpmBox.value()), 'rpm')
         
     def multi_step_right(self):
-        move_by(motor, 16 * self.multistep_numberBox.value(), round(self.rpmBox.value()*3200/60))
-        print(str(self.multistep_numberBox.value()), 'steps right with', str(self.rpmBox.value()), 'rpm')
+        msteps =self.motor.msteps_per_fstep * self.multistep_numberBox.value()
+        pps = round(self.rpmBox.value()*self.motor.msteps_per_rev/60)
+        self.motor.move_by_msteps(msteps, pps)
+        print(str(self.multistep_numberBox.value()), 'fullsteps right with', str(self.rpmBox.value()), 'rpm')
         
-    def perm_rot_left(self):
+    def perm_rot_left(self, motor):
         # motor speed calculated from: rpmBox * msteps_per_rev / 60sec
-        motor.rotate(-round(self.rpmBox.value()*3200/60))
+        pps = round(self.rpmBox.value()*self.motor.msteps_per_rev/60)
+        self.motor.motor.rotate(-pps)
         print('Rotating left with', str(self.rpmBox.value()), 'rpm')
         
     def perm_rot_right(self):
-        motor.rotate(round(self.rpmBox.value()*3200/60))
+        pps = round(self.rpmBox.value()*self.motor.msteps_per_rev/60)
+        self.motor.motor.rotate(pps)
         print('Rotating right with', str(self.rpmBox.value()), 'rpm')
         
     def stop_motor(self):
-        motor.stop()
+        self.motor.motor.stop()
         print('Motor stopped!')
-        
-    def select_motor(self, motorID):
-        print('Selected motor:', motorID)
         
             
     def set_allowed_ranges(self):
@@ -134,10 +155,10 @@ class Window(QMainWindow, Ui_MainWindow):
 
 def run_app():
     app = 0
-    # Initialize GUI control flow management. Requires passing
-    # argument vector (sys.argv) or empty list [] as arg; the former allows
-    # to pass configuration commands on startup to the program from the
-    # command line, if such commands were implemented.
+    '''Initialize GUI control flow management. Requires passing
+    argument vector (sys.argv) or empty list [] as arg; the former allows
+    to pass configuration commands on startup to the program from the
+    command line, if such commands were implemented.'''
     # If app is already open, use that one, otherwise open new app:
     if not QApplication.instance():
         app = QApplication(sys.argv)
