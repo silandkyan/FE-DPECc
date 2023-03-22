@@ -181,6 +181,7 @@ class Window(QMainWindow, Ui_MainWindow):
         max_pr = self.spinB_pr_max_RPM.value()
         self.spinB_RPM_when_pushed_pr.setMaximum(max_pr)
         self.spinB_RPM_pr_pos_control.setMaximum(max_pr)
+<<<<<<< HEAD
         
         
         
@@ -195,27 +196,32 @@ class Window(QMainWindow, Ui_MainWindow):
        #self.spinB_zbr_steps_per_rev.valueChanged.connect(self.init_ramp_settings(zbr), self.init_drive_settings(zbr))
         
         
+=======
+
+    
+    def connectSignalsSlots(self): 
+>>>>>>> 002583c3eb85ea027c32413ca25e76994b455173
     # connections for enabling group boxes exclusively
         # set exclusive for leg tab:
-        self.groupB_mselection_leg.clicked.connect(lambda: self.groupB_manager(1)) 
-        self.groupB_permanent_leg.clicked.connect(lambda: self.groupB_manager(2))
-        self.groupB_when_pushed_leg.clicked.connect(lambda: self.groupB_manager(3))
-        self.groupB_key_control_leg.clicked.connect(lambda: self.groupB_manager(4))
-        # set exclusive for x direction:
-        self.groupB_pos_control_x.clicked.connect(lambda: self.groupB_manager(5))
-        self.groupB_permanent_x.clicked.connect(lambda: self.groupB_manager(6))
-        self.groupB_when_pushed_x.clicked.connect(lambda: self.groupB_manager(7))
-        self.groupB_key_control_x.clicked.connect(lambda: self.groupB_manager(8)) 
-        # set exclusive for pr:
-        self.groupB_pos_control_pr.clicked.connect(lambda: self.groupB_manager(9))
-        self.groupB_when_pushed_pr.clicked.connect(lambda: self.groupB_manager(11))
-        self.groupB_key_control_pr.clicked.connect(lambda: self.groupB_manager(12)) 
-        # set exclusive for cr:
-        self.groupB_pos_control_cr.clicked.connect(lambda: self.groupB_manager(13))
-        self.groupB_key_control_cr.clicked.connect(lambda: self.groupB_manager(14)) 
-        # set exclusive for switch:
-        self.groupB_switch.clicked.connect(lambda: self.groupB_manager(15))
-        self.groupB_key_control_switch.clicked.connect(lambda: self.groupB_manager(16))
+        # self.groupB_mselection_leg.clicked.connect(lambda: self.groupB_manager(1)) 
+        # self.groupB_permanent_leg.clicked.connect(lambda: self.groupB_manager(2))
+        # self.groupB_when_pushed_leg.clicked.connect(lambda: self.groupB_manager(3))
+        # self.groupB_key_control_leg.clicked.connect(lambda: self.groupB_manager(4))
+        # # set exclusive for x direction:
+        # self.groupB_pos_control_x.clicked.connect(lambda: self.groupB_manager(5))
+        # self.groupB_permanent_x.clicked.connect(lambda: self.groupB_manager(6))
+        # self.groupB_when_pushed_x.clicked.connect(lambda: self.groupB_manager(7))
+        # self.groupB_key_control_x.clicked.connect(lambda: self.groupB_manager(8)) 
+        # # set exclusive for pr:
+        # self.groupB_pos_control_pr.clicked.connect(lambda: self.groupB_manager(9))
+        # self.groupB_when_pushed_pr.clicked.connect(lambda: self.groupB_manager(11))
+        # self.groupB_key_control_pr.clicked.connect(lambda: self.groupB_manager(12)) 
+        # # set exclusive for cr:
+        # self.groupB_pos_control_cr.clicked.connect(lambda: self.groupB_manager(13))
+        # self.groupB_key_control_cr.clicked.connect(lambda: self.groupB_manager(14)) 
+        # # set exclusive for switch:
+        # self.groupB_switch.clicked.connect(lambda: self.groupB_manager(15))
+        # self.groupB_key_control_switch.clicked.connect(lambda: self.groupB_manager(16))
         
     # setting the key control groupBoxes exclusive
         self.groupB_key_control_leg.clicked.connect(lambda: self.groupB_manager(17))

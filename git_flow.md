@@ -58,7 +58,7 @@ after some changes were made, add them (-A = all) to the commit list and commit 
 
 publish the modifications in the central remote repo (will be reviewed before merging):
 
-`git push -u origin branch-name`
+`git push --set-upstream origin branch-name`
 
 when the branch goal is reached, it can be merged with main branch in github.
 
