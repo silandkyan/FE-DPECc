@@ -17,11 +17,15 @@ Created on Tue Feb 21 17:38:27 2023
 # -> lohnt sich das überhaupt je nach dem wie viel noch verändert wird
 # - wie wichitg ist es, dass die spin Boxen den Wert anzeigen den man zuvor eingestellt hat? 
 
-# Fehlt:
+
+# Offen:
     
 # - Funktionen die den motoren mitteilen wie viele RPM sie machen sollen? 
 # - Funktionen oder variablen die mm bzw. deg mit gegebener RPM Zahl in pps umrechnen 
 # - Die LCD anzeigen für die individuellen Motoren in save und show stat Funktionen 
+# - jedes mal wenn sich die microstep resolution für einen Motor ändert muss mit der 
+# init drive settings funktion connected werden und mit der init ramp settings funktion
+
 
 # als nächstes:
 
@@ -30,6 +34,14 @@ Created on Tue Feb 21 17:38:27 2023
 # wird und ihm die Änderung mitgeteilt wird 
 # - set allowed ranges für die leg RPM spin Boxen noch anpassen
 
+# Gui fusion mit motor control:
+
+# - eine wrapper funktion für permanent modus ODER die obere bzw. untere Anschlagsposition wählen?
+# - wie kann when pushed realisiert werden?
+# - bei keyboard control muss auch noch eine Geschwindigkeit angegeben werden und dann move by steps funktion nehmen 
+# - einfache TMCL funktion für invert motor direction?
+# - umrechnungsfunktion von mm auf der Achse bzw. deg auf msteps
+
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
 from PyQt5.QtGui import QKeyEvent
@@ -37,6 +49,22 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QShortcut
 from modules.gui.main_window_ui import Ui_MainWindow
+
+#from ..Motor import Motor as m
+
+
+# settings...
+
+### Motor assignment ###
+
+# port_list = ConnectionManager().list_connections()
+
+# m0 = Motor(port_list[0])        
+# m1 = Motor(port_list[1])
+
+# print(m0.motor_status_message())
+# print(m1.motor_status_message())
+
 
 
 class Window(QMainWindow, Ui_MainWindow):
@@ -53,6 +81,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # setup functions:
         self.setup()
         self.check()
+        # self.pps_calculator()
         self.connectSignalsSlots()
         self.show()
         
@@ -152,30 +181,47 @@ class Window(QMainWindow, Ui_MainWindow):
         max_pr = self.spinB_pr_max_RPM.value()
         self.spinB_RPM_when_pushed_pr.setMaximum(max_pr)
         self.spinB_RPM_pr_pos_control.setMaximum(max_pr)
+<<<<<<< HEAD
         
+        
+        
+    # def pps_calculator(self, RPM, msteps):
+    #     pps = RPM * msteps / 60 
+    #     return pps 
+        
+    # def connectSignalsSlots(self): 
+    #     pass
+    # connect whenever mstep resolution is changed could work if these functions would take the spinBox value for 
+    # exponent argument 
+       #self.spinB_zbr_steps_per_rev.valueChanged.connect(self.init_ramp_settings(zbr), self.init_drive_settings(zbr))
+        
+        
+=======
+
     
     def connectSignalsSlots(self): 
+>>>>>>> 002583c3eb85ea027c32413ca25e76994b455173
     # connections for enabling group boxes exclusively
         # set exclusive for leg tab:
-        self.groupB_mselection_leg.clicked.connect(lambda: self.groupB_manager(1)) 
-        self.groupB_permanent_leg.clicked.connect(lambda: self.groupB_manager(2))
-        self.groupB_when_pushed_leg.clicked.connect(lambda: self.groupB_manager(3))
-        self.groupB_key_control_leg.clicked.connect(lambda: self.groupB_manager(4))
-        # set exclusive for x direction:
-        self.groupB_pos_control_x.clicked.connect(lambda: self.groupB_manager(5))
-        self.groupB_permanent_x.clicked.connect(lambda: self.groupB_manager(6))
-        self.groupB_when_pushed_x.clicked.connect(lambda: self.groupB_manager(7))
-        self.groupB_key_control_x.clicked.connect(lambda: self.groupB_manager(8)) 
-        # set exclusive for pr:
-        self.groupB_pos_control_pr.clicked.connect(lambda: self.groupB_manager(9))
-        self.groupB_when_pushed_pr.clicked.connect(lambda: self.groupB_manager(11))
-        self.groupB_key_control_pr.clicked.connect(lambda: self.groupB_manager(12)) 
-        # set exclusive for cr:
-        self.groupB_pos_control_cr.clicked.connect(lambda: self.groupB_manager(13))
-        self.groupB_key_control_cr.clicked.connect(lambda: self.groupB_manager(14)) 
-        # set exclusive for switch:
-        self.groupB_switch.clicked.connect(lambda: self.groupB_manager(15))
-        self.groupB_key_control_switch.clicked.connect(lambda: self.groupB_manager(16))
+        # self.groupB_mselection_leg.clicked.connect(lambda: self.groupB_manager(1)) 
+        # self.groupB_permanent_leg.clicked.connect(lambda: self.groupB_manager(2))
+        # self.groupB_when_pushed_leg.clicked.connect(lambda: self.groupB_manager(3))
+        # self.groupB_key_control_leg.clicked.connect(lambda: self.groupB_manager(4))
+        # # set exclusive for x direction:
+        # self.groupB_pos_control_x.clicked.connect(lambda: self.groupB_manager(5))
+        # self.groupB_permanent_x.clicked.connect(lambda: self.groupB_manager(6))
+        # self.groupB_when_pushed_x.clicked.connect(lambda: self.groupB_manager(7))
+        # self.groupB_key_control_x.clicked.connect(lambda: self.groupB_manager(8)) 
+        # # set exclusive for pr:
+        # self.groupB_pos_control_pr.clicked.connect(lambda: self.groupB_manager(9))
+        # self.groupB_when_pushed_pr.clicked.connect(lambda: self.groupB_manager(11))
+        # self.groupB_key_control_pr.clicked.connect(lambda: self.groupB_manager(12)) 
+        # # set exclusive for cr:
+        # self.groupB_pos_control_cr.clicked.connect(lambda: self.groupB_manager(13))
+        # self.groupB_key_control_cr.clicked.connect(lambda: self.groupB_manager(14)) 
+        # # set exclusive for switch:
+        # self.groupB_switch.clicked.connect(lambda: self.groupB_manager(15))
+        # self.groupB_key_control_switch.clicked.connect(lambda: self.groupB_manager(16))
         
     # setting the key control groupBoxes exclusive
         self.groupB_key_control_leg.clicked.connect(lambda: self.groupB_manager(17))
@@ -387,8 +433,11 @@ class Window(QMainWindow, Ui_MainWindow):
             self.groupB_key_control_cr.setChecked(False)
             self.groupB_key_control_leg.setChecked(False)
             
+         
+            
+            
+            
     # functions for enabling checkability and checked state 
-    
     def enable_motorselection(self):
         self.checkB_zbr.setCheckable(True)
         self.checkB_zbc.setCheckable(True)
@@ -527,11 +576,18 @@ class Window(QMainWindow, Ui_MainWindow):
             # motors go to saved position shown on lower LCD
             print("ZBC/ZDC/ZBR/ZCR are heading for all the way down: {}mm".format(self.lcd_pos_down.value()))
             
+            
+            
     def single_motors(self, direction):
         if direction == 1:
             # selected motors go to saved position shown by LCD
             if check_zbr == True:
                 print("ZBR going all the way up: {}mm".format(self.lcd_pos_up.value()))
+                # m.move_to_pos(int(self.lcd_up.value()), self.pps_calculator(30, 2**self.spinB_zbr_steps_per_rev.value() * 200))
+                                                                       
+                                                                       
+                                                                       
+                                                                       
             if check_zbc == True:
                 print("ZBC going all the way up: {}mm".format(self.lcd_pos_up.value()))
             if check_zdr == True:
@@ -557,6 +613,9 @@ class Window(QMainWindow, Ui_MainWindow):
     def overwrite(self, pos):
     # this function should feature an output for the motor position in microsteps at the moment and display it in LCDs
         if pos == 1:
+            # get int(self.motor.actual_position) as value for LCD
+            
+            
             print("position up overwritten to new parameter shown by LCD")
             self.label_overwrite_up.setStyleSheet("QLabel {color: red;}")
         elif pos == 2:
@@ -750,6 +809,9 @@ class Window(QMainWindow, Ui_MainWindow):
         # when pushed forwards for leg
         if function == 1:
             if check_all == True:
+                # connect to all motors and call move to positon funciton and pass maximum possible position 
+                
+                
                 # if all motors are running the step amount per rotation gets derived form settings of zbr
                 steps_per_min = 1/(self.spinB_zbr_steps_per_rev.value() * self.spinB_RPM_when_pushed_leg.value()) * 60000
                 self.pushB_forwards_leg.setAutoRepeatInterval(steps_per_min)
