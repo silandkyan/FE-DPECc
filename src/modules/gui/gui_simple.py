@@ -17,12 +17,13 @@ from ..Motor import Motor
 ### Motor setup and assignment ###
 
 port_list = ConnectionManager().list_connections()
+for port in port_list:
+    Motor(port)
+    
+module_L, module_R = Motor.assign_modules()
 
-motor_L = Motor(port_list[0])        
-motor_R = Motor(port_list[1])
-
-print(motor_L.status_message())
-print(motor_R.status_message())
+print(module_L.status_message())
+print(module_R.status_message())
 
 
 class Window(QMainWindow, Ui_MainWindow):
@@ -61,7 +62,8 @@ class Window(QMainWindow, Ui_MainWindow):
         # Motor selection radio buttons:
         self.motor1_radioButton.setChecked(True) # Motor 1 is default
         # Set default motor that is active initially:
-        self.motor = motor_L
+        self.module = module_L
+        self.motor = module_L.motor
         
         
     def connectSignalsSlots(self):
@@ -82,50 +84,51 @@ class Window(QMainWindow, Ui_MainWindow):
         self.permstopButton.clicked.connect(self.stop_motor)
         self.multistopButton.clicked.connect(self.stop_motor)
         # Motor selection radio buttons:
-        self.motor1_radioButton.pressed.connect(lambda: self.select_motor(motor_L))
-        self.motor2_radioButton.pressed.connect(lambda: self.select_motor(motor_R))
+        self.motor1_radioButton.pressed.connect(lambda: self.select_module(module_L))
+        self.motor2_radioButton.pressed.connect(lambda: self.select_module(module_R))
 
         
-    def select_motor(self, m):
-        self.motor = m
+    def select_module(self, m):
+        self.module = m
+        self.motor = self.module.motor
         #print('Selected motor:', self.motor)
-        print(self.motor.status_message())
+        print(self.module.status_message())
 
     def single_step_left(self):
-        pps = round(self.rpmBox.value()*self.motor.msteps_per_rev/60)
-        self.motor.move_by_msteps(-self.motor.msteps_per_fstep, pps)
+        pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
+        self.motor.move_by(-self.module.msteps_per_fstep, pps)
         print('single fullstep left')
         
     def single_step_right(self):
-        pps = round(self.rpmBox.value()*self.motor.msteps_per_rev/60)
-        self.motor.move_by_msteps(self.motor.msteps_per_fstep, pps)
+        pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
+        self.motor.move_by(self.module.msteps_per_fstep, pps)
         print('single fullstep right')
         
     def multi_step_left(self):
-        msteps =self.motor.msteps_per_fstep * self.multistep_numberBox.value()
-        pps = round(self.rpmBox.value()*self.motor.msteps_per_rev/60)
-        self.motor.move_by_msteps(-msteps, pps)
+        msteps = self.module.msteps_per_fstep * self.multistep_numberBox.value()
+        pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
+        self.motor.move_by(-msteps, pps)
         print(str(self.multistep_numberBox.value()), 'fullsteps left with', str(self.rpmBox.value()), 'rpm')
         
     def multi_step_right(self):
-        msteps =self.motor.msteps_per_fstep * self.multistep_numberBox.value()
-        pps = round(self.rpmBox.value()*self.motor.msteps_per_rev/60)
-        self.motor.move_by_msteps(msteps, pps)
+        msteps = self.module.msteps_per_fstep * self.multistep_numberBox.value()
+        pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
+        self.motor.move_by(msteps, pps)
         print(str(self.multistep_numberBox.value()), 'fullsteps right with', str(self.rpmBox.value()), 'rpm')
         
     def perm_rot_left(self, motor):
         # motor speed calculated from: rpmBox * msteps_per_rev / 60sec
-        pps = round(self.rpmBox.value()*self.motor.msteps_per_rev/60)
-        self.motor.motor.rotate(-pps)
+        pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
+        self.motor.rotate(-pps)
         print('Rotating left with', str(self.rpmBox.value()), 'rpm')
         
     def perm_rot_right(self):
-        pps = round(self.rpmBox.value()*self.motor.msteps_per_rev/60)
-        self.motor.motor.rotate(pps)
+        pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
+        self.motor.rotate(pps)
         print('Rotating right with', str(self.rpmBox.value()), 'rpm')
         
     def stop_motor(self):
-        self.motor.motor.stop()
+        self.motor.stop()
         print('Motor stopped!')
         
             
