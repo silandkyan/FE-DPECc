@@ -61,6 +61,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.rpm_maxBox.setValue(300)       # max rpm value
         # Motor selection radio buttons:
         self.motor1_radioButton.setChecked(True) # Motor 1 is default
+        # Motor selection checkBoxes:
+        self.motor1_checkBox.setChecked(True)
         # Set default motor that is active initially:
         self.module = module_L
         self.motor = module_L.motor
@@ -86,13 +88,31 @@ class Window(QMainWindow, Ui_MainWindow):
         # Motor selection radio buttons:
         self.motor1_radioButton.pressed.connect(lambda: self.select_module(module_L))
         self.motor2_radioButton.pressed.connect(lambda: self.select_module(module_R))
-
+        # Motor selection checkBoxes:
+        self.motor1_checkBox.toggled.connect(self.refresh_motor_list)
+        self.motor2_checkBox.toggled.connect(self.refresh_motor_list)
+        
         
     def select_module(self, m):
         self.module = m
         self.motor = self.module.motor
         #print('Selected motor:', self.motor)
         print(self.module.status_message())
+        
+    def refresh_motor_list(self):
+        self.active_modules = []
+        boxlist = [self.motor1_checkBox, self.motor2_checkBox]
+        for box in boxlist:
+            if box.isChecked() == True:
+                if box == self.motor1_checkBox:
+                    self.active_modules.append(module_L)
+                elif box == self.motor2_checkBox:
+                    self.active_modules.append(module_R)
+        print(self.active_modules)
+        
+    # function to control several motors at once
+    
+    # function for mode selection
 
     def single_step_left(self):
         pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
