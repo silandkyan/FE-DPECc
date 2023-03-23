@@ -20,6 +20,7 @@ if __name__ == "__main__":
         app = run_app()
     except Exception:
         #pass
+        print('ERROR')
         disconnect_motors()
     
 

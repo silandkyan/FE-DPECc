@@ -74,6 +74,33 @@ After the branch was merged with main in github, the branch can be deleted direc
 `git merge branch-name`
 
 
+# Updating a feature branch
+
+first update local main branch:
+
+`git checkout main`
+
+update local main from remote, use -p option to delete any unused remote-tracking references:
+
+`git fetch -p origin`
+
+merge changes from origin/main into local main branch:
+
+`git merge origin/main`
+
+Check out the feature branch you want to merge into:
+
+`git checkout branch-name`
+
+merge the (now updated) main branch into the feature branch:
+
+`git merge main`
+
+push update to remote:
+
+`git push --set-upstream origin branch-name`
+
+
 # Handling pull requests
 
 to test proposed changes locally:

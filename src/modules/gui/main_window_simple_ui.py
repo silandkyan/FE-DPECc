@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'main_window.ui'
+# Form implementation generated from reading ui file 'main_window_simple.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.7
 #
@@ -89,6 +89,12 @@ class Ui_MainWindow(object):
         self.label_3 = QtWidgets.QLabel(self.tab)
         self.label_3.setGeometry(QtCore.QRect(20, 20, 31, 16))
         self.label_3.setObjectName("label_3")
+        self.motor2_checkBox = QtWidgets.QCheckBox(self.tab)
+        self.motor2_checkBox.setGeometry(QtCore.QRect(250, 90, 87, 21))
+        self.motor2_checkBox.setObjectName("motor2_checkBox")
+        self.motor1_checkBox = QtWidgets.QCheckBox(self.tab)
+        self.motor1_checkBox.setGeometry(QtCore.QRect(250, 70, 87, 21))
+        self.motor1_checkBox.setObjectName("motor1_checkBox")
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
@@ -128,15 +134,9 @@ class Ui_MainWindow(object):
         self.motor1_radioButton = QtWidgets.QRadioButton(self.centralwidget)
         self.motor1_radioButton.setGeometry(QtCore.QRect(100, 10, 104, 21))
         self.motor1_radioButton.setObjectName("motor1_radioButton")
-        self.motor3_radioButton = QtWidgets.QRadioButton(self.centralwidget)
-        self.motor3_radioButton.setGeometry(QtCore.QRect(260, 10, 104, 21))
-        self.motor3_radioButton.setObjectName("motor3_radioButton")
         self.motor2_radioButton = QtWidgets.QRadioButton(self.centralwidget)
         self.motor2_radioButton.setGeometry(QtCore.QRect(100, 30, 104, 21))
         self.motor2_radioButton.setObjectName("motor2_radioButton")
-        self.motor4_radioButton = QtWidgets.QRadioButton(self.centralwidget)
-        self.motor4_radioButton.setGeometry(QtCore.QRect(260, 30, 104, 21))
-        self.motor4_radioButton.setObjectName("motor4_radioButton")
         self.quitButton = QtWidgets.QPushButton(self.centralwidget)
         self.quitButton.setGeometry(QtCore.QRect(340, 510, 61, 41))
         font = QtGui.QFont()
@@ -176,6 +176,8 @@ class Ui_MainWindow(object):
         self.multistopButton.setText(_translate("MainWindow", "stop"))
         self.permlButton.setText(_translate("MainWindow", "left"))
         self.label_3.setText(_translate("MainWindow", "RPM"))
+        self.motor2_checkBox.setText(_translate("MainWindow", "Motor 2"))
+        self.motor1_checkBox.setText(_translate("MainWindow", "Motor 1"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Motor Control"))
         self.label_6.setText(_translate("MainWindow", "Microsteps"))
         self.label_8.setText(_translate("MainWindow", "max. RPM"))
@@ -184,9 +186,7 @@ class Ui_MainWindow(object):
         self.label_4.setText(_translate("MainWindow", "Stepper motor settings"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "Motor Settings"))
         self.motor1_radioButton.setText(_translate("MainWindow", "Motor 1"))
-        self.motor3_radioButton.setText(_translate("MainWindow", "Motor 3"))
         self.motor2_radioButton.setText(_translate("MainWindow", "Motor 2"))
-        self.motor4_radioButton.setText(_translate("MainWindow", "Motor 4"))
         self.quitButton.setText(_translate("MainWindow", "QUIT"))
 
 
