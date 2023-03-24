@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>648</height>
+    <width>785</width>
+    <height>696</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,9 +19,14 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>791</width>
-      <height>711</height>
+      <width>441</width>
+      <height>231</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>7</pointsize>
+     </font>
     </property>
     <property name="currentIndex">
      <number>3</number>
@@ -30,287 +35,11 @@
      <attribute name="title">
       <string>Leg control</string>
      </attribute>
-     <widget class="QLabel" name="label_14">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>290</y>
-        <width>441</width>
-        <height>281</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Info&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;- mode when pushed sends signals to motor continously,&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;as long as button is pressed down &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;- mode keyboard control is for small adjustments &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;(-&amp;gt; settings)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;- the value in microstep resolution spinbox is the exponent&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;for the base 2 (-&amp;gt; so by default microstep res. is 16)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;- usually 30 - 120 RPM is a good choice. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;At higher RPM, torque decreases.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-     <widget class="QFrame" name="stackedW_settings_leg">
-      <property name="geometry">
-       <rect>
-        <x>440</x>
-        <y>190</y>
-        <width>331</width>
-        <height>311</height>
-       </rect>
-      </property>
-      <widget class="QLabel" name="label_15">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>68</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_40">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>261</width>
-         <height>61</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>keyboard controls:
-press up and down for fine steps
-left and right for coarse steps</string>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="spinB_leg_fine">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>110</y>
-         <width>41</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>32</number>
-       </property>
-       <property name="value">
-        <number>1</number>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="spinB_leg_coarse">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>150</y>
-         <width>51</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>124</number>
-       </property>
-       <property name="value">
-        <number>10</number>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_42">
-       <property name="geometry">
-        <rect>
-         <x>70</x>
-         <y>150</y>
-         <width>68</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>coarse</string>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="spinB_mstep_res_leg">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>200</y>
-         <width>31</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>8</number>
-       </property>
-       <property name="singleStep">
-        <number>1</number>
-       </property>
-       <property name="value">
-        <number>4</number>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="spinB_leg_max_RPM">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>270</y>
-         <width>81</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>1000</number>
-       </property>
-       <property name="value">
-        <number>120</number>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pushB_leg_invert">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>230</y>
-         <width>131</width>
-         <height>34</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>invert direction</string>
-       </property>
-      </widget>
-      <widget class="QDoubleSpinBox" name="spinB_leg_mm_per_rev">
-       <property name="geometry">
-        <rect>
-         <x>120</x>
-         <y>110</y>
-         <width>61</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="singleStep">
-        <double>0.000000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.500000000000000</double>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_43">
-       <property name="geometry">
-        <rect>
-         <x>50</x>
-         <y>200</y>
-         <width>171</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>microstep multiplicator</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_44">
-       <property name="geometry">
-        <rect>
-         <x>190</x>
-         <y>110</y>
-         <width>141</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>mm per Revolution</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_41">
-       <property name="geometry">
-        <rect>
-         <x>70</x>
-         <y>110</y>
-         <width>68</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>fine</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_45">
-       <property name="geometry">
-        <rect>
-         <x>100</x>
-         <y>270</y>
-         <width>68</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>max RPM</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_16">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>0</y>
-         <width>68</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Settings&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QLabel" name="label_overwrite_down">
-      <property name="geometry">
-       <rect>
-        <x>580</x>
-        <y>120</y>
-        <width>68</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Ctrl + D</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_7">
-      <property name="geometry">
-       <rect>
-        <x>320</x>
-        <y>50</y>
-        <width>111</width>
-        <height>19</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>saved positions</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_9">
-      <property name="geometry">
-       <rect>
-        <x>560</x>
-        <y>50</y>
-        <width>131</width>
-        <height>19</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>overwrite Position</string>
-      </property>
-     </widget>
      <widget class="QCheckBox" name="checkB_zdc">
       <property name="geometry">
        <rect>
-        <x>120</x>
-        <y>130</y>
+        <x>100</x>
+        <y>140</y>
         <width>101</width>
         <height>23</height>
        </rect>
@@ -319,34 +48,11 @@ left and right for coarse steps</string>
        <string>ZDC</string>
       </property>
      </widget>
-     <widget class="QLCDNumber" name="lcd_pos_up">
-      <property name="geometry">
-       <rect>
-        <x>460</x>
-        <y>80</y>
-        <width>81</width>
-        <height>31</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushB_pos_up">
-      <property name="geometry">
-       <rect>
-        <x>310</x>
-        <y>80</y>
-        <width>131</width>
-        <height>34</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>all the way up</string>
-      </property>
-     </widget>
      <widget class="QCheckBox" name="checkB_zbr">
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>100</y>
+        <y>110</y>
         <width>101</width>
         <height>23</height>
        </rect>
@@ -358,8 +64,8 @@ left and right for coarse steps</string>
      <widget class="QCheckBox" name="checkB_zbc">
       <property name="geometry">
        <rect>
-        <x>120</x>
-        <y>100</y>
+        <x>100</x>
+        <y>110</y>
         <width>101</width>
         <height>23</height>
        </rect>
@@ -372,7 +78,7 @@ left and right for coarse steps</string>
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>30</y>
+        <y>50</y>
         <width>131</width>
         <height>23</height>
        </rect>
@@ -384,50 +90,24 @@ left and right for coarse steps</string>
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushB_pos_down">
-      <property name="geometry">
-       <rect>
-        <x>310</x>
-        <y>120</y>
-        <width>131</width>
-        <height>34</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>all the way down</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_8">
-      <property name="geometry">
-       <rect>
-        <x>460</x>
-        <y>50</y>
-        <width>91</width>
-        <height>19</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>mm on axis</string>
-      </property>
-     </widget>
      <widget class="QRadioButton" name="radioB_single_motor">
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>70</y>
+        <y>80</y>
         <width>151</width>
         <height>23</height>
        </rect>
       </property>
       <property name="text">
-       <string>single leg motor</string>
+       <string>select leg motor</string>
       </property>
      </widget>
      <widget class="QCheckBox" name="checkB_zdr">
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>130</y>
+        <y>140</y>
         <width>101</width>
         <height>23</height>
        </rect>
@@ -436,182 +116,69 @@ left and right for coarse steps</string>
        <string>ZDR</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_overwrite_up">
-      <property name="geometry">
-       <rect>
-        <x>580</x>
-        <y>80</y>
-        <width>68</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Ctrl + U</string>
-      </property>
-     </widget>
-     <widget class="QLCDNumber" name="lcd_pos_down">
-      <property name="geometry">
-       <rect>
-        <x>460</x>
-        <y>120</y>
-        <width>81</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="value" stdset="0">
-       <double>250.000000000000000</double>
-      </property>
-     </widget>
-     <widget class="QSpinBox" name="spinBox_RPM_leg">
-      <property name="geometry">
-       <rect>
-        <x>350</x>
-        <y>160</y>
-        <width>51</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="value">
-       <number>30</number>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_10">
-      <property name="geometry">
-       <rect>
-        <x>310</x>
-        <y>150</y>
-        <width>31</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>RPM</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_11">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>180</y>
-        <width>68</width>
-        <height>19</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Modes &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="label_12">
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>0</y>
+        <y>20</y>
         <width>131</width>
-        <height>31</height>
+        <height>21</height>
        </rect>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Motor selection&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Motor selection&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_13">
+     <widget class="QPushButton" name="pushB_upwards">
       <property name="geometry">
        <rect>
-        <x>310</x>
-        <y>10</y>
-        <width>171</width>
+        <x>200</x>
+        <y>50</y>
+        <width>81</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>upwards</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_150">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>20</y>
+        <width>68</width>
         <height>19</height>
        </rect>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Go to saved position&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Rotate&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
-     <widget class="QRadioButton" name="radioB_permanent_leg">
+     <widget class="QPushButton" name="pushB_stop_legs">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>220</y>
-        <width>119</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>permanent</string>
-      </property>
-      <attribute name="buttonGroup">
-       <string notr="true">buttonGroup</string>
-      </attribute>
-     </widget>
-     <widget class="QRadioButton" name="radioB_when_pushed_leg">
-      <property name="geometry">
-       <rect>
-        <x>140</x>
-        <y>220</y>
-        <width>131</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>when pushed</string>
-      </property>
-      <attribute name="buttonGroup">
-       <string notr="true">buttonGroup</string>
-      </attribute>
-     </widget>
-     <widget class="QRadioButton" name="radioB_key_control_leg">
-      <property name="geometry">
-       <rect>
-        <x>280</x>
-        <y>220</y>
-        <width>151</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>keyboard control</string>
-      </property>
-      <attribute name="buttonGroup">
-       <string notr="true">buttonGroup</string>
-      </attribute>
-     </widget>
-     <widget class="QPushButton" name="pushB_forwards_leg">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>260</y>
-        <width>81</width>
+        <x>200</x>
+        <y>100</y>
+        <width>181</width>
         <height>41</height>
        </rect>
       </property>
       <property name="text">
-       <string>forwards </string>
+       <string>Stop</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushB_backwards_leg">
+     <widget class="QPushButton" name="pushB_downwards">
       <property name="geometry">
        <rect>
-        <x>110</x>
-        <y>260</y>
-        <width>81</width>
+        <x>290</x>
+        <y>50</y>
+        <width>91</width>
         <height>41</height>
        </rect>
       </property>
       <property name="text">
-       <string>backwards</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushB_stop_leg">
-      <property name="geometry">
-       <rect>
-        <x>210</x>
-        <y>260</y>
-        <width>51</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>stop</string>
+       <string>downwards</string>
       </property>
      </widget>
     </widget>
@@ -619,247 +186,6 @@ left and right for coarse steps</string>
      <attribute name="title">
       <string>X direction</string>
      </attribute>
-     <widget class="QLabel" name="label_121">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>600</y>
-        <width>681</width>
-        <height>61</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Info: 
--usually 30 - 120 RPM is a good choice. At higher RPM, torque decreases.</string>
-      </property>
-     </widget>
-     <widget class="QFrame" name="stackedW_settings_x">
-      <property name="geometry">
-       <rect>
-        <x>440</x>
-        <y>180</y>
-        <width>341</width>
-        <height>321</height>
-       </rect>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Sunken</enum>
-      </property>
-      <widget class="QDoubleSpinBox" name="spinB_x_mm_per_rev">
-       <property name="geometry">
-        <rect>
-         <x>120</x>
-         <y>100</y>
-         <width>61</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="singleStep">
-        <double>1.000000000000000</double>
-       </property>
-       <property name="value">
-        <double>0.500000000000000</double>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_141">
-       <property name="geometry">
-        <rect>
-         <x>80</x>
-         <y>100</y>
-         <width>68</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>fine</string>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="spinB_x_fine">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>100</y>
-         <width>41</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>32</number>
-       </property>
-       <property name="value">
-        <number>1</number>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_142">
-       <property name="geometry">
-        <rect>
-         <x>50</x>
-         <y>190</y>
-         <width>151</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Sunken</enum>
-       </property>
-       <property name="text">
-        <string>microstep resolution</string>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pushB_x_invert">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>220</y>
-         <width>131</width>
-         <height>34</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>invert direction</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_143">
-       <property name="geometry">
-        <rect>
-         <x>80</x>
-         <y>140</y>
-         <width>68</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>coarse</string>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="spinB_x_coarse">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>140</y>
-         <width>51</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>124</number>
-       </property>
-       <property name="value">
-        <number>10</number>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="spinB_x_max_RPM">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>260</y>
-         <width>81</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>1000</number>
-       </property>
-       <property name="value">
-        <number>120</number>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_145">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>261</width>
-         <height>61</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>keyboard controls:
-press up and down for fine steps
-left and right for coarse steps</string>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="spinB_msteps_res_x">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>190</y>
-         <width>31</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>8</number>
-       </property>
-       <property name="value">
-        <number>4</number>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_146">
-       <property name="geometry">
-        <rect>
-         <x>100</x>
-         <y>260</y>
-         <width>68</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>max RPM</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_147">
-       <property name="geometry">
-        <rect>
-         <x>190</x>
-         <y>100</y>
-         <width>151</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>mm per Revolution</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>0</y>
-         <width>68</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Settings&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QLabel" name="label_351">
-      <property name="geometry">
-       <rect>
-        <x>320</x>
-        <y>49</y>
-        <width>111</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>saved positions</string>
-      </property>
-     </widget>
      <widget class="QPushButton" name="pushB_start_x">
       <property name="geometry">
        <rect>
@@ -871,71 +197,6 @@ left and right for coarse steps</string>
       </property>
       <property name="text">
        <string>Start</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushB_pos_A">
-      <property name="geometry">
-       <rect>
-        <x>310</x>
-        <y>80</y>
-        <width>131</width>
-        <height>34</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Position A</string>
-      </property>
-     </widget>
-     <widget class="QLCDNumber" name="lcd_pos_B">
-      <property name="geometry">
-       <rect>
-        <x>460</x>
-        <y>120</y>
-        <width>81</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="value" stdset="0">
-       <double>-500.000000000000000</double>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_overwrite_B">
-      <property name="geometry">
-       <rect>
-        <x>590</x>
-        <y>120</y>
-        <width>68</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Ctrl + B</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_346">
-      <property name="geometry">
-       <rect>
-        <x>560</x>
-        <y>48</y>
-        <width>131</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>overwrite Position</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushB_stop_x">
-      <property name="geometry">
-       <rect>
-        <x>80</x>
-        <y>100</y>
-        <width>51</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Stop</string>
       </property>
      </widget>
      <widget class="QDoubleSpinBox" name="dspinB_mm_axis_x">
@@ -961,59 +222,7 @@ left and right for coarse steps</string>
        </rect>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Absolute positon &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_overwrite_A">
-      <property name="geometry">
-       <rect>
-        <x>590</x>
-        <y>80</y>
-        <width>68</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Ctrl + A</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_349">
-      <property name="geometry">
-       <rect>
-        <x>460</x>
-        <y>48</y>
-        <width>91</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>mm on axis</string>
-      </property>
-     </widget>
-     <widget class="QLCDNumber" name="lcd_pos_A">
-      <property name="geometry">
-       <rect>
-        <x>460</x>
-        <y>80</y>
-        <width>81</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="value" stdset="0">
-       <double>500.000000000000000</double>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushB_pos_B">
-      <property name="geometry">
-       <rect>
-        <x>310</x>
-        <y>120</y>
-        <width>131</width>
-        <height>34</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Position B</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Absolute position &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_348">
@@ -1029,50 +238,11 @@ left and right for coarse steps</string>
        <string>mm on axis</string>
       </property>
      </widget>
-     <widget class="QSpinBox" name="spinB_RPM_x">
+     <widget class="QPushButton" name="pushB_backwards">
       <property name="geometry">
        <rect>
-        <x>350</x>
-        <y>160</y>
-        <width>51</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="value">
-       <number>30</number>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_352">
-      <property name="geometry">
-       <rect>
-        <x>310</x>
-        <y>160</y>
-        <width>31</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>RPM</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_493">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>180</y>
-        <width>68</width>
-        <height>19</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Modes &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushB_backwards_x">
-      <property name="geometry">
-       <rect>
-        <x>110</x>
-        <y>240</y>
+        <x>290</x>
+        <y>50</y>
         <width>81</width>
         <height>41</height>
        </rect>
@@ -1081,336 +251,50 @@ left and right for coarse steps</string>
        <string>backwards</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushB_stop_x1">
+     <widget class="QPushButton" name="pushB_forwards">
       <property name="geometry">
        <rect>
         <x>200</x>
-        <y>240</y>
-        <width>51</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>stop</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioB_permanent_x">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>210</y>
-        <width>119</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>permanent</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_494">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>280</y>
-        <width>361</width>
-        <height>281</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Info&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;- mode when pushed sends signals to motor continously,&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;as long as button is pressed down &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;- mode keyboard control is for small adjustments &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;(-&amp;gt; settings)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;- the value in microstep resolution spinbox is the exponent&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;for the base 2 (-&amp;gt; so by default microstep res. is 16)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;- usually 30 - 120 RPM is a good choice. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;At higher RPM, torque decreases.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioB_when_pushed_x">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>210</y>
-        <width>131</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>when pushed</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushB_forwards_x">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>240</y>
+        <y>50</y>
         <width>81</width>
         <height>41</height>
        </rect>
       </property>
       <property name="text">
-       <string>forwards </string>
+       <string>forwards</string>
       </property>
      </widget>
-     <widget class="QRadioButton" name="radioB_key_control_x">
+     <widget class="QPushButton" name="pushB_stop_x">
       <property name="geometry">
        <rect>
-        <x>280</x>
-        <y>210</y>
-        <width>151</width>
-        <height>23</height>
+        <x>200</x>
+        <y>100</y>
+        <width>171</width>
+        <height>41</height>
        </rect>
       </property>
       <property name="text">
-       <string>keyboard control</string>
+       <string>Stop</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_350">
+     <widget class="QLabel" name="label_145">
       <property name="geometry">
        <rect>
-        <x>320</x>
+        <x>200</x>
         <y>20</y>
-        <width>121</width>
+        <width>68</width>
         <height>19</height>
        </rect>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Go to position&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Rotate&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </widget>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">
-      <string>PR </string>
+      <string>PR / CR</string>
      </attribute>
-     <widget class="QFrame" name="stackedW_settings_pr_cr">
-      <property name="geometry">
-       <rect>
-        <x>440</x>
-        <y>190</y>
-        <width>341</width>
-        <height>311</height>
-       </rect>
-      </property>
-      <widget class="QLabel" name="label_178">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>68</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_180">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>261</width>
-         <height>61</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>keyboard controls:
-press up and down for fine steps
-left and right for coarse steps</string>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="spinB_pr_fine">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>110</y>
-         <width>41</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>32</number>
-       </property>
-       <property name="value">
-        <number>1</number>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="spinB_pr_coarse">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>150</y>
-         <width>51</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>124</number>
-       </property>
-       <property name="value">
-        <number>10</number>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_181">
-       <property name="geometry">
-        <rect>
-         <x>80</x>
-         <y>150</y>
-         <width>68</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>coarse</string>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="spinB_msteps_res_pr">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>200</y>
-         <width>31</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>0</number>
-       </property>
-       <property name="maximum">
-        <number>8</number>
-       </property>
-       <property name="value">
-        <number>4</number>
-       </property>
-      </widget>
-      <widget class="QSpinBox" name="spinB_pr_max_RPM">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>270</y>
-         <width>81</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <number>-1</number>
-       </property>
-       <property name="maximum">
-        <number>1000</number>
-       </property>
-       <property name="value">
-        <number>120</number>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="pushB_pr_invert">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>230</y>
-         <width>131</width>
-         <height>34</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>invert direction</string>
-       </property>
-      </widget>
-      <widget class="QDoubleSpinBox" name="spinB_pr_mm_per_rev">
-       <property name="geometry">
-        <rect>
-         <x>124</x>
-         <y>110</y>
-         <width>61</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="value">
-        <double>0.500000000000000</double>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_182">
-       <property name="geometry">
-        <rect>
-         <x>50</x>
-         <y>200</y>
-         <width>151</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>microstep resolution</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_183">
-       <property name="geometry">
-        <rect>
-         <x>190</x>
-         <y>110</y>
-         <width>141</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>deg per Revolution</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_184">
-       <property name="geometry">
-        <rect>
-         <x>80</x>
-         <y>110</y>
-         <width>68</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>fine</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_185">
-       <property name="geometry">
-        <rect>
-         <x>100</x>
-         <y>270</y>
-         <width>68</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>max RPM</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_163">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>0</y>
-         <width>68</width>
-         <height>19</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Settings&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QLCDNumber" name="lcd_pos_Y">
-      <property name="geometry">
-       <rect>
-        <x>460</x>
-        <y>120</y>
-        <width>81</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="segmentStyle">
-       <enum>QLCDNumber::Filled</enum>
-      </property>
-      <property name="value" stdset="0">
-       <double>-15.000000000000000</double>
-      </property>
-     </widget>
      <widget class="QLabel" name="label_5">
       <property name="geometry">
        <rect>
@@ -1421,15 +305,15 @@ left and right for coarse steps</string>
        </rect>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Absolute position&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Absolute position&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushB_stop_pr">
+     <widget class="QPushButton" name="pushB_stop_pr_cr">
       <property name="geometry">
        <rect>
-        <x>80</x>
-        <y>100</y>
-        <width>51</width>
+        <x>220</x>
+        <y>160</y>
+        <width>171</width>
         <height>41</height>
        </rect>
       </property>
@@ -1437,20 +321,7 @@ left and right for coarse steps</string>
        <string>Stop</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_150">
-      <property name="geometry">
-       <rect>
-        <x>570</x>
-        <y>50</y>
-        <width>131</width>
-        <height>19</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>overwrite Position</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushB_start_pr">
+     <widget class="QPushButton" name="pushB_start_pr_cr">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -1461,45 +332,6 @@ left and right for coarse steps</string>
       </property>
       <property name="text">
        <string>Start</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_148">
-      <property name="geometry">
-       <rect>
-        <x>320</x>
-        <y>50</y>
-        <width>111</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>saved positions</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_overwrite_X">
-      <property name="geometry">
-       <rect>
-        <x>590</x>
-        <y>80</y>
-        <width>68</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Ctrl + X</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_149">
-      <property name="geometry">
-       <rect>
-        <x>460</x>
-        <y>50</y>
-        <width>91</width>
-        <height>19</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>deg on axis</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_151">
@@ -1515,85 +347,7 @@ left and right for coarse steps</string>
        <string>deg on axis</string>
       </property>
      </widget>
-     <widget class="QLCDNumber" name="lcd_pos_X">
-      <property name="geometry">
-       <rect>
-        <x>460</x>
-        <y>80</y>
-        <width>81</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="value" stdset="0">
-       <double>15.000000000000000</double>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushB_pos_Y">
-      <property name="geometry">
-       <rect>
-        <x>310</x>
-        <y>120</y>
-        <width>131</width>
-        <height>34</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Position Y</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_6">
-      <property name="geometry">
-       <rect>
-        <x>310</x>
-        <y>160</y>
-        <width>41</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>RPM</string>
-      </property>
-     </widget>
-     <widget class="QSpinBox" name="spinB_RPM_pr">
-      <property name="geometry">
-       <rect>
-        <x>350</x>
-        <y>160</y>
-        <width>51</width>
-        <height>25</height>
-       </rect>
-      </property>
-      <property name="value">
-       <number>30</number>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushB_pos_X">
-      <property name="geometry">
-       <rect>
-        <x>310</x>
-        <y>80</y>
-        <width>131</width>
-        <height>34</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Position X</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_overwrite_Y">
-      <property name="geometry">
-       <rect>
-        <x>590</x>
-        <y>120</y>
-        <width>68</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Ctrl + Y</string>
-      </property>
-     </widget>
-     <widget class="QDoubleSpinBox" name="dspinBox_deg_on_axis_pr">
+     <widget class="QDoubleSpinBox" name="dspinBox_deg_on_axis_pr_cr">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -1612,114 +366,75 @@ left and right for coarse steps</string>
        <double>30.000000000000000</double>
       </property>
      </widget>
-     <widget class="QLabel" name="label_684">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>290</y>
-        <width>361</width>
-        <height>281</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Info&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;- mode when pushed sends signals to motor continously,&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;as long as button is pressed down &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;- mode keyboard control is for small adjustments &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;(-&amp;gt; settings)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;- the value in microstep resolution spinbox is the exponent&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;for the base 2 (-&amp;gt; so by default microstep res. is 16)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;- usually 30 - 120 RPM is a good choice. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;At higher RPM, torque decreases.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushB_stop_pr1">
-      <property name="geometry">
-       <rect>
-        <x>200</x>
-        <y>250</y>
-        <width>51</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>stop</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_683">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>190</y>
-        <width>68</width>
-        <height>19</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Modes &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioB_key_control_pr">
-      <property name="geometry">
-       <rect>
-        <x>280</x>
-        <y>220</y>
-        <width>151</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>keyboard control</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioB_permanent_pr">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>220</y>
-        <width>119</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>permanent</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioB_when_pushed_pr">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>220</y>
-        <width>131</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>when pushed</string>
-      </property>
-     </widget>
      <widget class="QPushButton" name="pushB_lefthand">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>250</y>
+        <x>220</x>
+        <y>110</y>
         <width>81</width>
         <height>41</height>
        </rect>
       </property>
       <property name="text">
-       <string>lefthand </string>
+       <string>clockwise</string>
       </property>
      </widget>
      <widget class="QPushButton" name="pushB_righthand">
       <property name="geometry">
        <rect>
-        <x>110</x>
-        <y>250</y>
-        <width>81</width>
+        <x>310</x>
+        <y>110</y>
+        <width>121</width>
         <height>41</height>
        </rect>
       </property>
       <property name="text">
-       <string>righthand</string>
+       <string>counterclockwise</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkB_pr">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>50</y>
+        <width>119</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>PR</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkB_cr">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>80</y>
+        <width>119</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>CR</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_6">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>20</y>
+        <width>68</width>
+        <height>19</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Rotate&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </widget>
     <widget class="QWidget" name="tab">
      <attribute name="title">
-      <string>Specimen switch</string>
+      <string>Switch</string>
      </attribute>
      <widget class="QLabel" name="label_162">
       <property name="geometry">
@@ -1734,439 +449,6 @@ left and right for coarse steps</string>
        <string/>
       </property>
      </widget>
-     <widget class="QStackedWidget" name="stackedW_settings_s">
-      <property name="geometry">
-       <rect>
-        <x>440</x>
-        <y>40</y>
-        <width>331</width>
-        <height>301</height>
-       </rect>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Sunken</enum>
-      </property>
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <widget class="QWidget" name="stackedW_settings_s_10" native="true">
-       <widget class="QDoubleSpinBox" name="spinB_s_mm_per_rev">
-        <property name="geometry">
-         <rect>
-          <x>120</x>
-          <y>100</y>
-          <width>61</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="singleStep">
-         <double>1.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>0.500000000000000</double>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_170">
-        <property name="geometry">
-         <rect>
-          <x>80</x>
-          <y>100</y>
-          <width>68</width>
-          <height>19</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>fine</string>
-        </property>
-       </widget>
-       <widget class="QSpinBox" name="spinB_s_fine">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>100</y>
-          <width>41</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>32</number>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_171">
-        <property name="geometry">
-         <rect>
-          <x>100</x>
-          <y>190</y>
-          <width>151</width>
-          <height>19</height>
-         </rect>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Sunken</enum>
-        </property>
-        <property name="text">
-         <string>steps per revolutions</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="pushB_s_invert">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>220</y>
-          <width>131</width>
-          <height>34</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>invert direction</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_172">
-        <property name="geometry">
-         <rect>
-          <x>80</x>
-          <y>140</y>
-          <width>68</width>
-          <height>19</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>coarse</string>
-        </property>
-       </widget>
-       <widget class="QSpinBox" name="spinB_s_coarse">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>140</y>
-          <width>51</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>124</number>
-        </property>
-        <property name="value">
-         <number>10</number>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_173">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>0</y>
-          <width>68</width>
-          <height>19</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>S:</string>
-        </property>
-       </widget>
-       <widget class="QSpinBox" name="spinB_s_max_RPM">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>260</y>
-          <width>81</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="maximum">
-         <number>1000</number>
-        </property>
-        <property name="value">
-         <number>120</number>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_174">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>30</y>
-          <width>261</width>
-          <height>61</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>keyboard controls:
-press up and down for fine steps
-left and right for coarse steps</string>
-        </property>
-       </widget>
-       <widget class="QSpinBox" name="spinB_s_steps_per_rev">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>190</y>
-          <width>81</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="maximum">
-         <number>51200</number>
-        </property>
-        <property name="value">
-         <number>400</number>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_175">
-        <property name="geometry">
-         <rect>
-          <x>100</x>
-          <y>260</y>
-          <width>68</width>
-          <height>19</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>max RPM</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_176">
-        <property name="geometry">
-         <rect>
-          <x>190</x>
-          <y>100</y>
-          <width>151</width>
-          <height>19</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>mm per Revolution</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="pushB_s_cr">
-        <property name="geometry">
-         <rect>
-          <x>290</x>
-          <y>0</y>
-          <width>41</width>
-          <height>34</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>1/2</string>
-        </property>
-       </widget>
-      </widget>
-      <widget class="QWidget" name="page">
-       <widget class="QSpinBox" name="spinB_cr_fine">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>110</y>
-          <width>41</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>32</number>
-        </property>
-        <property name="value">
-         <number>1</number>
-        </property>
-       </widget>
-       <widget class="QSpinBox" name="spinB_msteps_res_cr">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>200</y>
-          <width>31</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="minimum">
-         <number>0</number>
-        </property>
-        <property name="maximum">
-         <number>8</number>
-        </property>
-        <property name="value">
-         <number>4</number>
-        </property>
-       </widget>
-       <widget class="QDoubleSpinBox" name="spinB_cr_mm_per_rev">
-        <property name="geometry">
-         <rect>
-          <x>114</x>
-          <y>110</y>
-          <width>61</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="value">
-         <double>0.500000000000000</double>
-        </property>
-       </widget>
-       <widget class="QSpinBox" name="spinB_cr_max_RPM">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>270</y>
-          <width>81</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="minimum">
-         <number>-1</number>
-        </property>
-        <property name="maximum">
-         <number>1000</number>
-        </property>
-        <property name="value">
-         <number>120</number>
-        </property>
-       </widget>
-       <widget class="QSpinBox" name="spinB_cr_coarse_10">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>150</y>
-          <width>51</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>124</number>
-        </property>
-        <property name="value">
-         <number>10</number>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="pushB_cr_invert">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>230</y>
-          <width>131</width>
-          <height>34</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>invert direction</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_692">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>68</width>
-          <height>19</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;CR:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_693">
-        <property name="geometry">
-         <rect>
-          <x>90</x>
-          <y>270</y>
-          <width>68</width>
-          <height>19</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>max RPM</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_694">
-        <property name="geometry">
-         <rect>
-          <x>180</x>
-          <y>110</y>
-          <width>141</width>
-          <height>19</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>deg per Revolution</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_695">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>30</y>
-          <width>261</width>
-          <height>61</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>keyboard controls:
-press up and down for fine steps
-left and right for coarse steps</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_696">
-        <property name="geometry">
-         <rect>
-          <x>70</x>
-          <y>150</y>
-          <width>68</width>
-          <height>19</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>coarse</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_697">
-        <property name="geometry">
-         <rect>
-          <x>40</x>
-          <y>200</y>
-          <width>151</width>
-          <height>19</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>microstep resolution</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_698">
-        <property name="geometry">
-         <rect>
-          <x>70</x>
-          <y>110</y>
-          <width>68</width>
-          <height>19</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>fine</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="pushB_s_cr_2">
-        <property name="geometry">
-         <rect>
-          <x>290</x>
-          <y>0</y>
-          <width>41</width>
-          <height>34</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>2/2</string>
-        </property>
-       </widget>
-      </widget>
-     </widget>
      <widget class="QLabel" name="label_177">
       <property name="geometry">
        <rect>
@@ -2177,20 +459,7 @@ left and right for coarse steps</string>
        </rect>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;S motor&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_631">
-      <property name="geometry">
-       <rect>
-        <x>440</x>
-        <y>10</y>
-        <width>71</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Settings&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;S motor&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
      <widget class="QPushButton" name="pushB_switch">
@@ -2202,176 +471,869 @@ left and right for coarse steps</string>
         <height>34</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>7</pointsize>
+       </font>
+      </property>
       <property name="text">
        <string>next specimen</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_632">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>110</y>
-        <width>81</width>
-        <height>19</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;CR motor&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_634">
-      <property name="geometry">
-       <rect>
-        <x>280</x>
-        <y>140</y>
-        <width>131</width>
-        <height>19</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>overwrite Position</string>
-      </property>
-     </widget>
-     <widget class="QLCDNumber" name="lcd_pos_ion_beam">
-      <property name="geometry">
-       <rect>
-        <x>180</x>
-        <y>210</y>
-        <width>81</width>
-        <height>31</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_633">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>140</y>
-        <width>111</width>
-        <height>20</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>saved positions</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushB_pos_ion_beam">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>210</y>
-        <width>131</width>
-        <height>34</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>ion beam </string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushB_pos_raman">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>170</y>
-        <width>131</width>
-        <height>34</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>raman </string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_overwrite_ion_beam">
-      <property name="geometry">
-       <rect>
-        <x>300</x>
-        <y>210</y>
-        <width>68</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Ctrl + I</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_overwrite_raman">
-      <property name="geometry">
-       <rect>
-        <x>300</x>
-        <y>170</y>
-        <width>68</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Ctrl + R</string>
-      </property>
-     </widget>
-     <widget class="QLCDNumber" name="lcd_pos_raman">
-      <property name="geometry">
-       <rect>
-        <x>180</x>
-        <y>170</y>
-        <width>81</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="value" stdset="0">
-       <double>90.000000000000000</double>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_699">
-      <property name="geometry">
-       <rect>
-        <x>180</x>
-        <y>140</y>
-        <width>91</width>
-        <height>19</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>deg on axis</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_700">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>270</y>
-        <width>141</width>
-        <height>19</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Keyboard control&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioB_key_control_s">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>300</y>
-        <width>119</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>S</string>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="radioB_key_control_cr">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>330</y>
-        <width>119</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>CR</string>
-      </property>
-     </widget>
+    </widget>
+   </widget>
+   <widget class="QFrame" name="stackedW_settings_leg">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>390</y>
+      <width>341</width>
+      <height>251</height>
+     </rect>
+    </property>
+    <widget class="QSpinBox" name="spinB_max_RPM">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>220</y>
+       <width>81</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>1000</number>
+     </property>
+     <property name="value">
+      <number>120</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_41">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>100</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>fine</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_10">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>120</y>
+       <width>31</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>RPM</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spinB_fine">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>100</y>
+       <width>41</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>32</number>
+     </property>
+     <property name="value">
+      <number>1</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_16">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>0</y>
+       <width>68</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Settings&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_42">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>130</y>
+       <width>68</width>
+       <height>19</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>coarse</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_45">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>220</y>
+       <width>68</width>
+       <height>19</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>max RPM</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_40">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>20</y>
+       <width>261</width>
+       <height>81</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>keyboard control: 
+press up and down for fine steps 
+press left and right for coarse steps </string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="spinB_mm_per_rev">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>100</y>
+       <width>61</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="singleStep">
+      <double>0.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>0.500000000000000</double>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spinB_coarse">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>130</y>
+       <width>51</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>124</number>
+     </property>
+     <property name="value">
+      <number>10</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_44">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>100</y>
+       <width>91</width>
+       <height>19</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>mm per rev</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spinB_mstep_res">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>160</y>
+       <width>31</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="minimum">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <number>8</number>
+     </property>
+     <property name="singleStep">
+      <number>1</number>
+     </property>
+     <property name="value">
+      <number>4</number>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushB_invert">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>190</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>invert direction</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_43">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>160</y>
+       <width>171</width>
+       <height>19</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>microstep multiplicator</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spinBox_RPM">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>130</y>
+       <width>51</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="value">
+      <number>30</number>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>10</y>
+      <width>171</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Go to saved position&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushB_overwrite_u">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>90</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>7</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Pos Up</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushB_overwrite_d">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>120</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>7</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Pos Down</string>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcd_pos_u">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>90</y>
+      <width>64</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcd_pos_d">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>120</y>
+      <width>64</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_overwrite_u">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>90</y>
+      <width>68</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;Ctrl + U&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_overwrite_d">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>120</y>
+      <width>68</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;Ctrl + D&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_15">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>70</y>
+      <width>101</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;Leg positions&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_141">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>40</y>
+      <width>68</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;position&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_142">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>40</y>
+      <width>111</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;mm / deg on axis&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_143">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>40</y>
+      <width>101</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;overwrite pos&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_overwrite_a">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>170</y>
+      <width>68</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;Ctrl + A&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_overwrite_b">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>200</y>
+      <width>68</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;Ctrl + B&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcd_pos_a">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>170</y>
+      <width>64</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcd_pos_b">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>200</y>
+      <width>64</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushB_overwrite_b">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>200</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>7</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Pos B</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushB_overwrite_a">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>170</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>7</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Pos A</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_overwrite_x">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>250</y>
+      <width>68</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;Ctrl + X&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_overwrite_y">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>280</y>
+      <width>68</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;Ctrl + Y&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcd_pos_x">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>250</y>
+      <width>64</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcd_pos_y">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>280</y>
+      <width>64</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushB_overwrite_y">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>280</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>7</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Pos Y</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushB_overwrite_x">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>250</y>
+      <width>71</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>7</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Pos X</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_overwrite_r">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>330</y>
+      <width>68</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;Ctrl + R&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_overwrite_i">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>360</y>
+      <width>68</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;Ctrl + I&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcd_pos_r">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>330</y>
+      <width>64</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLCDNumber" name="lcd_pos_i">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>360</y>
+      <width>64</width>
+      <height>21</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushB_overwrite_i">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>360</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>7</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Pos ion beam</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushB_overwrite_r">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>330</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>7</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Pos raman</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_163">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>150</y>
+      <width>81</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;X positions&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_170">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>230</y>
+      <width>68</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>7</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>PR</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_171">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>310</y>
+      <width>68</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>7</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>CR</string>
+    </property>
+   </widget>
+   <widget class="QFrame" name="frame">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>230</y>
+      <width>421</width>
+      <height>401</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLabel" name="label_494">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>80</y>
+       <width>361</width>
+       <height>331</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Info&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;- mode when pushed sends signals to motor continously,&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;as long as button is pressed down &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;- mode keyboard control is for small adjustments &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;(-&amp;gt; settings)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;- for PR / CR deg on axis are used for LCD values,&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;for the rest mm on axis &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;- the value in microstep resolution spinbox is the exponent&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;for the base 2 (-&amp;gt; so by default microstep res. is 16)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;- usually 30 - 120 RPM is a good choice. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;At higher RPM, torque decreases.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_11">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>68</width>
+       <height>19</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Modes &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioB_permanent">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>60</y>
+       <width>119</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>permanent</string>
+     </property>
+     <attribute name="buttonGroup">
+      <string notr="true">buttonGroup</string>
+     </attribute>
+    </widget>
+    <widget class="QRadioButton" name="radioB_when_pushed">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>60</y>
+       <width>131</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>when pushed</string>
+     </property>
+     <attribute name="buttonGroup">
+      <string notr="true">buttonGroup</string>
+     </attribute>
+    </widget>
+    <widget class="QRadioButton" name="radioB_key_control">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>60</y>
+       <width>151</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>keyboard control</string>
+     </property>
+     <attribute name="buttonGroup">
+      <string notr="true">buttonGroup</string>
+     </attribute>
     </widget>
    </widget>
   </widget>
@@ -2380,7 +1342,7 @@ left and right for coarse steps</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>785</width>
      <height>31</height>
     </rect>
    </property>

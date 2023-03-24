@@ -56,15 +56,15 @@ from pytrinamic.connections import ConnectionManager
 
 # settings...
 
-### Motor assignment ###
-
 # port_list = ConnectionManager().list_connections()
+# for port in port_list:
+#     Motor(port)
+    
+# module_L, module_R = Motor.assign_modules()
 
-# m0 = Motor(port_list[0])        
-# m1 = Motor(port_list[1])
+# print(module_L.status_message())
+# print(module_R.status_message())
 
-# print(m0.status_message())
-# print(m1.status_message())
 
 
 
@@ -118,8 +118,7 @@ class Window(QMainWindow, Ui_MainWindow):
         check_zdr = self.checkB_zdr.isChecked()
         global check_zdc
         check_zdc = self.checkB_zdc.isChecked()
-    
-        #self.motor = m0
+
 
         
     def RPM_master(self):
@@ -147,8 +146,13 @@ class Window(QMainWindow, Ui_MainWindow):
     # checkboxes for individual motors are only be checkable if single motor radioButton is enabled
         # enables checkability for the motor checkBoxes
         self.radioB_single_motor.clicked.connect(self.enable_motorselection)
+        #self.radioB_single_motor.clicked.connect(lambda: self.select_module(module_R))
         # disables checkability and changes values to unchecked 
         self.radioB_all_motors.clicked.connect(self.all_legs_setup)
+        #self.radioB_all_motors.clicked.connect(lambda: self.select_module(module_L))
+        #self.radioB_all_motors.clicked.connect(self.refresh_motor_list)
+        
+        
         
         #change pages when pushButton for different pages is clicked 
         self.pushB_s_cr.clicked.connect(lambda: self.stackedW_settings_s.setCurrentIndex(1))
@@ -168,6 +172,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.radioB_key_control_pr.pressed.connect(lambda: self.key_control(3))
         self.radioB_key_control_s.pressed.connect(lambda: self.key_control(4))
         self.radioB_key_control_cr.pressed.connect(lambda: self.key_control(5))
+    
         
     # positional pushButtons
         # go to position leg 
@@ -211,8 +216,15 @@ class Window(QMainWindow, Ui_MainWindow):
         self.shortcut.activated.connect(lambda: self.overwrite(5))
         self.shortcut = QShortcut(QKeySequence('Ctrl+Y'), self)
         self.shortcut.activated.connect(lambda: self.overwrite(6))
+        
+    def select_module(self, m):
+        self.module = m
+        self.motor = self.module.motor
+        #print('Selected motor:', self.motor)
+        print(self.module.status_message())
+        
     
-            
+    
     # functions for enabling checkability and checked state 
     def enable_motorselection(self):
         self.checkB_zbr.setCheckable(True)
