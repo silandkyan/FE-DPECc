@@ -8,8 +8,8 @@ Created on Thu Feb 23 16:38:18 2023
 
 #####   Importing Packages   #####
 
-#from modules.gui.gui_connections import run_app
-from modules.gui.gui_simple import run_app
+from modules.gui.gui_connections import run_app
+#from modules.gui.gui_simple import run_app
 from modules.Motor import disconnect_motors
 
 
@@ -19,10 +19,10 @@ if __name__ == "__main__":
     try:
         app = run_app()
     except Exception:
-        #pass
-        disconnect_motors()
+        print("error")
+    #     #disconnect_motors()
     
 
 # This should make a clean disconnect of the USB Serial connection after closing the main window:
-disconnect_motors()
+#disconnect_motors()
 

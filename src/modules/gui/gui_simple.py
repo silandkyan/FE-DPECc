@@ -16,13 +16,13 @@ from ..Motor import Motor
 
 ### Motor setup and assignment ###
 
-port_list = ConnectionManager().list_connections()
+# port_list = ConnectionManager().list_connections()
 
-motor_L = Motor(port_list[0])        
-motor_R = Motor(port_list[1])
+# motor_L = Motor(port_list[0])        
+# motor_R = Motor(port_list[1])
 
-print(motor_L.status_message())
-print(motor_R.status_message())
+# print(motor_L.status_message())
+# print(motor_R.status_message())
 
 
 class Window(QMainWindow, Ui_MainWindow):
@@ -61,7 +61,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # Motor selection radio buttons:
         self.motor1_radioButton.setChecked(True) # Motor 1 is default
         # Set default motor that is active initially:
-        self.motor = motor_L
+        #self.motor = motor_L
         
         
     def connectSignalsSlots(self):
@@ -82,8 +82,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.permstopButton.clicked.connect(self.stop_motor)
         self.multistopButton.clicked.connect(self.stop_motor)
         # Motor selection radio buttons:
-        self.motor1_radioButton.pressed.connect(lambda: self.select_motor(motor_L))
-        self.motor2_radioButton.pressed.connect(lambda: self.select_motor(motor_R))
+        # self.motor1_radioButton.pressed.connect(lambda: self.select_motor(motor_L))
+        # self.motor2_radioButton.pressed.connect(lambda: self.select_motor(motor_R))
 
         
     def select_motor(self, m):
