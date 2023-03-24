@@ -51,6 +51,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.rpmBox.setValue(10)    # default rpm
         # amount of single steps in multistep mode:
         self.multistep_numberBox.setValue(10)   # amount of single steps 
+        
         ### Hardware settings values (with allowed min-max ranges)
         # motor steps:
         self.stepsBox.setValue(200)         # number of motor steps
@@ -63,6 +64,9 @@ class Window(QMainWindow, Ui_MainWindow):
         self.motor1_radioButton.setChecked(True) # Motor 1 is default
         # Motor selection checkBoxes:
         self.motor1_checkBox.setChecked(True)
+        # Mode selection checkBoxes and mode:
+        self.mode_single.setChecked(True)
+        self.mode = 1
         # Set default motor that is active initially:
         self.module = module_L
         self.motor = module_L.motor
@@ -72,51 +76,61 @@ class Window(QMainWindow, Ui_MainWindow):
     def connectSignalsSlots(self):
         '''This function defines the widget behaviour with Qt's 
         signal-and-slot mechanism.'''
+        ### general ###
         # Close window and end program:
         self.quitButton.clicked.connect(self.close)
+        self.mode_single.pressed.connect(lambda: self.set_mode(1))
+        self.mode_multi.pressed.connect(lambda: self.set_mode(2))
+        self.mode_perm.pressed.connect(lambda: self.set_mode(3))
         
         ### single ###
-        # Single step rotation:
-        self.singlelButton.clicked.connect(self.single_step_left)
-        self.singlerButton.clicked.connect(self.single_step_right)
-        # Multi step rotation:
-        self.multilButton.clicked.connect(self.multi_step_left)
-        self.multirButton.clicked.connect(self.multi_step_right)
-        # Continuous rotation:
-        self.permlButton.clicked.connect(self.perm_rot_left)
-        self.permrButton.clicked.connect(self.perm_rot_right)
-        # Stop button:
-        self.permstopButton.clicked.connect(self.stop_motor)
-        self.multistopButton.clicked.connect(self.stop_motor)
-        # Motor selection radio buttons:
+        # Motor selection radioButtons:
         self.motor1_radioButton.pressed.connect(lambda: self.select_module(module_L))
         self.motor2_radioButton.pressed.connect(lambda: self.select_module(module_R))
+        # Rotation Buttons:
+        self.s_left.clicked.connect(self.left)
+        self.s_right.clicked.connect(self.right)
+        self.s_stop.clicked.connect(self.stop_motor)
         
         ### multi ###
-        # Single step rotation:
-        self.singlelButton_2.clicked.connect(lambda: self.multi_module_control(self.single_step_left))
-        self.singlerButton_2.clicked.connect(lambda: self.multi_module_control(self.single_step_right))
-        # Multi step rotation:
-        self.multilButton_2.clicked.connect(lambda: self.multi_module_control(self.multi_step_left))
-        self.multirButton_2.clicked.connect(lambda: self.multi_module_control(self.multi_step_right))
-        # Continuous rotation:
-        self.permlButton_2.clicked.connect(lambda: self.multi_module_control(self.perm_rot_left))
-        self.permrButton_2.clicked.connect(lambda: self.multi_module_control(self.perm_rot_right))
-        # Stop button:
-        self.permstopButton_2.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
-        self.multistopButton_2.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
         # Motor selection checkBoxes:
         self.motor1_checkBox.toggled.connect(self.refresh_module_list)
         self.motor2_checkBox.toggled.connect(self.refresh_module_list)
+        # Rotation Buttons:
+        self.m_left.clicked.connect(lambda: self.multi_module_control(self.left))
+        self.m_right.clicked.connect(lambda: self.multi_module_control(self.right))
+        self.m_stop.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
         
         
     def select_module(self, m):
         '''Module selection for single module use.'''
         self.module = m
         self.motor = self.module.motor
-        #print('Selected motor:', self.motor)
-        print(self.module.status_message())
+        print('Selected motor: Motor', self.module.moduleID)
+        #print(self.module.status_message())
         
+    def set_mode(self, mode):
+        self.mode = mode
+        print('Mode:', mode)
+        
+    def left(self):
+        print('Mode:', self.mode)
+        if self.mode == 1:
+            self.single_step_left()
+        elif self.mode == 2:
+            self.multi_step_left()
+        elif self.mode == 3:
+            self.perm_rot_left()
+            
+    def right(self):
+        print('Mode:', self.mode)
+        if self.mode == 1:
+            self.single_step_right()
+        elif self.mode == 2:
+            self.multi_step_right()
+        elif self.mode == 3:
+            self.perm_rot_right()
+            
     def refresh_module_list(self):
         '''Module selection for multi module use.'''
         self.active_modules = []
@@ -127,12 +141,17 @@ class Window(QMainWindow, Ui_MainWindow):
                     self.active_modules.append(module_L)
                 elif box == self.motor2_checkBox:
                     self.active_modules.append(module_R)
-        #print(self.active_modules)
+        print('Selected motor(s):')
+        for module in self.active_modules:
+            print('Motor', module.moduleID)
         
-    # function to control several motors at once
-    
-    # function for mode selection
-    
+    def multi_module_control(self, action):
+        for module in self.active_modules:
+            self.module = module
+            self.motor = module.motor
+            action()
+        
+            
     # HORRIBLE BUG IN single_step!!!
     # after perm_rot, the first call of move_by shows erratic behaviour.
     # the motor rotates for a number of steps equal to the previous rotation,
@@ -179,13 +198,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.module.motor.stop()
         print('Motor', self.module.moduleID, 'stopped!')
         
-    def multi_module_control(self, action):
-        for module in self.active_modules:
-            self.module = module
-            self.motor = module.motor
-            action()
-            
-            
+        
     def set_allowed_ranges(self):
         '''Specify allowed min-max ranges for values that can 
         be changed in the GUI. These should usually be fine...'''
