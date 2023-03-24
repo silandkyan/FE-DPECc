@@ -152,11 +152,6 @@ class Window(QMainWindow, Ui_MainWindow):
             action()
         
             
-    # HORRIBLE BUG IN single_step!!!
-    # after perm_rot, the first call of move_by shows erratic behaviour.
-    # the motor rotates for a number of steps equal to the previous rotation,
-    # and ignores the mstep value actually passed as argument. Try to reproduce 
-    # in isolation...
     def single_step_left(self):
         msteps = self.module.msteps_per_fstep
         pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
