@@ -131,12 +131,12 @@ class Motor(TMCM1260):
 
 ### Motor assignment ###
 
-# port_list = ConnectionManager().list_connections()
-# for port in port_list:
-#     Motor(port)
+port_list = ConnectionManager().list_connections()
+for port in port_list:
+    Motor(port)
     
-# m1, m2 = Motor.assign_modules()
+m1, m2 = Motor.assign_modules()
 
-# print(m1.status_message())
-# print(m2.status_message())
+print(m1.status_message())
+print(m2.status_message())
 #

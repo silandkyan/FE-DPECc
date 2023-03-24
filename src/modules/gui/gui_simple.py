@@ -53,7 +53,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.multistep_numberBox.setValue(10)   # amount of single steps 
         ### Hardware settings values (with allowed min-max ranges)
         # motor steps:
-        self.stepsBox.setValue(400)         # number of motor steps
+        self.stepsBox.setValue(200)         # number of motor steps
         # motor microsteps:
         self.microstepsBox.setValue(256)    # number of microsteps
         # motor rpm (could also be derived from other params...)
@@ -66,6 +66,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # Set default motor that is active initially:
         self.module = module_L
         self.motor = module_L.motor
+        self.active_modules = [self.module]
         
         
     def connectSignalsSlots(self):
@@ -73,6 +74,8 @@ class Window(QMainWindow, Ui_MainWindow):
         signal-and-slot mechanism.'''
         # Close window and end program:
         self.quitButton.clicked.connect(self.close)
+        
+        ### single ###
         # Single step rotation:
         self.singlelButton.clicked.connect(self.single_step_left)
         self.singlerButton.clicked.connect(self.single_step_right)
@@ -88,18 +91,34 @@ class Window(QMainWindow, Ui_MainWindow):
         # Motor selection radio buttons:
         self.motor1_radioButton.pressed.connect(lambda: self.select_module(module_L))
         self.motor2_radioButton.pressed.connect(lambda: self.select_module(module_R))
+        
+        ### multi ###
+        # Single step rotation:
+        self.singlelButton_2.clicked.connect(lambda: self.multi_module_control(self.single_step_left))
+        self.singlerButton_2.clicked.connect(lambda: self.multi_module_control(self.single_step_right))
+        # Multi step rotation:
+        self.multilButton_2.clicked.connect(lambda: self.multi_module_control(self.multi_step_left))
+        self.multirButton_2.clicked.connect(lambda: self.multi_module_control(self.multi_step_right))
+        # Continuous rotation:
+        self.permlButton_2.clicked.connect(lambda: self.multi_module_control(self.perm_rot_left))
+        self.permrButton_2.clicked.connect(lambda: self.multi_module_control(self.perm_rot_right))
+        # Stop button:
+        self.permstopButton_2.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
+        self.multistopButton_2.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
         # Motor selection checkBoxes:
-        self.motor1_checkBox.toggled.connect(self.refresh_motor_list)
-        self.motor2_checkBox.toggled.connect(self.refresh_motor_list)
+        self.motor1_checkBox.toggled.connect(self.refresh_module_list)
+        self.motor2_checkBox.toggled.connect(self.refresh_module_list)
         
         
     def select_module(self, m):
+        '''Module selection for single module use.'''
         self.module = m
         self.motor = self.module.motor
         #print('Selected motor:', self.motor)
         print(self.module.status_message())
         
-    def refresh_motor_list(self):
+    def refresh_module_list(self):
+        '''Module selection for multi module use.'''
         self.active_modules = []
         boxlist = [self.motor1_checkBox, self.motor2_checkBox]
         for box in boxlist:
@@ -108,21 +127,30 @@ class Window(QMainWindow, Ui_MainWindow):
                     self.active_modules.append(module_L)
                 elif box == self.motor2_checkBox:
                     self.active_modules.append(module_R)
-        print(self.active_modules)
+        #print(self.active_modules)
         
     # function to control several motors at once
     
     # function for mode selection
-
+    
+    # HORRIBLE BUG IN single_step!!!
+    # after perm_rot, the first call of move_by shows erratic behaviour.
+    # the motor rotates for a number of steps equal to the previous rotation,
+    # and ignores the mstep value actually passed as argument. Try to reproduce 
+    # in isolation...
     def single_step_left(self):
+        msteps = self.module.msteps_per_fstep
         pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
-        self.motor.move_by(-self.module.msteps_per_fstep, pps)
+        self.motor.move_by(-msteps, pps)
         print('single fullstep left')
+        print(-msteps)
         
     def single_step_right(self):
+        msteps = self.module.msteps_per_fstep
         pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
-        self.motor.move_by(self.module.msteps_per_fstep, pps)
+        self.motor.move_by(msteps, pps)
         print('single fullstep right')
+        print(msteps)
         
     def multi_step_left(self):
         msteps = self.module.msteps_per_fstep * self.multistep_numberBox.value()
@@ -136,7 +164,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.motor.move_by(msteps, pps)
         print(str(self.multistep_numberBox.value()), 'fullsteps right with', str(self.rpmBox.value()), 'rpm')
         
-    def perm_rot_left(self, motor):
+    def perm_rot_left(self):
         # motor speed calculated from: rpmBox * msteps_per_rev / 60sec
         pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
         self.motor.rotate(-pps)
@@ -148,9 +176,15 @@ class Window(QMainWindow, Ui_MainWindow):
         print('Rotating right with', str(self.rpmBox.value()), 'rpm')
         
     def stop_motor(self):
-        self.motor.stop()
-        print('Motor stopped!')
+        self.module.motor.stop()
+        print('Motor', self.module.moduleID, 'stopped!')
         
+    def multi_module_control(self, action):
+        for module in self.active_modules:
+            self.module = module
+            self.motor = module.motor
+            action()
+            
             
     def set_allowed_ranges(self):
         '''Specify allowed min-max ranges for values that can 
