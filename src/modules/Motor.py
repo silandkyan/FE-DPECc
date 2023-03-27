@@ -40,14 +40,14 @@ class Motor(TMCM1260):
             # Get the moduleID from the Trinamic module global parameters, then
             # assign motor variable names to moduleIDs:
             if inst.moduleID == 11:
-                motor_L = inst
+                module_L = inst
                 print('Variable name \"motor_L\" assigned to module', inst.moduleID)
             elif inst.moduleID == 12:
-                motor_R = inst
+                module_R = inst
                 print('Variable name \"motor_R\" assigned to module', inst.moduleID)
             #elif moduleID == 3:
             #    motor_C =  motor_list[i]
-        return motor_L, motor_R#, motor_C # add motors here...
+        return module_L, module_R#, motor_C # add motors here...
     
     
     def __init__(self, port):
@@ -74,6 +74,8 @@ class Motor(TMCM1260):
         self.msteps_per_rev = self.msteps_per_fstep * self.fsteps_per_rev
         # Toggle step interpolation (works only with 16 microsteps):
         motor.set_axis_parameter(motor.AP.Intpol, value=1)
+        # Toggle RelativePositioningOption:
+        motor.set_axis_parameter(motor.AP.RelativePositioningOption, 1)
         #print(motor, motor.drive_settings)
 
     def init_ramp_settings(self, motor):
@@ -139,4 +141,11 @@ class Motor(TMCM1260):
 
 # print(m1.status_message())
 # print(m2.status_message())
+
+# m1.motor.rotate(10000)
+# time.sleep(1)
+# m1.motor.stop()
+
+# time.sleep(2)
+# m1.motor.move_by(- 10*m1.msteps_per_fstep, 10000)
 #

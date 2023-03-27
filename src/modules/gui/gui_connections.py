@@ -56,14 +56,14 @@ from pytrinamic.connections import ConnectionManager
 
 # settings...
 
-# port_list = ConnectionManager().list_connections()
-# for port in port_list:
-#     Motor(port)
+port_list = ConnectionManager().list_connections()
+for port in port_list:
+    Motor(port)
     
-# module_L, module_R = Motor.assign_modules()
+module_L, module_R = Motor.assign_modules()
 
-# print(module_L.status_message())
-# print(module_R.status_message())
+print(module_L.status_message())
+print(module_R.status_message())
 
 
 
@@ -130,44 +130,34 @@ class Window(QMainWindow, Ui_MainWindow):
     # checkboxes for individual motors are only be checkable if single motor radioButton is enabled
         # enables checkability for the motor checkBoxes
         self.radioB_single_motor.clicked.connect(self.enable_motorselection)
-        #self.radioB_single_motor.clicked.connect(lambda: self.select_module(module_R))
+        self.radioB_single_motor.clicked.connect(lambda: self.select_module(module_R))
         # disables checkability and changes values to unchecked 
         self.radioB_all_motors.clicked.connect(self.all_legs_setup)
-        #self.radioB_all_motors.clicked.connect(lambda: self.select_module(module_L))
-        #self.radioB_all_motors.clicked.connect(self.refresh_motor_list)
+        self.radioB_all_motors.clicked.connect(lambda: self.select_module(module_L))
+        self.radioB_all_motors.clicked.connect(self.refresh_motor_list)
         
         
-    # same three buttons share different funcitionalities permanent,
-    # when pushed and keyboard control which are enabled with these connect_... funcitons
-        #functions for leg
-        self.radioB_permanent_leg.pressed.connect(self.connection_permanent)
-        self.radioB_when_pushed_leg.pressed.connect(self.connection_when_pushed)
-        self.radioB_key_control_leg.pressed.connect(lambda: self.key_control(1))
-        #functions for x
-        self.radioB_permanent_x.pressed.connect(self.connection_permanent)
-        self.radioB_when_pushed_x.pressed.connect(self.connection_when_pushed)
-        self.radioB_key_control_x.pressed.connect(lambda: self.key_control(2))
-        #functions for pr
-        self.radioB_key_control_pr.pressed.connect(lambda: self.key_control(3))
-        self.radioB_key_control_s.pressed.connect(lambda: self.key_control(4))
-        self.radioB_key_control_cr.pressed.connect(lambda: self.key_control(5))
+        
+        # connections for when pushButtons of modes are pressed or clicked they check which 
+        # radioButton is active 
+
     
         
-    # positional pushButtons
+    # connections for positional pushButtons
         # go to position leg 
-        self.pushB_pos_up.clicked.connect(lambda: self.go_to(1))
-        self.pushB_pos_down.clicked.connect(lambda: self.go_to(2))
+        self.pushB_pos_u.clicked.connect(lambda: self.go_to(1))
+        self.pushB_pos_d.clicked.connect(lambda: self.go_to(2))
         # go to position x 
-        self.pushB_pos_A.clicked.connect(lambda: self.go_to(3))
-        self.pushB_pos_B.clicked.connect(lambda: self.go_to(4))
+        self.pushB_pos_a.clicked.connect(lambda: self.go_to(3))
+        self.pushB_pos_b.clicked.connect(lambda: self.go_to(4))
         # go to position pr
-        self.pushB_pos_X.clicked.connect(lambda: self.go_to(5))
-        self.pushB_pos_Y.clicked.connect(lambda: self.go_to(6))
+        self.pushB_pos_x.clicked.connect(lambda: self.go_to(5))
+        self.pushB_pos_y.clicked.connect(lambda: self.go_to(6))
         # go to position cr
-        self.pushB_pos_raman.clicked.connect(lambda: self.go_to(7))
-        self.pushB_pos_ion_beam.clicked.connect(lambda: self.go_to(8))
+        self.pushB_pos_r.clicked.connect(lambda: self.go_to(7))
+        self.pushB_pos_i.clicked.connect(lambda: self.go_to(8))
         
-    # absolute position pushButtons:
+    # connections for absolute position pushButtons:
         # absolute for x
         self.pushB_start_x.clicked.connect(lambda: self.absolute_pos(1))
         self.pushB_stop_x.clicked.connect(self.stop)
@@ -195,6 +185,12 @@ class Window(QMainWindow, Ui_MainWindow):
         self.shortcut.activated.connect(lambda: self.overwrite(5))
         self.shortcut = QShortcut(QKeySequence('Ctrl+Y'), self)
         self.shortcut.activated.connect(lambda: self.overwrite(6))
+        # connections for cr overwrite 
+        self.shortcut = QShortcut(QKeySequence('Ctrl+R'), self)
+        self.shortcut.activated.connect(lambda: self.overwrite(7))
+        self.shortcut = QShortcut(QKeySequence('Ctrl+I'), self)
+        self.shortcut.activated.connect(lambda: self.overwrite(8))
+        
         
     def select_module(self, m):
         self.module = m
@@ -306,57 +302,31 @@ class Window(QMainWindow, Ui_MainWindow):
         if pos == 1:
             # get int(self.motor.actual_position) as value for LCD
             print("position up overwritten to new parameter shown by LCD")
-            self.label_overwrite_up.setStyleSheet("QLabel {color: red;}")
+            self.label_pos_u.setStyleSheet("QLabel {color: red;}")
         elif pos == 2:
             print("position down overwritten to parameter shown by LCD")
-            self.label_overwrite_down.setStyleSheet("QLabel {color: red;}")
+            self.label_pos_d.setStyleSheet("QLabel {color: red;}")
         elif pos == 3:
             print("position A overwritten to new parameter shown by LCD")
-            self.label_overwrite_A.setStyleSheet("QLabel {color: red;}")
+            self.label_pos_a.setStyleSheet("QLabel {color: red;}")
         elif pos == 4:
             print("position B overwritten to parameter shown by LCD")
-            self.label_overwrite_B.setStyleSheet("QLabel {color: red;}")
+            self.label_pos_b.setStyleSheet("QLabel {color: red;}")
         elif pos == 5:
             print("position X overwritten to parameter shown by LCD") 
-            self.label_overwrite_X.setStyleSheet("QLabel {color: red;}")
+            self.label_pos_x.setStyleSheet("QLabel {color: red;}")
         elif pos == 6:
             print("position Y overwritten to parameter shown by LCD")
-            self.label_overwrite_Y.setStyleSheet("QLabel {color: red;}")
-       
+            self.label_pos_y.setStyleSheet("QLabel {color: red;}")
+        elif pos == 7:
+            print("position Raman overwritten to parameter shown by LCD")
+            self.label_pos_r.setStyleSheet("QLabel {color: red;}")
+        elif pos == 8:
+            print("position Ion beam overwritten to parameter shown by LCD")
+            self.label_pos_i.setStyleSheet("QLabel {color: red;}")
         
        
-        
-       
-        
-       
-        
-       
-        
-    def connection_permanent(self):
-        self.pushB_forwards_leg.clicked.connect(lambda: self.permanent(1))  
-        self.pushB_backwards_leg.clicked.connect(lambda: self.permanent(2))
-        self.pushB_stop_leg.clicked.connect(self.stop)    
 
-        self.pushB_forwards_x.clicked.connect(lambda: self.permanent(3))  
-        self.pushB_backwards_x.clicked.connect(lambda: self.permanent(4))
-        self.pushB_stop_x1.clicked.connect(self.stop) 
-        
-        self.pushB_lefthand.clicked.connect(lambda: self.permanent(5))
-        self.pushB_righthand.clicked.connect(lambda: self.permanent(6))
-        self.pushB_stop_pr1.clicked.connect(self.stop) 
-    
-    def connection_when_pushed(self):
-        self.pushB_forwards_leg.pressed.connect(lambda: self.when_pushed(1)) 
-        self.pushB_backwards_leg.pressed.connect(lambda: self.when_pushed(2))
-        self.pushB_stop_leg.clicked.connect(self.stop)    
-
-        self.pushB_forwards_x.pressed.connect(lambda: self.when_pushed(3))  
-        self.pushB_backwards_x.pressed.connect(lambda: self.when_pushed(4))
-        self.pushB_stop_x1.clicked.connect(self.stop) 
-        
-        self.pushB_lefthand.pressed.connect(lambda: self.when_pushed(5))  
-        self.pushB_righthand.pressed.connect(lambda: self.when_pushed(6))
-        self.pushB_stop_pr1.clicked.connect(self.stop)  
         
         
     # functions for keyboard control:
