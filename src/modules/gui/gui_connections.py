@@ -94,12 +94,9 @@ class Window(QMainWindow, Ui_MainWindow):
         self.checkB_zdc.setCheckable(False)
     # if a max RPM spinBox changes its value, the maximum of the mastered spinBoxes change accordingly
         # connect if a master RPM spinBox from legs changes 
-        self.spinB_leg_max_RPM.valueChanged.connect(self.RPM_master)
+        self.spinB_max_RPM.valueChanged.connect(self.RPM_master)
         # connect if a master RPM spinBox from x changes
-        self.spinB_x_max_RPM.valueChanged.connect(self.RPM_master)
-        # connect if a master RPM spinBox from pr/cr changes
-        self.spinB_pr_max_RPM.valueChanged.connect(self.RPM_master)
-        # (cr and switch are not mentioned, since they dont have RPM spinBoxes)
+
     
         
     def check(self):
@@ -118,31 +115,18 @@ class Window(QMainWindow, Ui_MainWindow):
         check_zdr = self.checkB_zdr.isChecked()
         global check_zdc
         check_zdc = self.checkB_zdc.isChecked()
-
-
         
     def RPM_master(self):
 
-        max_legs = self.spinB_leg_max_RPM.value()
-        self.spinBox_RPM_leg.setMaximum(max_legs)
-        
-        max_x = self.spinB_x_max_RPM.value()
-        self.spinB_RPM_x.setMaximum(max_x)
-        
-        max_pr = self.spinB_pr_max_RPM.value()
-        self.spinB_RPM_pr.setMaximum(max_pr)
-
-        max_s = self.spinB_s_max_RPM.value()
-        self.spinB_RPM_s.setMaximum(max_s)
-        
-        
+        max_RPM = self.spinB_max_RPM.value()
+        self.spinBox_RPM.setMaximum(max_RPM)
+    
     def pps_calculator(self):
         pps = round(self.spinB_RPM_permanent_x.value() * self.motor.msteps_per_rev / 60)
         return pps 
     
     
     def connectSignalsSlots(self): 
-
     # checkboxes for individual motors are only be checkable if single motor radioButton is enabled
         # enables checkability for the motor checkBoxes
         self.radioB_single_motor.clicked.connect(self.enable_motorselection)
@@ -152,11 +136,6 @@ class Window(QMainWindow, Ui_MainWindow):
         #self.radioB_all_motors.clicked.connect(lambda: self.select_module(module_L))
         #self.radioB_all_motors.clicked.connect(self.refresh_motor_list)
         
-        
-        
-        #change pages when pushButton for different pages is clicked 
-        self.pushB_s_cr.clicked.connect(lambda: self.stackedW_settings_s.setCurrentIndex(1))
-        self.pushB_s_cr_2.clicked.connect(lambda: self.stackedW_settings_s.setCurrentIndex(0))
         
     # same three buttons share different funcitionalities permanent,
     # when pushed and keyboard control which are enabled with these connect_... funcitons
