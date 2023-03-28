@@ -11,28 +11,26 @@ from PyQt5.QtWidgets import (QMainWindow, QApplication)
 from pytrinamic.connections import ConnectionManager
 from .main_window_simple_ui import Ui_MainWindow
 from ..Motor import Motor
-#from ..motor_control import assign_motors
 
 
 ### Motor setup and assignment ###
-
 port_list = ConnectionManager().list_connections()
 for port in port_list:
     Motor(port)
-    
+
 module_L, module_R = Motor.assign_modules()
 
 print(module_L.status_message())
 print(module_R.status_message())
 
 
+### Class definition ###
 class Window(QMainWindow, Ui_MainWindow):
     '''This custom class inherits from QMainWindow class and the custom 
     Ui_MainWindow class from main_window_ui.py file. That file is created 
     from main_window.ui using the pyuic5 command line program, e.g.:
     pyuic5 -x main_window.ui -o main_window_ui.py
     '''
-     
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
@@ -43,7 +41,6 @@ class Window(QMainWindow, Ui_MainWindow):
         self.connectSignalsSlots()
         self.show()
         
-    
     def set_default_values(self):
         '''User input: Specify default values here.'''
         ### User input values (with allowed min-max ranges)
@@ -51,9 +48,10 @@ class Window(QMainWindow, Ui_MainWindow):
         self.rpmBox.setValue(10)    # default rpm
         # amount of single steps in multistep mode:
         self.multistep_numberBox.setValue(10)   # amount of single steps 
+        
         ### Hardware settings values (with allowed min-max ranges)
         # motor steps:
-        self.stepsBox.setValue(400)         # number of motor steps
+        self.stepsBox.setValue(200)         # number of motor steps
         # motor microsteps:
         self.microstepsBox.setValue(256)    # number of microsteps
         # motor rpm (could also be derived from other params...)
@@ -63,95 +61,167 @@ class Window(QMainWindow, Ui_MainWindow):
         self.motor1_radioButton.setChecked(True) # Motor 1 is default
         # Motor selection checkBoxes:
         self.motor1_checkBox.setChecked(True)
-        # Set default motor that is active initially:
+        # Mode selection checkBoxes and mode:
+        self.mode_single.setChecked(True)
+        self.mode = 1
+        # Set default motor and module that is active initially:
         self.module = module_L
         self.motor = module_L.motor
-        
+        self.active_modules = [self.module]
         
     def connectSignalsSlots(self):
         '''This function defines the widget behaviour with Qt's 
         signal-and-slot mechanism.'''
+        ### general ###
         # Close window and end program:
         self.quitButton.clicked.connect(self.close)
-        # Single step rotation:
-        self.singlelButton.clicked.connect(self.single_step_left)
-        self.singlerButton.clicked.connect(self.single_step_right)
-        # Multi step rotation:
-        self.multilButton.clicked.connect(self.multi_step_left)
-        self.multirButton.clicked.connect(self.multi_step_right)
-        # Continuous rotation:
-        self.permlButton.clicked.connect(self.perm_rot_left)
-        self.permrButton.clicked.connect(self.perm_rot_right)
-        # Stop button:
-        self.permstopButton.clicked.connect(self.stop_motor)
-        self.multistopButton.clicked.connect(self.stop_motor)
-        # Motor selection radio buttons:
+        self.mode_single.pressed.connect(lambda: self.set_mode(1))
+        self.mode_multi.pressed.connect(lambda: self.set_mode(2))
+        self.mode_perm.pressed.connect(lambda: self.set_mode(3))
+        
+        ### single ###
+        # Motor selection radioButtons:
         self.motor1_radioButton.pressed.connect(lambda: self.select_module(module_L))
         self.motor2_radioButton.pressed.connect(lambda: self.select_module(module_R))
-        # Motor selection checkBoxes:
-        self.motor1_checkBox.toggled.connect(self.refresh_motor_list)
-        self.motor2_checkBox.toggled.connect(self.refresh_motor_list)
+        # Rotation Buttons:
+        self.s_left.clicked.connect(self.left)
+        self.s_right.clicked.connect(self.right)
+        self.s_stop.clicked.connect(self.stop_motor)
         
+        ### multi ###
+        # Motor selection checkBoxes:
+        self.motor1_checkBox.toggled.connect(self.refresh_module_list)
+        self.motor2_checkBox.toggled.connect(self.refresh_module_list)
+        # Rotation Buttons:
+        self.m_left.clicked.connect(lambda: self.multi_module_control(self.left))
+        self.m_right.clicked.connect(lambda: self.multi_module_control(self.right))
+        self.m_stop.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
         
     def select_module(self, m):
+        '''Module selection for single module control.'''
         self.module = m
         self.motor = self.module.motor
-        #print('Selected motor:', self.motor)
-        print(self.module.status_message())
+        print('Selected motor: Motor', self.module.moduleID)
+        #print(self.module.status_message())
         
-    def refresh_motor_list(self):
+    def set_mode(self, mode):
+        self.mode = mode
+        print('Mode:', mode)
+        
+    def left(self):
+        print('Mode:', self.mode)
+        if self.mode == 1:
+            self.single_step_left()
+        elif self.mode == 2:
+            self.multi_step_left()
+        elif self.mode == 3:
+            self.perm_rot_left()
+            
+    def right(self):
+        print('Mode:', self.mode)
+        if self.mode == 1:
+            self.single_step_right()
+        elif self.mode == 2:
+            self.multi_step_right()
+        elif self.mode == 3:
+            self.perm_rot_right()
+            
+    def refresh_module_list(self):
+        '''Module selection for multi module use.'''
+        # clear list of active modules:
         self.active_modules = []
+        # write all possible module checkboxes to a list:
         boxlist = [self.motor1_checkBox, self.motor2_checkBox]
+        # iterate over all checked boxes:
         for box in boxlist:
             if box.isChecked() == True:
+                # add all selected modules to the active list:
                 if box == self.motor1_checkBox:
                     self.active_modules.append(module_L)
                 elif box == self.motor2_checkBox:
                     self.active_modules.append(module_R)
-        print(self.active_modules)
+                # elif box == self.motor3_checkBox:
+                #     self.active_modules.append(module_C)
+                # ...
+        # Status message:
+        print('Selected motor(s):')
+        for module in self.active_modules:
+            print('Motor', module.moduleID)
         
-    # function to control several motors at once
-    
-    # function for mode selection
-
+    def multi_module_control(self, action):
+        '''Add multi motor control capability. Argument "action" is one of
+        the motor control functions below (e.g., single_step).'''
+        # iterate over all active modules and apply the action function:
+        for module in self.active_modules:
+            self.module = module
+            self.motor = module.motor
+            action()
+            
     def single_step_left(self):
+        '''Single fullstep mode. Required amount of msteps and pulse freqency
+        are calculated from the module settings and the value of rpmBox.'''
+        # initialize movement parameters for one fullstep:
+        msteps = self.module.msteps_per_fstep
         pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
-        self.motor.move_by(-self.module.msteps_per_fstep, pps)
+        # move by needed amount of msteps at pps velocity in negative direction:
+        self.motor.move_by(-msteps, pps)
+        # Status message:
         print('single fullstep left')
+        print(-msteps)
         
     def single_step_right(self):
+        '''As above.'''
+        msteps = self.module.msteps_per_fstep
         pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
-        self.motor.move_by(self.module.msteps_per_fstep, pps)
+        # move by needed amount of msteps at pps velocity in positive direction:
+        self.motor.move_by(msteps, pps)
         print('single fullstep right')
+        print(msteps)
         
     def multi_step_left(self):
+        '''Multiple fullsteps mode. Required amount of msteps and pulse freqency
+        are calculated from the module settings, specified amount of fullsteps
+        and the value of rpmBox.'''
+        # initialize movement parameters for required fullsteps:
         msteps = self.module.msteps_per_fstep * self.multistep_numberBox.value()
         pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
+        # move by needed amount of msteps at pps velocity in negative direction:
         self.motor.move_by(-msteps, pps)
+        # Status message:
         print(str(self.multistep_numberBox.value()), 'fullsteps left with', str(self.rpmBox.value()), 'rpm')
         
     def multi_step_right(self):
+        '''As above.'''
         msteps = self.module.msteps_per_fstep * self.multistep_numberBox.value()
         pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
+        # move by needed amount of msteps at pps velocity in positive direction:
         self.motor.move_by(msteps, pps)
+        # Status message:
         print(str(self.multistep_numberBox.value()), 'fullsteps right with', str(self.rpmBox.value()), 'rpm')
         
-    def perm_rot_left(self, motor):
+    def perm_rot_left(self):
+        '''Permanent rotation mode. Required pulse frequency is calculated
+        from the module settings and the value of rpmBox.'''
         # motor speed calculated from: rpmBox * msteps_per_rev / 60sec
         pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
+        # Rotate in negative direction:
         self.motor.rotate(-pps)
+        # Status message:
         print('Rotating left with', str(self.rpmBox.value()), 'rpm')
         
     def perm_rot_right(self):
+        '''As above.'''
         pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
+        # Rotate in positive direction:
         self.motor.rotate(pps)
+        # Status message:
         print('Rotating right with', str(self.rpmBox.value()), 'rpm')
         
     def stop_motor(self):
-        self.motor.stop()
-        print('Motor stopped!')
+        '''Stop signal, can always be sent to the motor.'''
+        self.module.motor.stop()
+        print('Motor', self.module.moduleID, 'stopped!')
         
-            
     def set_allowed_ranges(self):
         '''Specify allowed min-max ranges for values that can 
         be changed in the GUI. These should usually be fine...'''
