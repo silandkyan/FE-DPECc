@@ -19,6 +19,7 @@ for port in port_list:
     Motor(port)
 
 module_L, module_R = Motor.assign_modules()
+# module_L = Motor.assign_modules()
 
 print(module_L.status_message())
 print(module_R.status_message())
@@ -78,6 +79,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.mode_single.pressed.connect(lambda: self.set_mode(1))
         self.mode_multi.pressed.connect(lambda: self.set_mode(2))
         self.mode_perm.pressed.connect(lambda: self.set_mode(3))
+        # Status LCDs:
+        # self.lcd_current_1.display(module_L.motor.actual_position)
         
         ### single ###
         # Motor selection radioButtons:
@@ -147,6 +150,18 @@ class Window(QMainWindow, Ui_MainWindow):
         print('Selected motor(s):')
         for module in self.active_modules:
             print('Motor', module.moduleID)
+            
+    def refresh_lcd_displays(self):
+        '''This function can be called to update the status LCDs during 
+        motor operation. It is active as long as the motors are active.'''
+        # Check if motor is active:
+        while not self.motor.get_position_reached():
+            # Prevent blocking of the application by the while loop:
+            QApplication.processEvents()
+            # update LCD displays:
+            self.lcd_current_1.display(module_L.motor.actual_position)
+            self.lcd_current_2.display(module_R.motor.actual_position)
+            ### does not work in multi motor mode! FIND SOLUTION
         
     def multi_module_control(self, action):
         '''Add multi motor control capability. Argument "action" is one of
@@ -168,6 +183,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # Status message:
         print('single fullstep left')
         print(-msteps)
+        self.refresh_lcd_displays()
         
     def single_step_right(self):
         '''As above.'''
@@ -177,6 +193,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.motor.move_by(msteps, pps)
         print('single fullstep right')
         print(msteps)
+        self.refresh_lcd_displays()
         
     def multi_step_left(self):
         '''Multiple fullsteps mode. Required amount of msteps and pulse freqency
@@ -208,6 +225,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.motor.rotate(-pps)
         # Status message:
         print('Rotating left with', str(self.rpmBox.value()), 'rpm')
+        self.refresh_lcd_displays()
         
     def perm_rot_right(self):
         '''As above.'''
@@ -216,11 +234,13 @@ class Window(QMainWindow, Ui_MainWindow):
         self.motor.rotate(pps)
         # Status message:
         print('Rotating right with', str(self.rpmBox.value()), 'rpm')
+        self.refresh_lcd_displays()
         
     def stop_motor(self):
         '''Stop signal, can always be sent to the motor.'''
         self.module.motor.stop()
         print('Motor', self.module.moduleID, 'stopped!')
+        self.refresh_lcd_displays()
         
     def set_allowed_ranges(self):
         '''Specify allowed min-max ranges for values that can 
