@@ -28,26 +28,16 @@
       <pointsize>7</pointsize>
      </font>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::NoFocus</enum>
+    </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="legs">
      <attribute name="title">
       <string>Leg control</string>
      </attribute>
-     <widget class="QCheckBox" name="checkB_zdc">
-      <property name="geometry">
-       <rect>
-        <x>100</x>
-        <y>140</y>
-        <width>101</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>ZDC</string>
-      </property>
-     </widget>
      <widget class="QCheckBox" name="checkB_zbr">
       <property name="geometry">
        <rect>
@@ -56,6 +46,9 @@
         <width>101</width>
         <height>23</height>
        </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
       </property>
       <property name="text">
        <string>ZBR</string>
@@ -70,6 +63,9 @@
         <height>23</height>
        </rect>
       </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
       <property name="text">
        <string>ZBC</string>
       </property>
@@ -82,6 +78,9 @@
         <width>131</width>
         <height>23</height>
        </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
       </property>
       <property name="text">
        <string>all leg motors </string>
@@ -99,6 +98,9 @@
         <height>23</height>
        </rect>
       </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
       <property name="text">
        <string>select leg motor</string>
       </property>
@@ -111,6 +113,9 @@
         <width>101</width>
         <height>23</height>
        </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
       </property>
       <property name="text">
        <string>ZDR</string>
@@ -129,17 +134,20 @@
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Motor selection&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushB_upwards">
+     <widget class="QPushButton" name="pushB_upwards1">
       <property name="geometry">
        <rect>
         <x>200</x>
         <y>50</y>
-        <width>81</width>
-        <height>41</height>
+        <width>71</width>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
        <string>upwards</string>
+      </property>
+      <property name="autoRepeat">
+       <bool>false</bool>
       </property>
      </widget>
      <widget class="QLabel" name="label_150">
@@ -147,38 +155,102 @@
        <rect>
         <x>200</x>
         <y>20</y>
-        <width>68</width>
+        <width>91</width>
         <height>19</height>
        </rect>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Rotate&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Permanent&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
      <widget class="QPushButton" name="pushB_stop_legs">
       <property name="geometry">
        <rect>
         <x>200</x>
-        <y>100</y>
-        <width>181</width>
-        <height>41</height>
+        <y>90</y>
+        <width>171</width>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
        <string>Stop</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushB_downwards">
+     <widget class="QPushButton" name="pushB_downwards1">
       <property name="geometry">
        <rect>
-        <x>290</x>
+        <x>280</x>
         <y>50</y>
         <width>91</width>
-        <height>41</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
        <string>downwards</string>
+      </property>
+      <property name="autoRepeat">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkB_zdc">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>140</y>
+        <width>61</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="text">
+       <string>ZDC</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushB_upwards2">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>160</y>
+        <width>71</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>upwards</string>
+      </property>
+      <property name="autoRepeat">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_176">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>130</y>
+        <width>111</width>
+        <height>19</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;When pushed&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushB_downwards2">
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>160</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>downwards</string>
+      </property>
+      <property name="autoRepeat">
+       <bool>false</bool>
       </property>
      </widget>
     </widget>
@@ -238,39 +310,45 @@
        <string>mm on axis</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushB_backwards">
+     <widget class="QPushButton" name="pushB_backwards1">
       <property name="geometry">
        <rect>
         <x>290</x>
         <y>50</y>
         <width>81</width>
-        <height>41</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
        <string>backwards</string>
       </property>
+      <property name="autoRepeat">
+       <bool>false</bool>
+      </property>
      </widget>
-     <widget class="QPushButton" name="pushB_forwards">
+     <widget class="QPushButton" name="pushB_forwards1">
       <property name="geometry">
        <rect>
         <x>200</x>
         <y>50</y>
         <width>81</width>
-        <height>41</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
        <string>forwards</string>
+      </property>
+      <property name="autoRepeat">
+       <bool>false</bool>
       </property>
      </widget>
      <widget class="QPushButton" name="pushB_stop_x">
       <property name="geometry">
        <rect>
         <x>200</x>
-        <y>100</y>
+        <y>90</y>
         <width>171</width>
-        <height>41</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
@@ -282,12 +360,57 @@
        <rect>
         <x>200</x>
         <y>20</y>
-        <width>68</width>
+        <width>91</width>
         <height>19</height>
        </rect>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Rotate&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Permanent&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushB_forwards2">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>160</y>
+        <width>81</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>forwards</string>
+      </property>
+      <property name="autoRepeat">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushB_backwards2">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>160</y>
+        <width>81</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>backwards</string>
+      </property>
+      <property name="autoRepeat">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_181">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>130</y>
+        <width>111</width>
+        <height>19</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;When pushed&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </widget>
@@ -311,10 +434,10 @@
      <widget class="QPushButton" name="pushB_stop_pr_cr">
       <property name="geometry">
        <rect>
-        <x>220</x>
-        <y>160</y>
-        <width>171</width>
-        <height>41</height>
+        <x>200</x>
+        <y>90</y>
+        <width>211</width>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
@@ -347,7 +470,7 @@
        <string>deg on axis</string>
       </property>
      </widget>
-     <widget class="QDoubleSpinBox" name="dspinBox_deg_on_axis_pr_cr">
+     <widget class="QDoubleSpinBox" name="dspinB_deg_axis_pr_cr">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -366,40 +489,49 @@
        <double>30.000000000000000</double>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushB_lefthand">
+     <widget class="QPushButton" name="pushB_clockwise1">
       <property name="geometry">
        <rect>
-        <x>220</x>
-        <y>110</y>
+        <x>200</x>
+        <y>50</y>
         <width>81</width>
-        <height>41</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
        <string>clockwise</string>
       </property>
+      <property name="autoRepeat">
+       <bool>false</bool>
+      </property>
      </widget>
-     <widget class="QPushButton" name="pushB_righthand">
+     <widget class="QPushButton" name="pushB_counterclockwise1">
       <property name="geometry">
        <rect>
-        <x>310</x>
-        <y>110</y>
+        <x>290</x>
+        <y>50</y>
         <width>121</width>
-        <height>41</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
        <string>counterclockwise</string>
       </property>
+      <property name="autoRepeat">
+       <bool>false</bool>
+      </property>
      </widget>
      <widget class="QCheckBox" name="checkB_pr">
       <property name="geometry">
        <rect>
-        <x>220</x>
-        <y>50</y>
-        <width>119</width>
+        <x>110</x>
+        <y>100</y>
+        <width>51</width>
         <height>23</height>
        </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
       </property>
       <property name="text">
        <string>PR</string>
@@ -408,11 +540,14 @@
      <widget class="QCheckBox" name="checkB_cr">
       <property name="geometry">
        <rect>
-        <x>220</x>
-        <y>80</y>
-        <width>119</width>
+        <x>110</x>
+        <y>130</y>
+        <width>51</width>
         <height>23</height>
        </rect>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
       </property>
       <property name="text">
        <string>CR</string>
@@ -421,14 +556,59 @@
      <widget class="QLabel" name="label_6">
       <property name="geometry">
        <rect>
-        <x>220</x>
+        <x>200</x>
         <y>20</y>
-        <width>68</width>
+        <width>91</width>
         <height>19</height>
        </rect>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Rotate&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Permanent &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushB_counterclockwise2">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>160</y>
+        <width>121</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>counterclockwise</string>
+      </property>
+      <property name="autoRepeat">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_182">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>130</y>
+        <width>111</width>
+        <height>19</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;When pushed&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushB_clockwise2">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>160</y>
+        <width>81</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>clockwise</string>
+      </property>
+      <property name="autoRepeat">
+       <bool>false</bool>
       </property>
      </widget>
     </widget>
@@ -490,6 +670,9 @@
       <width>341</width>
       <height>251</height>
      </rect>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
     </property>
     <widget class="QSpinBox" name="spinB_max_RPM">
      <property name="geometry">
@@ -770,7 +953,7 @@ press left and right for coarse steps </string>
       <string>microstep multiplicator</string>
      </property>
     </widget>
-    <widget class="QSpinBox" name="spinBox_RPM">
+    <widget class="QSpinBox" name="spinB_RPM">
      <property name="geometry">
       <rect>
        <x>180</x>
@@ -802,7 +985,7 @@ press left and right for coarse steps </string>
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Go to saved position&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushB_overwrite_u">
+   <widget class="QPushButton" name="pushB_pos_u">
     <property name="geometry">
      <rect>
       <x>460</x>
@@ -820,7 +1003,7 @@ press left and right for coarse steps </string>
      <string>Pos Up</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushB_overwrite_d">
+   <widget class="QPushButton" name="pushB_pos_d">
     <property name="geometry">
      <rect>
       <x>460</x>
@@ -982,7 +1165,7 @@ press left and right for coarse steps </string>
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushB_overwrite_b">
+   <widget class="QPushButton" name="pushB_pos_b">
     <property name="geometry">
      <rect>
       <x>460</x>
@@ -1000,7 +1183,7 @@ press left and right for coarse steps </string>
      <string>Pos B</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushB_overwrite_a">
+   <widget class="QPushButton" name="pushB_pos_a">
     <property name="geometry">
      <rect>
       <x>460</x>
@@ -1064,7 +1247,7 @@ press left and right for coarse steps </string>
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushB_overwrite_y">
+   <widget class="QPushButton" name="pushB_pos_y">
     <property name="geometry">
      <rect>
       <x>460</x>
@@ -1082,7 +1265,7 @@ press left and right for coarse steps </string>
      <string>Pos Y</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushB_overwrite_x">
+   <widget class="QPushButton" name="pushB_pos_x">
     <property name="geometry">
      <rect>
       <x>460</x>
@@ -1146,7 +1329,7 @@ press left and right for coarse steps </string>
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushB_overwrite_i">
+   <widget class="QPushButton" name="pushB_pos_i">
     <property name="geometry">
      <rect>
       <x>460</x>
@@ -1164,7 +1347,7 @@ press left and right for coarse steps </string>
      <string>Pos ion beam</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushB_overwrite_r">
+   <widget class="QPushButton" name="pushB_pos_r">
     <property name="geometry">
      <rect>
       <x>460</x>
@@ -1240,6 +1423,9 @@ press left and right for coarse steps </string>
       <height>401</height>
      </rect>
     </property>
+    <property name="focusPolicy">
+     <enum>Qt::WheelFocus</enum>
+    </property>
     <property name="frameShape">
      <enum>QFrame::StyledPanel</enum>
     </property>
@@ -1272,12 +1458,12 @@ press left and right for coarse steps </string>
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Modes &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="radioB_permanent">
+    <widget class="QRadioButton" name="radioB_permanent_when_pushed">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>60</y>
-       <width>119</width>
+       <width>191</width>
        <height>23</height>
       </rect>
      </property>
@@ -1286,29 +1472,11 @@ press left and right for coarse steps </string>
        <pointsize>7</pointsize>
       </font>
      </property>
-     <property name="text">
-      <string>permanent</string>
-     </property>
-     <attribute name="buttonGroup">
-      <string notr="true">buttonGroup</string>
-     </attribute>
-    </widget>
-    <widget class="QRadioButton" name="radioB_when_pushed">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>60</y>
-       <width>131</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>7</pointsize>
-      </font>
+     <property name="focusPolicy">
+      <enum>Qt::StrongFocus</enum>
      </property>
      <property name="text">
-      <string>when pushed</string>
+      <string>permanent / when pushed</string>
      </property>
      <attribute name="buttonGroup">
       <string notr="true">buttonGroup</string>
@@ -1317,7 +1485,7 @@ press left and right for coarse steps </string>
     <widget class="QRadioButton" name="radioB_key_control">
      <property name="geometry">
       <rect>
-       <x>240</x>
+       <x>210</x>
        <y>60</y>
        <width>151</width>
        <height>23</height>
@@ -1327,6 +1495,9 @@ press left and right for coarse steps </string>
       <font>
        <pointsize>7</pointsize>
       </font>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::StrongFocus</enum>
      </property>
      <property name="text">
       <string>keyboard control</string>

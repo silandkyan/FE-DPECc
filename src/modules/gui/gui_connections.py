@@ -5,42 +5,10 @@ Created on Tue Feb 21 17:38:27 2023
 @author: pschw
 """
 
-# Zu beheben:
-    
-# - Elegantere Lösung für exklusive groupBoxen
-# - bei all leg betrieb: wie viel RPM wird eingestellt?! und wie wirds realisiert?
-# - die RPM müssten für jeden motor einzeln gepseichert werden aber wenn mehrere Motoren ausgewählt sind
-#   welche RPM sollen die Motoren dann annehmen?
-# - die parameter sind immer überschreibbar auch wenn man in anderem Tab ist: ändern?!
-# - die ganzen globalen Variablen in Klassenvariablen umwandeln?!
-# - Codeabfolge umordnen, sodass die connecitons direkt über den funktionen stehen?!
-# -> lohnt sich das überhaupt je nach dem wie viel noch verändert wird
-# - wie wichitg ist es, dass die spin Boxen den Wert anzeigen den man zuvor eingestellt hat? 
-
-
-# Offen:
-    
-# - Funktionen die den motoren mitteilen wie viele RPM sie machen sollen? 
-# - Funktionen oder variablen die mm bzw. deg mit gegebener RPM Zahl in pps umrechnen 
-# - Die LCD anzeigen für die individuellen Motoren in save und show stat Funktionen 
-# - jedes mal wenn sich die microstep resolution für einen Motor ändert muss mit der 
-# init drive settings funktion connected werden und mit der init ramp settings funktion
-
-
-# als nächstes:
-
-# - die invert Buttons verknüpfen 
-# - einstellen, dass sich jedes mal, wenn sich die spin Box Werte für die RPM ändern, mit dem Motor connected
-# wird und ihm die Änderung mitgeteilt wird 
-# - set allowed ranges für die leg RPM spin Boxen noch anpassen
-
-# Gui fusion mit motor control:
-
-# - eine wrapper funktion für permanent modus ODER die obere bzw. untere Anschlagsposition wählen?
-# - wie kann when pushed realisiert werden?
-# - bei keyboard control muss auch noch eine Geschwindigkeit angegeben werden und dann move by steps funktion nehmen 
-# - einfache TMCL funktion für invert motor direction?
-# - umrechnungsfunktion von mm auf der Achse bzw. deg auf msteps
+# jeder Motor braucht seine eignene spinbox für die mm oder deg pro umdrehung
+# die go to funktion überarbeiten 
+# aus pr und cr entweder radiobuttons machen oder dass cr irgendwie nur über keyboard gesteuert wird 
+# wenn ein neuer Tab mit einem einzigen motor geöffnet wird muss das richtige modul selected werden 
 
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
@@ -56,15 +24,19 @@ from pytrinamic.connections import ConnectionManager
 
 # settings...
 
-port_list = ConnectionManager().list_connections()
-for port in port_list:
-    Motor(port)
+# port_list = ConnectionManager().list_connections()
+# for port in port_list:
+#     Motor(port)
     
-module_L, module_R = Motor.assign_modules()
+#module_zbr, module_zbc = Motor.assign_modules() # module_zdr, module_zdc, module_x, module_pr, module_cr, module_s
 
-print(module_L.status_message())
-print(module_R.status_message())
-
+# print(module_zbr.status_message())
+# print(module_zbc.status_message())
+# print(module_zdr.status_message())
+# print(module_zdc.status_message())
+# print(module_pr.status_message())
+# print(module_cr.status_message())
+# print(module_s.status_message())
 
 
 
@@ -81,7 +53,6 @@ class Window(QMainWindow, Ui_MainWindow):
         self.setWindowTitle('FE_DPECc_GUI')
         # setup functions:
         self.setup()
-        self.check()
         self.connectSignalsSlots()
         self.show()
         
@@ -96,78 +67,51 @@ class Window(QMainWindow, Ui_MainWindow):
         # connect if a master RPM spinBox from legs changes 
         self.spinB_max_RPM.valueChanged.connect(self.RPM_master)
         # connect if a master RPM spinBox from x changes
+        self.refresh_motor_list(1)
+        # self.module = module_R
+        # self.module.motor = module_R.motor
+        # self.active_modules = [self.module]
 
-    
-        
-    def check(self):
-    # function is called whenever motors should do something to make sure the selected motors
-    # are running in specified mode
-    # when there is a radioButton group only one of them has to be checked since they have exclusive property
-        # check for all or single motors selected in legs 
-        global check_all
-        check_all = self.radioB_all_motors.isChecked()
-        # check for the checkBoxes for the individual motors
-        global check_zbr 
-        check_zbr = self.checkB_zbr.isChecked()
-        global check_zbc
-        check_zbc = self.checkB_zbc.isChecked()
-        global check_zdr
-        check_zdr = self.checkB_zdr.isChecked()
-        global check_zdc
-        check_zdc = self.checkB_zdc.isChecked()
         
     def RPM_master(self):
-
         max_RPM = self.spinB_max_RPM.value()
         self.spinBox_RPM.setMaximum(max_RPM)
     
     def pps_calculator(self):
-        pps = round(self.spinB_RPM_permanent_x.value() * self.motor.msteps_per_rev / 60)
-        return pps 
-    
+        pps = round(self.spinB_RPM.value() * 200*16 / 60) 
+        self.pps = pps
+        
+    def mm_deg_to_steps(self, mm_deg ,mm_deg_per_rev):
+        msteps = round(mm_deg / mm_deg_per_rev * 200*16, 3)
+        self.msteps = msteps
     
     def connectSignalsSlots(self): 
-    # checkboxes for individual motors are only be checkable if single motor radioButton is enabled
-        # enables checkability for the motor checkBoxes
-        self.radioB_single_motor.clicked.connect(self.enable_motorselection)
-        self.radioB_single_motor.clicked.connect(lambda: self.select_module(module_R))
-        # disables checkability and changes values to unchecked 
-        self.radioB_all_motors.clicked.connect(self.all_legs_setup)
-        self.radioB_all_motors.clicked.connect(lambda: self.select_module(module_L))
-        self.radioB_all_motors.clicked.connect(self.refresh_motor_list)
-        
-        
-        
-        # connections for when pushButtons of modes are pressed or clicked they check which 
-        # radioButton is active 
-
-    
-        
     # connections for positional pushButtons
         # go to position leg 
-        self.pushB_pos_u.clicked.connect(lambda: self.go_to(1))
-        self.pushB_pos_d.clicked.connect(lambda: self.go_to(2))
+        self.pushB_pos_u.clicked.connect(lambda: self.multi_module_control(self.go_to(1)))
+        self.pushB_pos_d.clicked.connect(lambda: self.multi_module_control(self.go_to(2)))
         # go to position x 
-        self.pushB_pos_a.clicked.connect(lambda: self.go_to(3))
-        self.pushB_pos_b.clicked.connect(lambda: self.go_to(4))
+        self.pushB_pos_a.clicked.connect(lambda: self.multi_module_control(self.go_to(3)))
+        self.pushB_pos_b.clicked.connect(lambda: self.multi_module_control(self.go_to(4)))
         # go to position pr
-        self.pushB_pos_x.clicked.connect(lambda: self.go_to(5))
-        self.pushB_pos_y.clicked.connect(lambda: self.go_to(6))
+        self.pushB_pos_x.clicked.connect(lambda: self.multi_module_control(self.go_to(5)))
+        self.pushB_pos_y.clicked.connect(lambda: self.multi_module_control(self.go_to(6)))
         # go to position cr
-        self.pushB_pos_r.clicked.connect(lambda: self.go_to(7))
-        self.pushB_pos_i.clicked.connect(lambda: self.go_to(8))
+        self.pushB_pos_r.clicked.connect(lambda: self.multi_module_control(self.go_to(7)))
+        self.pushB_pos_i.clicked.connect(lambda: self.multi_module_control(self.go_to(8)))
         
     # connections for absolute position pushButtons:
         # absolute for x
-        self.pushB_start_x.clicked.connect(lambda: self.absolute_pos(1))
-        self.pushB_stop_x.clicked.connect(self.stop)
-        # ablsolute for pr
-        self.pushB_start_pr.clicked.connect(lambda: self.absolute_pos(2))
-        self.pushB_stop_pr.clicked.connect(self.stop)
+        #self.pushB_start_x.clicked.connect(lambda: self.select_module(module_x))
+        self.pushB_start_x.clicked.connect(lambda: self.go_to(9))
+        self.pushB_stop_x.clicked.connect(self.stop_motor)
+        #ablsolute for pr and cr
+        self.pushB_start_pr_cr.clicked.connect(lambda: self.multi_module_control(self.go_to(10)))
+        self.pushB_stop_pr_cr.clicked.connect(self.stop_motor)
         
     # connections for specimen switch
-        self.pushB_switch.clicked.connect(self.next_specimen)
-        
+        # self.pushB_switch.clicked.connect(self.next_specimen)
+    
         
     # connections for the overwrite functions:
         # connnecitons for leg  position overwrite 
@@ -190,6 +134,197 @@ class Window(QMainWindow, Ui_MainWindow):
         self.shortcut.activated.connect(lambda: self.overwrite(7))
         self.shortcut = QShortcut(QKeySequence('Ctrl+I'), self)
         self.shortcut.activated.connect(lambda: self.overwrite(8))
+            
+            
+        # self.radioB_permanent_when_pushed.pressed.connect(lambda: self.set_mode(1))
+        
+        
+        self.radioB_single_motor.clicked.connect(self.enable_motorselection)
+        self.radioB_all_motors.clicked.connect(self.all_legs_setup)
+        
+        # if the all leg radioButton is pressed, all the motors are selected
+        self.radioB_all_motors.clicked.connect(lambda: self.refresh_motor_list(1))
+        
+        # if select leg motor is enabled, the list is refreshed when new motors are chosen
+        self.checkB_zbr.toggled.connect(lambda: self.refresh_motor_list(2))
+        self.checkB_zbc.toggled.connect(lambda: self.refresh_motor_list(2))
+        self.checkB_zdr.toggled.connect(lambda: self.refresh_motor_list(2))
+        self.checkB_zdc.toggled.connect(lambda: self.refresh_motor_list(2))
+        
+        self.checkB_pr.toggled.connect(lambda: self.refresh_motor_list(2))
+        self.checkB_cr.toggled.connect(lambda: self.refresh_motor_list(2))
+        
+        # connections for the individual buttons
+        #self.pushB_upwards1.clicked.connect(lambda: self.multi_module_control(self.permanent_left))
+        self.pushB_upwards1.clicked.connect(self.permanent_right)
+        #self.pushB_downwards1.clicked.connect(lambda: self.multi_module_control(self.permanent_right))
+        self.pushB_downwards1.clicked.connect(self.permanent_left) 
+        #self.pushB_stop_legs.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
+        self.pushB_stop_legs.clicked.connect(lambda: print('all leg motors stopped'))
+        
+        #self.pushB_upwards.pressed.connect(lambda: self.multi_module_control(permanent_right))
+        #self.pushB_upwards2.released.connect(lambda: self.multi_module_control(self.stop_motor))
+        self.pushB_upwards2.pressed.connect(self.permanent_right)
+        self.pushB_upwards2.released.connect(self.stop_motor)
+        #self.pushB_downwards.pressed.connect(lambda: self.multi_module_control(self.permanent_left))
+        #self.pushB_downwards2.released.connect(lambda: self.multi_module_control(self.stop_motor))
+        self.pushB_downwards2.pressed.connect(self.permanent_left)
+        self.pushB_downwards2.released.connect(self.stop_motor)
+        
+        
+        #self.pushB_forwards1.clicked.connect(lambda: self.select_module(module_x))
+        self.pushB_forwards1.clicked.connect(self.permanent_right)
+        #self.pushB_backwards1.clicked.connect(lambda: self.select_module(module_x))
+        self.pushB_backwards1.clicked.connect(self.permanent_left)
+        #self.pushB_stop_x.clicked.connect(lambda: self.select_module(module_x))
+        self.pushB_stop_x.clicked.connect(self.stop_motor)
+        
+        #self.pushB_forwards2.clicked.connect(lambda: self.select_module(module_x))
+        self.pushB_forwards2.pressed.connect(self.permanent_right)
+        self.pushB_forwards2.released.connect(self.stop_motor)
+        #self.pushB_backwards2.clicked.connect(lambda: self.select_module(module_x))
+        self.pushB_backwards2.pressed.connect(self.permanent_left)
+        self.pushB_backwards2.released.connect(self.stop_motor)
+
+        
+
+        #self.pushB_clockwise1.clicked.connect(lambda: self.select_module(module_pr))
+        self.pushB_clockwise1.clicked.connect(self.permanent_right)
+        #self.pushB_counterclockwise1.clicked.connect(lambda: self.select_module(module_pr))
+        self.pushB_counterclockwise1.clicked.connect(self.permanent_left)
+        #self.pushB_stop_pr_cr.clicked.connect(lambda: self.select_module(module_pr))
+        self.pushB_stop_pr_cr.clicked.connect(self.stop_motor)
+        
+        #self.pushB_clockwise1.clicked.connect(lambda: self.select_module(module_pr))
+        self.pushB_clockwise2.pressed.connect(self.permanent_right)
+        self.pushB_clockwise2.released.connect(self.stop_motor)
+        #self.pushB_counterclockwise1.clicked.connect(lambda: self.select_module(module_pr))
+        self.pushB_counterclockwise2.pressed.connect(self.permanent_left)
+        self.pushB_counterclockwise2.released.connect(self.stop_motor)
+
+
+        
+        #self.pushB_switch.clicked.connect(lambda: self.select_module(module_s))
+        #self.pushB_switch.clicked.connect(self.permanent_left)
+
+        
+    def select_module(self, m):
+        '''Module selection for single module use.'''
+        self.module = m
+        self.motor = self.module.motor
+        print('Selected motor: Motor', self.module.moduleID)
+        #print(self.module.status_message()) 
+
+    # def set_mode(self, mode):
+    #     self.mode = mode
+    #     print('Mode:', mode)
+        
+    def refresh_motor_list(self, select):
+        self.active_modules = []
+        boxlist = [self.checkB_zbr, self.checkB_zbc,self.checkB_zdr, self.checkB_zdc,
+                        self.checkB_pr, self.checkB_cr]
+        if select == 1:
+            #self.active_modules.append(module_zbr, module_zbc) #, module_zdr, module_zdc
+            print('All leg motors are selected')                              
+                                       
+        if select == 2:     
+            for box in boxlist:
+                if box.isChecked() == True:
+                    if box == self.checkB_zbr:
+                        #self.active_modules.append(module_R)
+                        print('ZBR appended')
+                    if box == self.checkB_zbc:  
+                        #self.active_modules.append(module_R)
+                        print('ZBC appended')
+                    if box == self.checkB_zdr:                   
+                        #self.active_modules.append(module_zdr)
+                        print('ZDR appended')
+                    if box == self.checkB_zdc:
+                        #self.active_modules.append(module_zdc)
+                        print('ZDC appended')
+                    if box == self.checkB_pr:                   
+                        #self.active_modules.append(module_pr)
+                        self.radioB_all_motors.setChecked(True) # calling this function makes sure, when working with 
+                        self.all_legs_setup()                   # pr/cr the leg motors are deleted from active module list
+                        print('PR appended')
+                    if box == self.checkB_cr:                   
+                        #self.active_modules.append(module_cr)
+                        self.radioB_all_motors.setChecked(True)
+                        self.all_legs_setup()
+                        print('CR appended')
+        print('Selected motor(s):')
+        for module in self.active_modules:
+            print('Motor', module.moduleID)
+        
+    def multi_module_control(self, action):
+        for module in self.active_modules:
+            self.module = module
+            self.motor = module.motor
+            action()
+            
+    # def left(self):
+    #     print('Mode:', self.mode)
+    #     if self.mode == 1:
+    #         self.permanent_left()
+
+        
+    # def right(self):
+    #     print('Mode:', self.mode)
+    #     if self.mode == 1:
+    #         self.permanent_right()
+            
+            
+    def permanent_left(self):
+        if self.radioB_permanent_when_pushed.isChecked() == True:
+            #self.motor.rotate(-self.pps)
+            print('Rotating left with', str(self.spinB_RPM.value()), 'rpm')
+    
+    def permanent_right(self):
+        if self.radioB_permanent_when_pushed.isChecked() == True:
+            #self.motor.rotate(self.pps)
+            print('Rotating right with', str(self.spinB_RPM.value()), 'rpm')
+            
+    def fine_step_left(self):
+        #msteps = self.module.msteps_per_fstep * self.spinB_fine.value()
+        #self.motor.move_by(-msteps, self.pps)
+        print('Fine steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+        
+    def coarse_step_left(self):
+        #msteps = self.module.msteps_per_fstep * self.spinB_coarse.value()
+        #self.motor.move_by(-msteps, self.pps)
+        print('Coarse steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+        
+    def fine_step_right(self):
+        #msteps = self.module.msteps_per_fstep * self.spinB_fine.value()
+        #self.motor.move_by(msteps, self.pps)
+        print('Fine steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+        
+    def coarse_step_right(self):
+        #msteps = self.module.msteps_per_fstep * self.spinB_coarse.value()
+        #self.motor.move_by(msteps, self.pps)
+        print('Coarse steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+
+    def keyPressEvent(self, event: QKeyEvent) -> None: # pass keys to call the functions 
+        # event gets defined and keys are specified below 
+        key_pressed = event.key()
+        if self.radioB_key_control.isChecked() == True:
+            if key_pressed == Qt.Key_S:
+                #self.multi_module_control(self.fine_step_left)
+                print('Fine steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+            if key_pressed == Qt.Key_A:
+                #self.multi_module_control(self.coarse_step_left)
+                print('Coarse steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+            if key_pressed == Qt.Key_W:
+                #self.multi_module_control(self.fine_step_right)
+                print('Fine steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+            if key_pressed == Qt.Key_D:
+                #self.multi_module_control(self.coarse_step_right)
+                print('Coarse steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+            
+    def stop_motor(self):
+        #self.module.motor.stop()
+        #print('Motor', self.module.moduleID, 'stopped!')
+        print("Motors stopped")
         
         
     def select_module(self, m):
@@ -197,8 +332,6 @@ class Window(QMainWindow, Ui_MainWindow):
         self.motor = self.module.motor
         #print('Selected motor:', self.motor)
         print(self.module.status_message())
-        
-    
     
     # functions for enabling checkability and checked state 
     def enable_motorselection(self):
@@ -206,6 +339,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.checkB_zbc.setCheckable(True)
         self.checkB_zdr.setCheckable(True)
         self.checkB_zdc.setCheckable(True)
+    
         
     def all_legs_setup(self):
         # unchecking the chekBoxes of the individual motor selection
@@ -221,378 +355,91 @@ class Window(QMainWindow, Ui_MainWindow):
                
     # this function lets the motors drive to the position which are shown by the LCDs in microsteps    
     def go_to(self, position):
-        # at first direction gets checked and then there is a check for which motors are selected 
-        self.check() # update which mode is active: single or all motors
-        # position control for leg 
         if position == 1:
-            if check_all == True:
-                self.all_motors(1)
-            else: 
-                self.single_motors(1)
-        if position == 2:
-            if check_all == True:
-                self.all_motors(2)
-            else: 
-                self.single_motors(2)
-                
+            self.mm_deg_to_steps(self.lcd_pos_u.value(), self.spinB_mm_per_rev.value())
+            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
+            #self.motor.move_to(self.msteps, self.pps)
+            print('Going to position Up shown by according LCD')
         # positon control for x  
+        if position == 2:
+            self.mm_deg_to_steps(self.lcd_pos_d.value(), self.spinB_mm_per_rev.value())
+            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
+            #self.motor.move_to(self.msteps, self.pps)
+            print('Going to position Down shown by according LCD')
         if position == 3:
-            # x is heading for position shown by upper LCD: 500 by default 
-            print("X is heading for position A: {}".format(self.lcd_pos_A.value()))
+            self.mm_deg_to_steps(self.lcd_pos_a.value(), self.spinB_mm_per_rev.value())
+            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
+            #self.motor.move_to(self.msteps, self.pps)
+            print('Going to position A shown by according LCD')
         if position == 4:
-            # x is heading for position shown by lower LCD: -500 by default
-            print("X is heading for position B: {}".format(self.lcd_pos_B.value()))
-            
-        # positon control for pr
+            self.mm_deg_to_steps(self.lcd_pos_b.value(), self.spinB_mm_per_rev.value())
+            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
+            #self.motor.move_to(self.msteps, self.pps)
+            print('Going to position B shown by according LCD')
         if position == 5:
-            # pr is heading for position shown by upper LCD: 15 by default 
-            print("PR is heading for position X: {}".format(self.lcd_pos_X.value()))
+            self.mm_deg_to_steps(self.lcd_pos_x.value(), self.spinB_mm_per_rev.value())
+            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
+            #self.motor.move_to(self.msteps, self.pps)
+            print('Going to position X shown by according LCD')
         if position == 6:
-            # pr is heading for position shown by lower LCD: -15 by default
-            print("PR is heading for position Y: {}".format(self.lcd_pos_Y.value()))
-            
-        # positon control for cr
+            self.mm_deg_to_steps(self.lcd_pos_y.value(), self.spinB_mm_per_rev.value())
+            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
+            #self.motor.move_to(self.msteps, self.pps)
+            print('Going to position Y shown by according LCD')
         if position == 7:
-            # cr is heading for position shown by upper LCD: 90 by default 
-            print("CR is heading for position raman: {}".format(self.lcd_pos_raman.value()))
+            self.mm_deg_to_steps(self.lcd_pos_r.value(), self.spinB_mm_per_rev.value())
+            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
+            #self.motor.move_to(self.msteps, self.pps)
+            print('Going to position Raman shown by according LCD')
         if position == 8:
-            # cr is heading for position shown by lower LCD: 0 by default
-            print("CR is heading for position ion beam: {}".format(self.lcd_pos_ion_beam.value()))
+            self.mm_deg_to_steps(self.lcd_pos_i.value(), self.spinB_mm_per_rev.value())
+            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
+            #self.motor.move_to(self.msteps, self.pps)
+            print('Going to position Ion beam shown by according LCD')
+        if position == 9:
+            self.mm_deg_to_steps(self.dspinB_mm_axis_x.value(), self.spinB_mm_per_rev.value())
+            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
+            #self.motor.move_to(self.msteps, self.pps)
+            print('X is going to position chosen in spinBox according LCD')
+        if position == 10:
+            self.mm_deg_to_steps(self.dspinB_deg_axis_pr_cr.value(), self.spinB_mm_per_rev.value())
+            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
+            #self.motor.move_to(self.msteps, self.pps)
+            print('PR is going to position chosen in spinBox according LCD')
+
            
-    # all motors and single motors are functions for leg tab
-    def all_motors(self, direction):
-        if direction == 1:
-            # motors go to saved position shown on upper LCD
-            print("ZBC/ZDC/ZBR/ZCR are heading for all the way up: {}mm".format(self.lcd_pos_up.value()))
-        else:
-            # motors go to saved position shown on lower LCD
-            print("ZBC/ZDC/ZBR/ZCR are heading for all the way down: {}mm".format(self.lcd_pos_down.value()))
-            
-            
-            
-    def single_motors(self, direction):
-        if direction == 1:
-            # selected motors go to saved position shown by LCD
-            if check_zbr == True:
-                print("ZBR going all the way up: {}mm".format(self.lcd_pos_up.value()))
-            if check_zbc == True:
-                print("ZBC going all the way up: {}mm".format(self.lcd_pos_up.value()))
-            if check_zdr == True:
-                print("ZDR going all the way up: {}mm".format(self.lcd_pos_up.value()))
-            if check_zdc == True:
-                print("ZDC going all the way up: {}mm".format(self.lcd_pos_up.value()))
-        else:
-            if check_zbr == True:
-                print("ZBR going all the way down: {}mm".format(self.lcd_pos_down.value()))
-            if check_zbc == True:
-                print("ZBC going all the way down: {}mm".format(self.lcd_pos_down.value()))
-            if check_zdr == True:
-                print("ZDR going all the way down: {}mm".format(self.lcd_pos_down.value()))
-            if check_zdc == True:
-                print("ZDC going all the way down: {}mm".format(self.lcd_pos_down.value()))
-                
-    def absolute_pos(self, pos):
-        if pos  == 1:
-            print("X is going to absolute position: {}mm with {} RPM".format(self.dspinB_mm_axis_x.value(), self.spinB_RPM_x.value()))
-        else: 
-            print("PR is going ot absolute position: {}deg with {} RPM".format(self.dspinBox_deg_on_axis_pr.value(), self.spinB_RPM_pr.value()))
-            
     def overwrite(self, pos):
     # this function should feature an output for the motor position in microsteps at the moment and display it in LCDs
         if pos == 1:
             # get int(self.motor.actual_position) as value for LCD
             print("position up overwritten to new parameter shown by LCD")
-            self.label_pos_u.setStyleSheet("QLabel {color: red;}")
+            self.label_overwrite_u.setStyleSheet("QLabel {color: red;}")
         elif pos == 2:
             print("position down overwritten to parameter shown by LCD")
-            self.label_pos_d.setStyleSheet("QLabel {color: red;}")
+            self.label_overwrite_d.setStyleSheet("QLabel {color: red;}")
         elif pos == 3:
             print("position A overwritten to new parameter shown by LCD")
-            self.label_pos_a.setStyleSheet("QLabel {color: red;}")
+            self.label_overwrite_a.setStyleSheet("QLabel {color: red;}")
         elif pos == 4:
             print("position B overwritten to parameter shown by LCD")
-            self.label_pos_b.setStyleSheet("QLabel {color: red;}")
+            self.label_overwrite_b.setStyleSheet("QLabel {color: red;}")
         elif pos == 5:
             print("position X overwritten to parameter shown by LCD") 
-            self.label_pos_x.setStyleSheet("QLabel {color: red;}")
+            self.label_overwrite_x.setStyleSheet("QLabel {color: red;}")
         elif pos == 6:
             print("position Y overwritten to parameter shown by LCD")
-            self.label_pos_y.setStyleSheet("QLabel {color: red;}")
+            self.label_overwrite_y.setStyleSheet("QLabel {color: red;}")
         elif pos == 7:
             print("position Raman overwritten to parameter shown by LCD")
-            self.label_pos_r.setStyleSheet("QLabel {color: red;}")
+            self.label_overwrite_r.setStyleSheet("QLabel {color: red;}")
         elif pos == 8:
             print("position Ion beam overwritten to parameter shown by LCD")
-            self.label_pos_i.setStyleSheet("QLabel {color: red;}")
+            self.label_overwrite_i.setStyleSheet("QLabel {color: red;}")
         
        
 
         
-        
-    # functions for keyboard control:
-    def key_control(self, mode, event: QKeyEvent) -> None:
-        key_pressed = event.key()
-        self.check()
-        if mode == 1:
-        # functions for leg keyboard control 
-            # fine step left 
-            if key_pressed == Qt.Key_Up:
-                # check if all or single mode is active -> if single is active: which motors 
-                if check_all == True:
-                    # if all motors are selected the number of steps from zbr are taken 
-                    print("all motors taking {} fine steps forwards".format(self.spinB_leg_fine.value()))
-                else:
-                    if check_zbr == True:
-                        print("ZBR: fine step: {} steps done forwards".format(self.spinB_leg_fine.value()))
-                    if check_zbc == True:
-                        print("ZBC: fine step: {} steps done forwards".format(self.spinB_leg_fine.value()))
-                    if check_zdr == True:
-                        print("ZDR: fine step: {} steps done forwards".format(self.spinB_leg_fine.value()))
-                    if check_zdc == True:
-                        print("ZDC: fine step: {} steps done forwards".format(self.spinB_leg_fine.value()))
-            # fine step right
-            elif key_pressed == Qt.Key_Down:
-                # check if all or single mode is active -> if single is active: which motors
-                if check_all == True:
-                    # if all motors are selected the number of steps from zbr are taken 
-                    print("all motors taking {} fine steps backwards".format(self.spinB_leg_fine.value()))
-                else:
-                    if check_zbr == True:
-                        print("ZBR: fine step: {} steps done backwards".format(self.spinB_leg_fine.value()))
-                    if check_zbc == True:
-                        print("ZBC: fine step: {} steps done backwards".format(self.spinB_leg_fine.value()))
-                    if check_zdr == True:
-                        print("ZDR: fine step: {} steps done backwards".format(self.spinB_leg_fine.value()))
-                    if check_zdc == True:
-                        print("ZDC: fine step: {} steps done backwards".format(self.spinB_leg_fine.value()))
-            # coarse step left 
-            elif key_pressed == Qt.Key_Left:
-                # check if all or single mode is active -> if single is active: which motors
-                if check_all == True:
-                    # if all motors are selected the number of steps from zbr are taken 
-                    print("all motors taking {} coarse steps forwards".format(self.spinB_leg_coarse.value()))
-                else:
-                    if check_zbr == True:
-                        print("ZBR: coarse step: {} steps done forwards".format(self.spinB_leg_coarse.value()))
-                    if check_zbc == True:
-                        print("ZBC: coarse step: {} steps done forwards".format(self.spinB_leg_coarse.value()))
-                    if check_zdr == True:
-                        print("ZDR: coarse step: {} steps done forwards".format(self.spinB_leg_coarse.value()))
-                    if check_zdc == True:
-                        print("ZDC: coarse step: {} steps done forwards".format(self.spinB_leg_coarse.value()))
-            # coarse step right
-            elif key_pressed == Qt.Key_Right:
-                # check if all or single mode is active -> if single is active: which motors
-                if check_all == True:
-                    # if all motors are selected the number of steps from zbr are taken 
-                    print("all motors taking {} coarse steps backwards".format(self.spinB_leg_coarse.value()))
-                else:
-                    if check_zbr == True:
-                        print("ZBR: coarse step: {} steps done backwards".format(self.spinB_leg_coarse.value()))
-                    if check_zbc == True:
-                        print("ZBC: coarse step: {} steps done backwards".format(self.spinB_leg_coarse.value()))
-                    if check_zdr == True:
-                        print("ZDR: coarse step: {} steps done backwards".format(self.spinB_leg_coarse.value()))
-                    if check_zdc == True:
-                        print("ZDC: coarse step: {} steps done backwards".format(self.spinB_leg_coarse.value()))
-        if mode == 2:
-        # key controls for x 
-            # fine step forwards
-            if key_pressed == Qt.Key_Up:
-                print("X takes {} fine steps forwards".format(self.spinB_x_fine.value()))
-            # fine step backwards
-            elif key_pressed == Qt.Key_Down:
-                print("X takes {} fine steps backwards".format(self.spinB_x_fine.value()))
-            # coarse step forwards
-            elif key_pressed == Qt.Key_Left:
-                print("X takes {} coarse steps forwards".format(self.spinB_x_coarse.value()))
-            # coarse step backwards
-            elif key_pressed == Qt.Key_Right:
-                print("X takes {} coarse steps backwards".format(self.spinB_x_coarse.value()))
-                
-        if mode == 3:
-        # key controls for pr
-            if key_pressed == Qt.Key_Up:
-                print("PR takes {} fine steps forwards".format(self.spinB_pr_fine.value()))
-            elif key_pressed == Qt.Key_Down:
-                print("PR takes {} fine steps backwards".format(self.spinB_pr_fine.value()))
-            elif key_pressed == Qt.Key_Left:
-                print("PR takes {} coarse steps forwards".format(self.spinB_pr_coarse.value()))
-            elif key_pressed == Qt.Key_Right:
-                print("PR takes {} coarse steps backwards".format(self.spinB_pr_coarse.value()))
-                
-        if mode == 4:
-        # key controls for cr
-            if key_pressed == Qt.Key_Up:
-                print("CR takes {} fine steps forwards".format(self.spinB_cr_fine.value()))
-            elif key_pressed == Qt.Key_Down:
-                print("CR takes {} fine steps backwards".format(self.spinB_cr_fine.value()))
-            elif key_pressed == Qt.Key_Left:
-                print("CR takes {} coarse steps forwards".format(self.spinB_cr_coarse.value()))
-            elif key_pressed == Qt.Key_Right:
-                print("CR takes {} coarse steps backwards".format(self.spinB_cr_coarse.value()))
-                
-        if mode == 5:
-        # key controls for switch
-            if key_pressed == Qt.Key_Up:
-                print("S takes {} fine steps forwards".format(self.spinB_s_fine.value()))
-            elif key_pressed == Qt.Key_Down:
-                print("S takes {} fine steps backwards".format(self.spinB_s_fine.value()))
-            elif key_pressed == Qt.Key_Left:
-                print("S takes {} coarse steps forwards".format(self.spinB_s_coarse.value()))
-            elif key_pressed == Qt.Key_Right:
-                print("S takes {} coarse steps backwards".format(self.spinB_s_coarse.value()))
-            
-            
-        
-    # functions for permanent:
-    def permanent(self, mode):
-        self.check()
-        if mode == 1:
-            if check_all == True:
-                print("all motors are running permanently forwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-            # single mode: check which motor is selected
-            else:
-                self.check() # properties have to be checked again in case of directions change 
-                if check_zbr == True:
-                        print("ZBR is running permanently forwards on {} RPM".format(self.spinBox_RPM_leg.value()))
 
-                if check_zbc == True:
-                        print("ZBC is running permanently forwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-
-                if check_zdr == True:
-                        print("ZDR is running permanently forwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-
-                if check_zdc == True:
-                        print("ZDC is running permanently forwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-        if mode == 2:
-            if check_all == True:
-                print("all motors are running permanently backwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-            # single mode: check which motor is selected
-            else:
-                self.check() # properties have to be checked again in case of directions change 
-                if check_zbr == True:
-                        print("ZBR is running permanently backwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-
-                if check_zbc == True:
-                        print("ZBC is running permanently backwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-
-                if check_zdr == True:
-                        print("ZDR is running permanently backwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-
-                if check_zdc == True:
-                        print("ZDC is running permanently backwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-        if mode == 3:
-            pps = self.pps_calculator()
-            print("X is running permanently forwards on {} RPM".format(self.spinB_RPM_x.value()))
-            #self.motor.motor.rotate(pps)
-        if mode == 4:
-            pps = self.pps_calculator()
-            print("X is running permanently backwards on {} RPM".format(self.spinB_RPM_x.value()))
-            #self.motor.motor.rotate(-pps)
-            
-        if mode  == 5:
-            pps = self.pps_calculator()
-            print("PR is running permanently lefthand on {} RPM".format(self.spinB_RPM_pr.value()))
-            #self.motor.motor.rotate(-pps)
-        if mode == 6:
-            pps = self.pps_calculator()
-            print("PR is running permanently righthand on {} RPM".format(self.spinB_RPM_pr.value()))
-            #self.motor.motor.rotate(-pps)
-            
-    def when_pushed(self, mode):
-        self.check()
-        if mode == 1:
-            if check_all == True:
-                steps_per_min = 1/(400 * self.spinBox_RPM_leg.value()) * 60000
-                self.pushB_forwards_leg.setAutoRepeatInterval(steps_per_min)
-                print("all motors are running forwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-            # single mode: check which motor is selected
-            else:
-                self.check() # properties have to be checked again in case of directions change 
-                if check_zbr == True:
-                    steps_per_min = 1/(400 * self.spinBox_RPM_leg.value()) * 60000
-                    self.pushB_forwards_leg.setAutoRepeatInterval(steps_per_min)
-                    print("ZBR is running forwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-
-                if check_zbc == True:
-                    steps_per_min = 1/(400 * self.spinBox_RPM_leg.value()) * 60000
-                    self.pushB_forwards_leg.setAutoRepeatInterval(steps_per_min)
-                    print("ZBC is running forwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-
-                if check_zdr == True:
-                    steps_per_min = 1/(400 * self.spinBox_RPM_leg.value()) * 60000
-                    self.pushB_forwards_leg.setAutoRepeatInterval(steps_per_min)
-                    print("ZDR is running forwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-
-                if check_zdc == True:
-                    steps_per_min = 1/(400 * self.spinBox_RPM_leg.value()) * 60000
-                    self.pushB_forwards_leg.setAutoRepeatInterval(steps_per_min)
-                    print("ZDC is running forwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-        if mode == 2:
-            if check_all == True:
-                steps_per_min = 1/(400 * self.spinBox_RPM_leg.value()) * 60000
-                self.pushB_backwards_leg.setAutoRepeatInterval(steps_per_min)
-                print("all motors are running backwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-            # single mode: check which motor is selected
-            else:
-                self.check() # properties have to be checked again in case of directions change 
-                if check_zbr == True:
-                        steps_per_min = 1/(400 * self.spinBox_RPM_leg.value()) * 60000
-                        self.pushB_backwards_leg.setAutoRepeatInterval(steps_per_min)
-                        print("ZBR is running backwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-
-                if check_zbc == True:
-                        steps_per_min = 1/(400 * self.spinBox_RPM_leg.value()) * 60000
-                        self.pushB_backwards_leg.setAutoRepeatInterval(steps_per_min)
-                        print("ZBC is running backwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-
-                if check_zdr == True:
-                        steps_per_min = 1/(400 * self.spinBox_RPM_leg.value()) * 60000
-                        self.pushB_backwards_leg.setAutoRepeatInterval(steps_per_min)
-                        print("ZDR is running backwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-
-                if check_zdc == True:
-                        steps_per_min = 1/(400 * self.spinBox_RPM_leg.value()) * 60000
-                        self.pushB_backwards_leg.setAutoRepeatInterval(steps_per_min)
-                        print("ZDC is running backwards on {} RPM".format(self.spinBox_RPM_leg.value()))
-        if mode == 3:
-            steps_per_min = 1/(400 * self.spinB_RPM_x.value()) * 60000
-            self.pushB_forwards_x.setAutoRepeatInterval(steps_per_min)
-            pps = self.pps_calculator()
-            print("X is running forwards on {} RPM".format(self.spinB_RPM_x.value()))
-            # make step 
-        if mode == 4:
-            steps_per_min = 1/(400 * self.spinB_RPM_x.value()) * 60000
-            self.pushB_backwards_x.setAutoRepeatInterval(steps_per_min)
-            pps = self.pps_calculator()
-            print("X is running backwards on {} RPM".format(self.spinB_RPM_x.value()))
-            # make step
-            
-        if mode == 5:
-            steps_per_min = 1/(400 * self.spinB_RPM_pr.value()) * 60000
-            self.pushB_lefthand.setAutoRepeatInterval(steps_per_min)
-            pps = self.pps_calculator()
-            print("PR is running lefthand on {} RPM".format(self.spinB_RPM_pr.value()))
-            # make step
-        if mode == 6:
-            steps_per_min = 1/(400 * self.spinB_RPM_pr.value()) * 60000
-            self.pushB_righthand.setAutoRepeatInterval(steps_per_min)
-            pps = self.pps_calculator()
-            print("PR is running righthand on {} RPM".format(self.spinB_RPM_pr.value()))
-            # make step
-        
-    def stop(self):
-        #self.motor.motor.stop()
-        print("Motor stopped!")    
-    
-        
-    # function for specimen switch specimen
-    def next_specimen(self):
-        print("take next specimen from mag")
-        
-    # function for invert motor direction:
-        # maybe by a simple command from given tmcl 
                 
 def run_app():   
     app = 0

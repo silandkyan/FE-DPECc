@@ -70,6 +70,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.mode_single.setChecked(True)
         self.mode = 1
         # Set default motor that is active initially:
+
         self.module = module_L
         self.motor = module_L.motor
         self.active_modules = [self.module]

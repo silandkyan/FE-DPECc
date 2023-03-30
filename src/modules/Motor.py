@@ -39,15 +39,15 @@ class Motor(TMCM1260):
         for inst in cls.instances:
             # Get the moduleID from the Trinamic module global parameters, then
             # assign motor variable names to moduleIDs:
-            if inst.moduleID == 11:
-                module_L = inst
-                print('Variable name \"motor_L\" assigned to module', inst.moduleID)
-            elif inst.moduleID == 12:
+            #if inst.moduleID == 11:
+                #module_L = inst
+                #print('Variable name \"motor_L\" assigned to module', inst.moduleID)
+            if inst.moduleID == 12:
                 module_R = inst
                 print('Variable name \"motor_R\" assigned to module', inst.moduleID)
             #elif moduleID == 3:
             #    motor_C =  motor_list[i]
-        return module_L, module_R#, motor_C # add motors here...
+        return module_R#, motor_C # add motors here...
     
     
     def __init__(self, port):
