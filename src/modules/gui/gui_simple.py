@@ -245,6 +245,7 @@ class Window(QMainWindow, Ui_MainWindow):
             pos = module.module_positions[pos_idx]
             module.motor.move_to(pos, pps)
             print('go to', pos)
+        for module in self.active_modules:
             # Check if motor is active:
             while not module.motor.get_position_reached():
                 # Prevent blocking of the application by the while loop:
