@@ -6,7 +6,14 @@ Created on Thu Feb 23 16:37:43 2023
 @author: pgross
 """
 
+### TO DO
+
+### refresh active modules when switching between single/multi tabs! or make consistent
+### clean up all the mess!
+
+
 import sys
+import time
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
 from pytrinamic.connections import ConnectionManager
 from .main_window_simple_ui import Ui_MainWindow
@@ -39,6 +46,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # setup functions:
         self.set_allowed_ranges()
         self.set_default_values()
+        self.refresh_lcd_displays()
         self.connectSignalsSlots()
         self.show()
         
@@ -69,6 +77,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.module = module_L
         self.motor = module_L.motor
         self.active_modules = [self.module]
+        # # list of stored positions [A, B]:
+        # self.module_positions = [0, 0]
         
     def connectSignalsSlots(self):
         '''This function defines the widget behaviour with Qt's 
@@ -81,15 +91,20 @@ class Window(QMainWindow, Ui_MainWindow):
         self.mode_perm.pressed.connect(lambda: self.set_mode(3))
         # Status LCDs:
         # self.lcd_current_1.display(module_L.motor.actual_position)
+        # Store current position:
+        self.storeButton.clicked.connect(lambda: self.store_pos(0))
+        # Go to stored position:
+        self.goto_button.clicked.connect(lambda: self.goto(0))
+        #self.goto_2.clicked.connect(lambda: self.goto(module_R.motor, round(self.lcd_stored_2.value())))
         
         ### single ###
         # Motor selection radioButtons:
         self.motor1_radioButton.pressed.connect(lambda: self.select_module(module_L))
         self.motor2_radioButton.pressed.connect(lambda: self.select_module(module_R))
         # Rotation Buttons:
-        self.s_left.clicked.connect(self.left)
-        self.s_right.clicked.connect(self.right)
-        self.s_stop.clicked.connect(self.stop_motor)
+        self.s_left.clicked.connect(lambda: self.multi_module_control(self.left))
+        self.s_right.clicked.connect(lambda: self.multi_module_control(self.right))
+        self.s_stop.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
         
         ### multi ###
         # Motor selection checkBoxes:
@@ -104,9 +119,37 @@ class Window(QMainWindow, Ui_MainWindow):
         '''Module selection for single module control.'''
         self.module = m
         self.motor = self.module.motor
+        # override list of active modules:
+        self.active_modules = [self.module]
         print('Selected motor: Motor', self.module.moduleID)
         #print(self.module.status_message())
         
+    def refresh_module_list(self):
+        '''Module selection for multi module use.'''
+        # clear list of active modules:
+        self.active_modules = []
+        # write all possible module checkboxes to a list:
+        boxlist = [self.motor1_checkBox, self.motor2_checkBox]
+        # iterate over all checked boxes:
+        for box in boxlist:
+            if box.isChecked() == True:
+                # add all selected modules to the active list:
+                if box == self.motor1_checkBox:
+                    self.active_modules.append(module_L)
+                elif box == self.motor2_checkBox:
+                    self.active_modules.append(module_R)
+                # elif box == self.motor3_checkBox:
+                #     self.active_modules.append(module_C)
+                # ...
+        # update single active module and motor:
+        if len(self.active_modules) == 1:
+            self.module = self.active_modules[0]
+            self.motor = self.module.motor
+        # Status message:
+        print('Selected motor(s):')
+        for module in self.active_modules:
+            print('Motor', module.moduleID)
+            
     def set_mode(self, mode):
         self.mode = mode
         print('Mode:', mode)
@@ -129,48 +172,69 @@ class Window(QMainWindow, Ui_MainWindow):
         elif self.mode == 3:
             self.perm_rot_right()
             
-    def refresh_module_list(self):
-        '''Module selection for multi module use.'''
-        # clear list of active modules:
-        self.active_modules = []
-        # write all possible module checkboxes to a list:
-        boxlist = [self.motor1_checkBox, self.motor2_checkBox]
-        # iterate over all checked boxes:
-        for box in boxlist:
-            if box.isChecked() == True:
-                # add all selected modules to the active list:
-                if box == self.motor1_checkBox:
-                    self.active_modules.append(module_L)
-                elif box == self.motor2_checkBox:
-                    self.active_modules.append(module_R)
-                # elif box == self.motor3_checkBox:
-                #     self.active_modules.append(module_C)
-                # ...
-        # Status message:
-        print('Selected motor(s):')
+    def store_pos(self, pos_idx):
         for module in self.active_modules:
-            print('Motor', module.moduleID)
+            if module.motor == module_L.motor:
+                module.module_positions[pos_idx] = module.motor.actual_position
+                self.lcd_stored_1.display(module.module_positions[pos_idx])
+            elif module.motor == module_R.motor:
+                module.module_positions[pos_idx] = module.motor.actual_position
+                self.lcd_stored_2.display(module.module_positions[pos_idx])
             
     def refresh_lcd_displays(self):
         '''This function can be called to update the status LCDs during 
         motor operation. It is active as long as the motors are active.'''
+        self.lcd_current_1.display(module_L.motor.actual_position)
+        self.lcd_current_2.display(module_R.motor.actual_position)
+        # expand list for more modules...
+        # time.sleep(0.1)
+        
+    def single_module_control(self, action):
+        # initial refresh:
+        self.refresh_lcd_displays()
+        action()
         # Check if motor is active:
-        while not self.motor.get_position_reached():
+        while not self.module.motor.get_position_reached():
             # Prevent blocking of the application by the while loop:
             QApplication.processEvents()
-            # update LCD displays:
-            self.lcd_current_1.display(module_L.motor.actual_position)
-            self.lcd_current_2.display(module_R.motor.actual_position)
-            ### does not work in multi motor mode! FIND SOLUTION
-        
+            # Refresh LCD
+            self.refresh_lcd_displays()
+            
     def multi_module_control(self, action):
         '''Add multi motor control capability. Argument "action" is one of
         the motor control functions below (e.g., single_step).'''
         # iterate over all active modules and apply the action function:
         for module in self.active_modules:
+            # initial refresh:
+            self.refresh_lcd_displays()
+            # set module and motor:
             self.module = module
             self.motor = module.motor
             action()
+        # iterate over all active modules and refresh LCDs:
+        for module in self.active_modules:
+            # Check if motor is active:
+            while not module.motor.get_position_reached():
+                # Prevent blocking of the application by the while loop:
+                QApplication.processEvents()
+                # Refresh LCD
+                self.refresh_lcd_displays()
+                  
+    def goto(self, pos_idx):
+        # iterate over all active modules and apply the action function:
+        for module in self.active_modules:
+            # initial refresh:
+            #self.refresh_lcd_displays()
+            pps = round(self.rpmBox.value() * module.msteps_per_rev/60)
+            pos = module.module_positions[pos_idx]
+            module.motor.move_to(pos, pps)
+            print('go to', pos)
+            # Check if motor is active:
+            while not module.motor.get_position_reached():
+                # Prevent blocking of the application by the while loop:
+                QApplication.processEvents()
+                # Refresh LCD
+                self.refresh_lcd_displays()
             
     def single_step_left(self):
         '''Single fullstep mode. Required amount of msteps and pulse freqency
@@ -182,8 +246,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.motor.move_by(-msteps, pps)
         # Status message:
         print('single fullstep left')
-        print(-msteps)
-        self.refresh_lcd_displays()
+        print('= rotate', -msteps)
+        # self.refresh_lcd_displays()
         
     def single_step_right(self):
         '''As above.'''
@@ -192,8 +256,8 @@ class Window(QMainWindow, Ui_MainWindow):
         # move by needed amount of msteps at pps velocity in positive direction:
         self.motor.move_by(msteps, pps)
         print('single fullstep right')
-        print(msteps)
-        self.refresh_lcd_displays()
+        print('= rotate', msteps)
+        # self.refresh_lcd_displays()
         
     def multi_step_left(self):
         '''Multiple fullsteps mode. Required amount of msteps and pulse freqency
@@ -225,7 +289,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.motor.rotate(-pps)
         # Status message:
         print('Rotating left with', str(self.rpmBox.value()), 'rpm')
-        self.refresh_lcd_displays()
+        # self.refresh_lcd_displays()
         
     def perm_rot_right(self):
         '''As above.'''
@@ -234,13 +298,13 @@ class Window(QMainWindow, Ui_MainWindow):
         self.motor.rotate(pps)
         # Status message:
         print('Rotating right with', str(self.rpmBox.value()), 'rpm')
-        self.refresh_lcd_displays()
+        # self.refresh_lcd_displays()
         
     def stop_motor(self):
         '''Stop signal, can always be sent to the motor.'''
         self.module.motor.stop()
         print('Motor', self.module.moduleID, 'stopped!')
-        self.refresh_lcd_displays()
+        # self.refresh_lcd_displays()
         
     def set_allowed_ranges(self):
         '''Specify allowed min-max ranges for values that can 
