@@ -74,9 +74,10 @@ class Window(QMainWindow, Ui_MainWindow):
         self.mode_single.setChecked(True)
         self.mode = 1
         # Set default motor and module that is active initially:
-        self.module = module_L
-        self.motor = module_L.motor
-        self.active_modules = [self.module]
+        self.reset_module_list()
+        # self.module = module_L
+        # self.motor = module_L.motor
+        # self.active_modules = [self.module]
         # list of store_positions LCDs:
         self.store_lcds = [[self.lcd_stored_1A, self.lcd_stored_1B],
                            [self.lcd_stored_2A, self.lcd_stored_2B]] # expand list if needed...
@@ -90,6 +91,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.mode_single.pressed.connect(lambda: self.set_mode(1))
         self.mode_multi.pressed.connect(lambda: self.set_mode(2))
         self.mode_perm.pressed.connect(lambda: self.set_mode(3))
+        # Change mode tag:
+        self.tabWidget.currentChanged.connect(self.reset_module_list)
         # Status LCDs:
         # self.lcd_current_1.display(module_L.motor.actual_position)
         # Store current position:
@@ -126,6 +129,17 @@ class Window(QMainWindow, Ui_MainWindow):
         self.active_modules = [self.module]
         print('Selected motor: Motor', self.module.moduleID)
         #print(self.module.status_message())
+        
+    def reset_module_list(self):
+        '''Set default motor and module that is active initially:'''
+        self.module = module_L
+        self.motor = module_L.motor
+        # clear list of active modules:
+        self.active_modules = [self.module]
+        # set buttons correctly:
+        self.motor1_radioButton.setChecked(True)
+        self.motor1_checkBox.setChecked(True)
+        self.motor2_checkBox.setChecked(False)
         
     def refresh_module_list(self):
         '''Module selection for multi module use.'''
