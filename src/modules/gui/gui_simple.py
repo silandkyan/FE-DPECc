@@ -77,8 +77,9 @@ class Window(QMainWindow, Ui_MainWindow):
         self.module = module_L
         self.motor = module_L.motor
         self.active_modules = [self.module]
-        # # list of stored positions [A, B]:
-        # self.module_positions = [0, 0]
+        # list of store_positions LCDs:
+        self.store_lcds = [[self.lcd_stored_1A, self.lcd_stored_1B],
+                           [self.lcd_stored_2A, self.lcd_stored_2B]] # expand list if needed...
         
     def connectSignalsSlots(self):
         '''This function defines the widget behaviour with Qt's 
@@ -92,9 +93,11 @@ class Window(QMainWindow, Ui_MainWindow):
         # Status LCDs:
         # self.lcd_current_1.display(module_L.motor.actual_position)
         # Store current position:
-        self.storeButton.clicked.connect(lambda: self.store_pos(0))
+        self.storeButtonA.clicked.connect(lambda: self.store_pos(0))
+        self.storeButtonB.clicked.connect(lambda: self.store_pos(1))
         # Go to stored position:
-        self.goto_button.clicked.connect(lambda: self.goto(0))
+        self.goto_buttonA.clicked.connect(lambda: self.goto(0))
+        self.goto_buttonB.clicked.connect(lambda: self.goto(1))
         #self.goto_2.clicked.connect(lambda: self.goto(module_R.motor, round(self.lcd_stored_2.value())))
         
         ### single ###
@@ -174,12 +177,11 @@ class Window(QMainWindow, Ui_MainWindow):
             
     def store_pos(self, pos_idx):
         for module in self.active_modules:
+            module.module_positions[pos_idx] = module.motor.actual_position
             if module.motor == module_L.motor:
-                module.module_positions[pos_idx] = module.motor.actual_position
-                self.lcd_stored_1.display(module.module_positions[pos_idx])
+                self.store_lcds[0][pos_idx].display(module.module_positions[pos_idx])
             elif module.motor == module_R.motor:
-                module.module_positions[pos_idx] = module.motor.actual_position
-                self.lcd_stored_2.display(module.module_positions[pos_idx])
+                self.store_lcds[1][pos_idx].display(module.module_positions[pos_idx])
             
     def refresh_lcd_displays(self):
         '''This function can be called to update the status LCDs during 
