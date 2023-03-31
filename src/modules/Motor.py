@@ -61,9 +61,9 @@ class Motor(TMCM1260):
         ### MOTOR SETUP ###
         
     def init_drive_settings(self, motor):
-        '''Set initial motor drive settings. Values are in pps and are now
-        scaled to microstep resolution.'''
-        motor.drive_settings.max_current = 5
+        '''Set initial motor drive settings. Speed values are in pps and are
+        now scaled to microstep resolution.'''
+        motor.drive_settings.max_current = 50
         motor.drive_settings.standby_current = 0
         motor.drive_settings.boost_current = 0
         # Fullsteps/revolution:

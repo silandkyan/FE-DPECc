@@ -7,10 +7,11 @@ Created on Thu Feb 23 16:37:43 2023
 """
 
 ### TO DO
-
-### refresh active modules when switching between single/multi tabs! or make consistent
-### clean up all the mess!
-
+# clean up all the mess!
+# improve module assignment by using a module_list?
+# add multi_module_control capability to goto and store_pos?
+# stop motors when program exits
+# find good values for max_current parameter for both motor types...
 
 import sys
 import time
@@ -74,10 +75,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.mode_single.setChecked(True)
         self.mode = 1
         # Set default motor and module that is active initially:
-        self.reset_module_list()
-        # self.module = module_L
-        # self.motor = module_L.motor
-        # self.active_modules = [self.module]
+        self.reset_active_modules()
         # list of store_positions LCDs:
         self.store_lcds = [[self.lcd_stored_1A, self.lcd_stored_1B],
                            [self.lcd_stored_2A, self.lcd_stored_2B]] # expand list if needed...
@@ -91,8 +89,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.mode_single.pressed.connect(lambda: self.set_mode(1))
         self.mode_multi.pressed.connect(lambda: self.set_mode(2))
         self.mode_perm.pressed.connect(lambda: self.set_mode(3))
-        # Change mode tag:
-        self.tabWidget.currentChanged.connect(self.reset_module_list)
+        # reset active modules when mode tab is Changed:
+        self.tabWidget.currentChanged.connect(self.reset_active_modules)
         # Status LCDs:
         # self.lcd_current_1.display(module_L.motor.actual_position)
         # Store current position:
@@ -114,8 +112,8 @@ class Window(QMainWindow, Ui_MainWindow):
         
         ### multi ###
         # Motor selection checkBoxes:
-        self.motor1_checkBox.toggled.connect(self.refresh_module_list)
-        self.motor2_checkBox.toggled.connect(self.refresh_module_list)
+        self.motor1_checkBox.toggled.connect(self.refresh_active_modules)
+        self.motor2_checkBox.toggled.connect(self.refresh_active_modules)
         # Rotation Buttons:
         self.m_left.clicked.connect(lambda: self.multi_module_control(self.left))
         self.m_right.clicked.connect(lambda: self.multi_module_control(self.right))
@@ -130,7 +128,7 @@ class Window(QMainWindow, Ui_MainWindow):
         print('Selected motor: Motor', self.module.moduleID)
         #print(self.module.status_message())
         
-    def reset_module_list(self):
+    def reset_active_modules(self):
         '''Set default motor and module that is active initially:'''
         self.module = module_L
         self.motor = module_L.motor
@@ -140,8 +138,9 @@ class Window(QMainWindow, Ui_MainWindow):
         self.motor1_radioButton.setChecked(True)
         self.motor1_checkBox.setChecked(True)
         self.motor2_checkBox.setChecked(False)
+        # expand list if needed...
         
-    def refresh_module_list(self):
+    def refresh_active_modules(self):
         '''Module selection for multi module use.'''
         # clear list of active modules:
         self.active_modules = []
@@ -190,31 +189,39 @@ class Window(QMainWindow, Ui_MainWindow):
             self.perm_rot_right()
             
     def store_pos(self, pos_idx):
+        '''Store position of current active modules in a special instance
+        variable for later use. Argument pos_idx (type=int) refers to the 
+        index of the "stored position" column.'''
+        # iterate over active modules:
         for module in self.active_modules:
+            # Save current module position.
             module.module_positions[pos_idx] = module.motor.actual_position
+            # find correct LCD for display of saved position value using the
+            # store_lcds matrix-like list:
+            # 1st dimension = row_idx (= module_idx),
+            # 2nd dimension = col_idx (= pos_idx)
             if module.motor == module_L.motor:
                 self.store_lcds[0][pos_idx].display(module.module_positions[pos_idx])
             elif module.motor == module_R.motor:
                 self.store_lcds[1][pos_idx].display(module.module_positions[pos_idx])
             
     def refresh_lcd_displays(self):
-        '''This function can be called to update the status LCDs during 
-        motor operation. It is active as long as the motors are active.'''
+        '''Update the status LCDs.'''
         self.lcd_current_1.display(module_L.motor.actual_position)
         self.lcd_current_2.display(module_R.motor.actual_position)
         # expand list for more modules...
         # time.sleep(0.1)
         
-    def single_module_control(self, action):
-        # initial refresh:
-        self.refresh_lcd_displays()
-        action()
-        # Check if motor is active:
-        while not self.module.motor.get_position_reached():
-            # Prevent blocking of the application by the while loop:
-            QApplication.processEvents()
-            # Refresh LCD
-            self.refresh_lcd_displays()
+    # def single_module_control(self, action):
+    #     # initial refresh:
+    #     self.refresh_lcd_displays()
+    #     action()
+    #     # Check if motor is active:
+    #     while not self.module.motor.get_position_reached():
+    #         # Prevent blocking of the application by the while loop:
+    #         QApplication.processEvents()
+    #         # Refresh LCD
+    #         self.refresh_lcd_displays()
             
     def multi_module_control(self, action):
         '''Add multi motor control capability. Argument "action" is one of
@@ -223,7 +230,7 @@ class Window(QMainWindow, Ui_MainWindow):
         for module in self.active_modules:
             # initial refresh:
             self.refresh_lcd_displays()
-            # set module and motor:
+            # set module and motor: IS THIS NEEDED?
             self.module = module
             self.motor = module.motor
             action()
