@@ -10,27 +10,35 @@ Created on Thu Feb 23 16:37:43 2023
 # clean up all the mess!
 # improve module assignment by using a module_list?
 # add multi_module_control capability to goto and store_pos?
-# stop motors when program exits
 # find good values for max_current parameter for both motor types...
 
 import sys
-import time
+#import time
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
 from pytrinamic.connections import ConnectionManager
 from .main_window_simple_ui import Ui_MainWindow
 from ..Motor import Motor
 
 
-### Motor setup and assignment ###
+### Module setup and assignment ###
 port_list = ConnectionManager().list_connections()
 for port in port_list:
     Motor(port)
 
-module_L, module_R = Motor.assign_modules()
-# module_L = Motor.assign_modules()
+# define list of all moduleIDs and sort connected modules accordingly:
+ID_list = [11, 12, 13, 14, 15, 21, 22, 23, 24]
+module_list = Motor.sort_module_list(ID_list)
 
-print(module_L.status_message())
-print(module_R.status_message())
+'''Choose names for the modules. Make sure to correctly match the correct 
+module with its descriptive variable name (e.g. motor_L) below; 
+adjust if needed.'''
+module_L = module_list[0]
+module_R = module_list[1]
+# module_C = Motor.instances[2]
+# expand list as needed...
+
+# for module in module_list:
+#     print(module.status_message())
 
 
 ### Class definition ###
