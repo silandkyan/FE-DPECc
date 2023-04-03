@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>901</width>
-    <height>746</height>
+    <width>903</width>
+    <height>685</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
      <enum>Qt::NoFocus</enum>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="legs">
      <attribute name="title">
@@ -673,37 +673,13 @@
      <rect>
       <x>440</x>
       <y>440</y>
-      <width>331</width>
+      <width>451</width>
       <height>251</height>
      </rect>
     </property>
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QSpinBox" name="spinB_max_RPM">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>220</y>
-       <width>81</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>7</pointsize>
-      </font>
-     </property>
-     <property name="minimum">
-      <number>1</number>
-     </property>
-     <property name="maximum">
-      <number>1000</number>
-     </property>
-     <property name="value">
-      <number>120</number>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_41">
      <property name="geometry">
       <rect>
@@ -725,10 +701,10 @@
     <widget class="QLabel" name="label_10">
      <property name="geometry">
       <rect>
-       <x>250</x>
-       <y>120</y>
+       <x>320</x>
+       <y>110</y>
        <width>31</width>
-       <height>41</height>
+       <height>31</height>
       </rect>
      </property>
      <property name="font">
@@ -795,24 +771,6 @@
       <string>coarse</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_45">
-     <property name="geometry">
-      <rect>
-       <x>110</x>
-       <y>220</y>
-       <width>68</width>
-       <height>19</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>7</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>max RPM</string>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_40">
      <property name="geometry">
       <rect>
@@ -831,27 +789,6 @@
       <string>keyboard control: 
 press up and down for fine steps 
 press left and right for coarse steps </string>
-     </property>
-    </widget>
-    <widget class="QDoubleSpinBox" name="spinB_mm_per_rev">
-     <property name="geometry">
-      <rect>
-       <x>180</x>
-       <y>100</y>
-       <width>61</width>
-       <height>25</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>7</pointsize>
-      </font>
-     </property>
-     <property name="singleStep">
-      <double>0.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>0.500000000000000</double>
      </property>
     </widget>
     <widget class="QSpinBox" name="spinB_coarse">
@@ -878,29 +815,11 @@ press left and right for coarse steps </string>
       <number>10</number>
      </property>
     </widget>
-    <widget class="QLabel" name="label_44">
-     <property name="geometry">
-      <rect>
-       <x>250</x>
-       <y>100</y>
-       <width>91</width>
-       <height>19</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>7</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>mm per rev</string>
-     </property>
-    </widget>
     <widget class="QSpinBox" name="spinB_mstep_res">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>160</y>
+       <x>250</x>
+       <y>30</y>
        <width>31</width>
        <height>25</height>
       </rect>
@@ -926,8 +845,8 @@ press left and right for coarse steps </string>
     <widget class="QPushButton" name="pushB_invert">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>190</y>
+       <x>250</x>
+       <y>150</y>
        <width>101</width>
        <height>31</height>
       </rect>
@@ -944,9 +863,9 @@ press left and right for coarse steps </string>
     <widget class="QLabel" name="label_43">
      <property name="geometry">
       <rect>
-       <x>60</x>
-       <y>160</y>
-       <width>171</width>
+       <x>290</x>
+       <y>30</y>
+       <width>141</width>
        <height>19</height>
       </rect>
      </property>
@@ -962,10 +881,10 @@ press left and right for coarse steps </string>
     <widget class="QSpinBox" name="spinB_RPM">
      <property name="geometry">
       <rect>
-       <x>180</x>
-       <y>130</y>
-       <width>51</width>
-       <height>25</height>
+       <x>250</x>
+       <y>110</y>
+       <width>61</width>
+       <height>31</height>
       </rect>
      </property>
      <property name="font">
@@ -975,6 +894,48 @@ press left and right for coarse steps </string>
      </property>
      <property name="value">
       <number>30</number>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spinB_max_RPM">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>70</y>
+       <width>81</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>1000</number>
+     </property>
+     <property name="value">
+      <number>120</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_45">
+     <property name="geometry">
+      <rect>
+       <x>340</x>
+       <y>70</y>
+       <width>68</width>
+       <height>19</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>max RPM</string>
      </property>
     </widget>
    </widget>
@@ -1644,7 +1605,7 @@ press left and right for coarse steps </string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>901</width>
+     <width>903</width>
      <height>31</height>
     </rect>
    </property>

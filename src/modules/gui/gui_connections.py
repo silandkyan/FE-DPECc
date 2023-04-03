@@ -17,6 +17,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QShortcut
 from modules.gui.main_window_ui import Ui_MainWindow
+import time 
 
 from ..Motor import Motor 
 from pytrinamic.connections import ConnectionManager
@@ -66,13 +67,24 @@ class Window(QMainWindow, Ui_MainWindow):
     # if a max RPM spinBox changes its value, the maximum of the mastered spinBoxes change accordingly
         # connect if a master RPM spinBox from legs changes 
         self.spinB_max_RPM.valueChanged.connect(self.RPM_master)
+        self.spinB_RPM.valueChanged.connect(self.pps_calculator)
         # connect if a master RPM spinBox from x changes
         self.refresh_motor_list(1)
         # self.module = module_R
-        # self.module.motor = module_R.motor
+        # self.module = module_R.motor
         # self.active_modules = [self.module]
-
-        
+        self.store_lcds = [[self.lcd_A_zbr, self.lcd_B_zbr, self.lcd_C_zbr],
+                           [self.lcd_A_zbc, self.lcd_B_zbc, self.lcd_C_zbc],
+                           [self.lcd_A_zdr, self.lcd_B_zdr, self.lcd_C_zdr],
+                           [self.lcd_A_zdc, self.lcd_B_zdc, self.lcd_C_zdc],
+                           [self.lcd_A_x, self.lcd_B_x, self.lcd_C_x],
+                           [self.lcd_A_pr, self.lcd_B_pr, self.lcd_C_pr],
+                           [self.lcd_A_cr, self.lcd_B_cr, self.lcd_C_cr],
+                           [self.lcd_A_s, self.lcd_B_s, self.lcd_C_s]]
+        # hardware config takes in the mm or deg values shown by absolute pos spinBox 
+        # done by one revolution of motor on specific axis for x and pr
+        self.hardware_config = [0, 0, 0, 0, 0, 0, 0, 0]
+                                
     def RPM_master(self):
         max_RPM = self.spinB_max_RPM.value()
         self.spinBox_RPM.setMaximum(max_RPM)
@@ -86,56 +98,29 @@ class Window(QMainWindow, Ui_MainWindow):
         self.msteps = msteps
     
     def connectSignalsSlots(self): 
+        # given parameters represent the coulmn index 
+        self.pushB_store_A.clicked.connect(lambda: self.store_pos(0))
+        self.pushB_store_B.clicked.connect(lambda: self.store_pos(1))
+        self.pushB_store_C.clicked.connect(lambda: self.store_pos(2))
     # connections for positional pushButtons
         # go to position leg 
-        self.pushB_pos_u.clicked.connect(lambda: self.multi_module_control(self.go_to(1)))
-        self.pushB_pos_d.clicked.connect(lambda: self.multi_module_control(self.go_to(2)))
-        # go to position x 
-        self.pushB_pos_a.clicked.connect(lambda: self.multi_module_control(self.go_to(3)))
-        self.pushB_pos_b.clicked.connect(lambda: self.multi_module_control(self.go_to(4)))
-        # go to position pr
-        self.pushB_pos_x.clicked.connect(lambda: self.multi_module_control(self.go_to(5)))
-        self.pushB_pos_y.clicked.connect(lambda: self.multi_module_control(self.go_to(6)))
-        # go to position cr
-        self.pushB_pos_r.clicked.connect(lambda: self.multi_module_control(self.go_to(7)))
-        self.pushB_pos_i.clicked.connect(lambda: self.multi_module_control(self.go_to(8)))
+        self.pushB_go_to_A.clicked.connect(lambda: self.goto(0))
+        self.pushB_go_to_B.clicked.connect(lambda: self.goto(1))
+        self.pushB_go_to_C.clicked.connect(lambda: self.goto(2))
         
     # connections for absolute position pushButtons:
         # absolute for x
-        #self.pushB_start_x.clicked.connect(lambda: self.select_module(module_x))
-        self.pushB_start_x.clicked.connect(lambda: self.go_to(9))
+        self.pushB_start_x.clicked.connect(lambda: self.abs_pos(0))
         self.pushB_stop_x.clicked.connect(self.stop_motor)
         #ablsolute for pr and cr
-        self.pushB_start_pr_cr.clicked.connect(lambda: self.multi_module_control(self.go_to(10)))
+        self.pushB_start_pr_cr.clicked.connect(lambda: self.abs_pos(1))
         self.pushB_stop_pr_cr.clicked.connect(self.stop_motor)
         
+        self.tabWidget.currentChanged.connect(self.reset_active_modules)
     # connections for specimen switch
         # self.pushB_switch.clicked.connect(self.next_specimen)
     
-        
-    # connections for the overwrite functions:
-        # connnecitons for leg  position overwrite 
-        self.shortcut = QShortcut(QKeySequence('Ctrl+U'), self)
-        self.shortcut.activated.connect(lambda: self.overwrite(1))
-        self.shortcut = QShortcut(QKeySequence('Ctrl+D'), self)
-        self.shortcut.activated.connect(lambda: self.overwrite(2))
-        # connections for x position overwrite 
-        self.shortcut = QShortcut(QKeySequence('Ctrl+A'), self)
-        self.shortcut.activated.connect(lambda: self.overwrite(3))
-        self.shortcut = QShortcut(QKeySequence('Ctrl+B'), self)
-        self.shortcut.activated.connect(lambda: self.overwrite(4))
-        # connections for pr position overwrite 
-        self.shortcut = QShortcut(QKeySequence('Ctrl+X'), self)
-        self.shortcut.activated.connect(lambda: self.overwrite(5))
-        self.shortcut = QShortcut(QKeySequence('Ctrl+Y'), self)
-        self.shortcut.activated.connect(lambda: self.overwrite(6))
-        # connections for cr overwrite 
-        self.shortcut = QShortcut(QKeySequence('Ctrl+R'), self)
-        self.shortcut.activated.connect(lambda: self.overwrite(7))
-        self.shortcut = QShortcut(QKeySequence('Ctrl+I'), self)
-        self.shortcut.activated.connect(lambda: self.overwrite(8))
-            
-            
+    
         # self.radioB_permanent_when_pushed.pressed.connect(lambda: self.set_mode(1))
         
         
@@ -151,8 +136,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.checkB_zdr.toggled.connect(lambda: self.refresh_motor_list(2))
         self.checkB_zdc.toggled.connect(lambda: self.refresh_motor_list(2))
         
-        self.checkB_pr.toggled.connect(lambda: self.refresh_motor_list(2))
-        self.checkB_cr.toggled.connect(lambda: self.refresh_motor_list(2))
+        # self.checkB_pr.toggled.connect(lambda: self.refresh_motor_list(2))
+        # self.checkB_cr.toggled.connect(lambda: self.refresh_motor_list(2))
         
         # connections for the individual buttons
         #self.pushB_upwards1.clicked.connect(lambda: self.multi_module_control(self.permanent_left))
@@ -208,21 +193,67 @@ class Window(QMainWindow, Ui_MainWindow):
         #self.pushB_switch.clicked.connect(self.permanent_left)
 
         
+    def store_pos(self, pos_idx):
+        '''Store position of current active modules in a special instance
+        variable for later use. Argument pos_idx (type=int) refers to the 
+        index of the "stored position" column.'''
+        # iterate over active modules:
+        for module in self.active_modules:
+            # Save current module position.
+            module.module_positions[pos_idx] = module.motor.actual_position
+            # find correct LCD for display of saved position value using the
+            # store_lcds matrix-like list:
+            # 1st dimension = row_idx (= module_idx),
+            # 2nd dimension = col_idx (= pos_idx)
+            # if module.motor == module_zbr.motor:
+            #     self.store_lcds[0][pos_idx].display(module.module_positions[pos_idx])
+            # elif module.motor == module_zbc.motor:
+            #     self.store_lcds[1][pos_idx].display(module.module_positions[pos_idx])
+            # elif module.motor == module_zdr.motor:
+            #     self.store_lcds[2][pos_idx].display(module.module_positions[pos_idx])
+            # elif module.motor == module_zdc.motor:
+            #     self.store_lcds[3][pos_idx].display(module.module_positions[pos_idx])
+            # elif module.motor == module_x.motor:
+            #     self.store_lcds[4][pos_idx].display(module.module_positions[pos_idx])
+            # elif module.motor == module_pr.motor:
+            #     self.store_lcds[5][pos_idx].display(module.module_positions[pos_idx])
+            # elif module.motor == module_cr.motor:
+            #     self.store_lcds[7][pos_idx].display(module.module_positions[pos_idx])
+            # elif module.motor == module_s.motor:
+            #     self.store_lcds[8][pos_idx].display(module.module_positions[pos_idx])
+
+
     def select_module(self, m):
         '''Module selection for single module use.'''
         self.module = m
         self.motor = self.module.motor
+        # override list of active modules:
+        self.active_modules = [self.module]
         print('Selected motor: Motor', self.module.moduleID)
         #print(self.module.status_message()) 
 
     # def set_mode(self, mode):
     #     self.mode = mode
     #     print('Mode:', mode)
-        
+    
+    def reset_active_modules(self):
+        if self.tabWidget.currentIndex() == 0:
+            self.refresh_motor_list(1)
+            print('module legs selected')
+        if self.tabWidget.currentIndex() == 1:
+            #self.select_module(module_x)
+            print('module x selected')
+        if self.tabWidget.currentIndex() == 2:
+            #self.select_module(module_pr)
+            print('module pr selected')
+        if self.tabWidget.currentIndex() == 3:
+            #self.select_module(module_s)
+            print('module s selected')
+            
     def refresh_motor_list(self, select):
         self.active_modules = []
-        boxlist = [self.checkB_zbr, self.checkB_zbc,self.checkB_zdr, self.checkB_zdc,
-                        self.checkB_pr, self.checkB_cr]
+        boxlist = [self.checkB_zbr, self.checkB_zbc,self.checkB_zdr, self.checkB_zdc]
+                        
         if select == 1:
             #self.active_modules.append(module_zbr, module_zbc) #, module_zdr, module_zdc
             print('All leg motors are selected')                              
@@ -234,7 +265,7 @@ class Window(QMainWindow, Ui_MainWindow):
                         #self.active_modules.append(module_R)
                         print('ZBR appended')
                     if box == self.checkB_zbc:  
-                        #self.active_modules.append(module_R)
+                        #self.active_modules.append(module_L)
                         print('ZBC appended')
                     if box == self.checkB_zdr:                   
                         #self.active_modules.append(module_zdr)
@@ -242,16 +273,11 @@ class Window(QMainWindow, Ui_MainWindow):
                     if box == self.checkB_zdc:
                         #self.active_modules.append(module_zdc)
                         print('ZDC appended')
-                    if box == self.checkB_pr:                   
-                        #self.active_modules.append(module_pr)
-                        self.radioB_all_motors.setChecked(True) # calling this function makes sure, when working with 
-                        self.all_legs_setup()                   # pr/cr the leg motors are deleted from active module list
-                        print('PR appended')
-                    if box == self.checkB_cr:                   
-                        #self.active_modules.append(module_cr)
-                        self.radioB_all_motors.setChecked(True)
-                        self.all_legs_setup()
-                        print('CR appended')
+        # update single active module and motor:
+        if len(self.active_modules) == 1:
+            self.module = self.active_modules[0]
+            self.motor = self.module.motor
+        # Status message:
         print('Selected motor(s):')
         for module in self.active_modules:
             print('Motor', module.moduleID)
@@ -261,7 +287,29 @@ class Window(QMainWindow, Ui_MainWindow):
             self.module = module
             self.motor = module.motor
             action()
-            
+        # iterate over all active modules and refresh LCDs:
+        for module in self.active_modules:
+            # Check if motor is active:
+            while not module.motor.get_position_reached():
+                # Prevent blocking of the application by the while loop:
+                QApplication.processEvents()
+                # Refresh LCD
+                self.refresh_lcd_displays()
+                
+    def refresh_lcd_displays(self):
+        '''Update the status LCDs.'''
+        # self.lcd_current_zbr.display(module_zbr.motor.actual_position)
+        # self.lcd_current_zbc.display(module_zbc.motor.actual_position)
+        # self.lcd_current_zdr.display(module_zdr.motor.actual_position)
+        # self.lcd_current_zdc.display(module_zdc.motor.actual_position)
+        # self.lcd_current_x.display(module_x.motor.actual_position)
+        # self.lcd_current_pr.display(module_pr.motor.actual_position)
+        # self.lcd_current_cr.display(module_cr.motor.actual_position)
+        # self.lcd_current_s.display(module_s.motor.actual_position)
+        # time.sleep(0.1)
+        
+        
+        
     # def left(self):
     #     print('Mode:', self.mode)
     #     if self.mode == 1:
@@ -286,22 +334,22 @@ class Window(QMainWindow, Ui_MainWindow):
             
     def fine_step_left(self):
         #msteps = self.module.msteps_per_fstep * self.spinB_fine.value()
-        #self.motor.move_by(-msteps, self.pps)
+        #self.motor.move_by(-self.msteps, self.pps)
         print('Fine steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
         
     def coarse_step_left(self):
         #msteps = self.module.msteps_per_fstep * self.spinB_coarse.value()
-        #self.motor.move_by(-msteps, self.pps)
+        #self.motor.move_by(-self.msteps, self.pps)
         print('Coarse steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
         
     def fine_step_right(self):
         #msteps = self.module.msteps_per_fstep * self.spinB_fine.value()
-        #self.motor.move_by(msteps, self.pps)
+        #self.motor.move_by(self.msteps, self.pps)
         print('Fine steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
         
     def coarse_step_right(self):
         #msteps = self.module.msteps_per_fstep * self.spinB_coarse.value()
-        #self.motor.move_by(msteps, self.pps)
+        #self.motor.move_by(self.msteps, self.pps)
         print('Coarse steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
 
     def keyPressEvent(self, event: QKeyEvent) -> None: # pass keys to call the functions 
@@ -326,12 +374,6 @@ class Window(QMainWindow, Ui_MainWindow):
         #print('Motor', self.module.moduleID, 'stopped!')
         print("Motors stopped")
         
-        
-    def select_module(self, m):
-        self.module = m
-        self.motor = self.module.motor
-        #print('Selected motor:', self.motor)
-        print(self.module.status_message())
     
     # functions for enabling checkability and checked state 
     def enable_motorselection(self):
@@ -354,89 +396,32 @@ class Window(QMainWindow, Ui_MainWindow):
         self.checkB_zdc.setCheckable(False)
                
     # this function lets the motors drive to the position which are shown by the LCDs in microsteps    
-    def go_to(self, position):
-        if position == 1:
-            self.mm_deg_to_steps(self.lcd_pos_u.value(), self.spinB_mm_per_rev.value())
-            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
-            #self.motor.move_to(self.msteps, self.pps)
-            print('Going to position Up shown by according LCD')
-        # positon control for x  
-        if position == 2:
-            self.mm_deg_to_steps(self.lcd_pos_d.value(), self.spinB_mm_per_rev.value())
-            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
-            #self.motor.move_to(self.msteps, self.pps)
-            print('Going to position Down shown by according LCD')
-        if position == 3:
-            self.mm_deg_to_steps(self.lcd_pos_a.value(), self.spinB_mm_per_rev.value())
-            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
-            #self.motor.move_to(self.msteps, self.pps)
-            print('Going to position A shown by according LCD')
-        if position == 4:
-            self.mm_deg_to_steps(self.lcd_pos_b.value(), self.spinB_mm_per_rev.value())
-            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
-            #self.motor.move_to(self.msteps, self.pps)
-            print('Going to position B shown by according LCD')
-        if position == 5:
-            self.mm_deg_to_steps(self.lcd_pos_x.value(), self.spinB_mm_per_rev.value())
-            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
-            #self.motor.move_to(self.msteps, self.pps)
-            print('Going to position X shown by according LCD')
-        if position == 6:
-            self.mm_deg_to_steps(self.lcd_pos_y.value(), self.spinB_mm_per_rev.value())
-            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
-            #self.motor.move_to(self.msteps, self.pps)
-            print('Going to position Y shown by according LCD')
-        if position == 7:
-            self.mm_deg_to_steps(self.lcd_pos_r.value(), self.spinB_mm_per_rev.value())
-            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
-            #self.motor.move_to(self.msteps, self.pps)
-            print('Going to position Raman shown by according LCD')
-        if position == 8:
-            self.mm_deg_to_steps(self.lcd_pos_i.value(), self.spinB_mm_per_rev.value())
-            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
-            #self.motor.move_to(self.msteps, self.pps)
-            print('Going to position Ion beam shown by according LCD')
-        if position == 9:
-            self.mm_deg_to_steps(self.dspinB_mm_axis_x.value(), self.spinB_mm_per_rev.value())
-            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
-            #self.motor.move_to(self.msteps, self.pps)
-            print('X is going to position chosen in spinBox according LCD')
-        if position == 10:
-            self.mm_deg_to_steps(self.dspinB_deg_axis_pr_cr.value(), self.spinB_mm_per_rev.value())
-            #!!!mm_per_rev / deg_per_rev is individual for every axis, thus additional spinBoxes!!!
-            #self.motor.move_to(self.msteps, self.pps)
-            print('PR is going to position chosen in spinBox according LCD')
+    def goto(self, pos_idx):
+        # iterate over all active modules and apply the action function:
+        for module in self.active_modules:
+            # initial refresh:
+            #self.refresh_lcd_displays()
+            pps = round(self.rpmBox.value() * module.msteps_per_rev/60)
+            pos = module.module_positions[pos_idx]
+            module.motor.move_to(pos, pps)
+            print('go to', pos)
+        for module in self.active_modules:
+            # Check if motor is active:
+            while not module.motor.get_position_reached():
+                # Prevent blocking of the application by the while loop:
+                QApplication.processEvents()
+                # Refresh LCD
+                self.refresh_lcd_displays()
 
-           
-    def overwrite(self, pos):
-    # this function should feature an output for the motor position in microsteps at the moment and display it in LCDs
-        if pos == 1:
-            # get int(self.motor.actual_position) as value for LCD
-            print("position up overwritten to new parameter shown by LCD")
-            self.label_overwrite_u.setStyleSheet("QLabel {color: red;}")
-        elif pos == 2:
-            print("position down overwritten to parameter shown by LCD")
-            self.label_overwrite_d.setStyleSheet("QLabel {color: red;}")
-        elif pos == 3:
-            print("position A overwritten to new parameter shown by LCD")
-            self.label_overwrite_a.setStyleSheet("QLabel {color: red;}")
-        elif pos == 4:
-            print("position B overwritten to parameter shown by LCD")
-            self.label_overwrite_b.setStyleSheet("QLabel {color: red;}")
-        elif pos == 5:
-            print("position X overwritten to parameter shown by LCD") 
-            self.label_overwrite_x.setStyleSheet("QLabel {color: red;}")
-        elif pos == 6:
-            print("position Y overwritten to parameter shown by LCD")
-            self.label_overwrite_y.setStyleSheet("QLabel {color: red;}")
-        elif pos == 7:
-            print("position Raman overwritten to parameter shown by LCD")
-            self.label_overwrite_r.setStyleSheet("QLabel {color: red;}")
-        elif pos == 8:
-            print("position Ion beam overwritten to parameter shown by LCD")
-            self.label_overwrite_i.setStyleSheet("QLabel {color: red;}")
-        
-       
+    def abs_pos(self, motor): 
+        if motor == 0:
+            # self.mm_deg_to_steps(self.dspinB_deg_axis_x.value(), self.hardware_config[motor])
+            # self.motor.move_to(self.msteps, self.pps)
+            print('Motor x moving to position:', str(self.dspinB_mm_axis_x.value()))
+        elif motor == 1:
+            # self.mm_deg_to_steps(self.dspinB_deg_axis_pr_cr.value(), self.hardware_config[motor])
+            # self.motor.move_to(self.msteps, self.pps)
+            print('Motor pr moving to position:', str(self.dspinB_deg_axis_pr_cr.value()))
 
         
 
