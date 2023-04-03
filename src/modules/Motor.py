@@ -9,8 +9,7 @@ Created on Tue Mar 21 11:24:03 2023
 from pytrinamic.connections import ConnectionManager
 from pytrinamic.modules import TMCM1260
 from pytrinamic.modules import TMCLModule
-#from motor_control import assign_motors
-import time
+#import time
 
 
 ##### General functions #####
@@ -29,38 +28,61 @@ class Motor(TMCM1260):
     instances = []
     
     @classmethod
-    def assign_modules(cls):
-        '''This function handles the assignment of the physical motors to
-        descriptive motor variables. This is solved by permanently storing a
-        moduleID on the Trinamic motor driver module (using TMCL-IDE), 
-        currently in the Global Parameter "Serial Address", (Number 66, Bank 0).
-        Make sure to correctly match the moduleID with the descriptive variable 
-        names (e.g. motor_L) in the if-elif statement below; adjust if needed.'''
-        for inst in cls.instances:
-            # Get the moduleID from the Trinamic module global parameters, then
-            # assign motor variable names to moduleIDs:
-            if inst.moduleID == 11:
-                motor_L = inst
-                print('Variable name \"motor_L\" assigned to module', inst.moduleID)
-            elif inst.moduleID == 12:
-                motor_R = inst
-                print('Variable name \"motor_R\" assigned to module', inst.moduleID)
-            #elif moduleID == 3:
-            #    motor_C =  motor_list[i]
-        return motor_L, motor_R#, motor_C # add motors here...
+    def sort_module_list(cls, moduleID_list):
+        '''This function handles the assignment of the physical motors to a
+        list of active modules (given as argument), so that the connected
+        modules are sorted by increasing moduleID. The moduleIDs must be 
+        permanently stored on the Trinamic motor driver module (using 
+        TMCL-IDE), currently in the Global Parameter "Serial Address", 
+        (Number 66, Bank 0).'''
+        module_list = []
+        i = 0
+        # iterate over moduleIDs:
+        for ID in moduleID_list:
+            # iterate over all active modules:
+            for inst in cls.instances:
+                # match IDs of active modules with the given ID_list:
+                if inst.moduleID == ID:
+                    module_list.append(inst)
+                    print('Module', inst.moduleID, 'assigned to module_list index', i)
+                    i += 1
+        return module_list
+    
+    # @classmethod
+    # def assign_modules(cls):
+    #     '''This function handles the assignment of the physical motors to
+    #     descriptive motor variables. This is solved by permanently storing a
+    #     moduleID on the Trinamic motor driver module (using TMCL-IDE), 
+    #     currently in the Global Parameter "Serial Address", (Number 66, Bank 0).
+    #     Make sure to correctly match the moduleID with the descriptive variable 
+    #     names (e.g. motor_L) in the if-elif statement below; adjust if needed.'''
+    #     for inst in cls.instances:
+    #         # Get the moduleID from the Trinamic module global parameters, then
+    #         # assign motor variable names to moduleIDs:
+    #         if inst.moduleID == 11:
+    #             module_L = inst
+    #             print('Variable name \"motor_L\" assigned to module', inst.moduleID)
+    #         elif inst.moduleID == 12:
+    #             module_R = inst
+    #             print('Variable name \"motor_R\" assigned to module', inst.moduleID)
+    #         #elif moduleID == 3:
+    #         #    motor_C =  motor_list[i]
+    #     return module_L, module_R#, motor_C # add motors here...
     
     
     def __init__(self, port):
         self.port = port
         self.interface, self.module, self.motor = self.setup_motor(self.port)
+        # list of stored positions [A, B, C]:
+        self.module_positions = [0, 0, 0]
         self.__class__.instances.append(self)
     
     
         ### MOTOR SETUP ###
         
     def init_drive_settings(self, motor):
-        '''Set initial motor drive settings. Values are in pps and are now scaled 
-        to microstep resolution.'''
+        '''Set initial motor drive settings. Speed values are in pps and are
+        now scaled to microstep resolution.'''
         motor.drive_settings.max_current = 50
         motor.drive_settings.standby_current = 0
         motor.drive_settings.boost_current = 0
@@ -74,6 +96,8 @@ class Motor(TMCM1260):
         self.msteps_per_rev = self.msteps_per_fstep * self.fsteps_per_rev
         # Toggle step interpolation (works only with 16 microsteps):
         motor.set_axis_parameter(motor.AP.Intpol, value=1)
+        # Toggle RelativePositioningOption:
+        motor.set_axis_parameter(motor.AP.RelativePositioningOption, 1)
         #print(motor, motor.drive_settings)
 
     def init_ramp_settings(self, motor):
@@ -139,4 +163,11 @@ class Motor(TMCM1260):
 
 # print(m1.status_message())
 # print(m2.status_message())
+
+# m1.motor.rotate(10000)
+# time.sleep(1)
+# m1.motor.stop()
+
+# time.sleep(2)
+# m1.motor.move_by(- 10*m1.msteps_per_fstep, 10000)
 #
