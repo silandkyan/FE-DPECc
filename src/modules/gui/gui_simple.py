@@ -133,7 +133,7 @@ class Window(QMainWindow, Ui_MainWindow):
         '''Module selection for single module control.'''
         self.module = m
         self.motor = self.module.motor
-        # override list of active modules:
+        # overwrite list of active modules:
         self.active_modules = [self.module]
         print('Selected motor: Motor', self.module.moduleID)
         #print(self.module.status_message())

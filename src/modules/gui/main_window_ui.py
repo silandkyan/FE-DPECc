@@ -194,7 +194,7 @@ class Ui_MainWindow(object):
         self.stackedW_settings_leg.setFrameShadow(QtWidgets.QFrame.Raised)
         self.stackedW_settings_leg.setObjectName("stackedW_settings_leg")
         self.label_41 = QtWidgets.QLabel(self.stackedW_settings_leg)
-        self.label_41.setGeometry(QtCore.QRect(80, 100, 41, 21))
+        self.label_41.setGeometry(QtCore.QRect(70, 110, 41, 21))
         font = QtGui.QFont()
         font.setPointSize(7)
         self.label_41.setFont(font)
@@ -206,7 +206,7 @@ class Ui_MainWindow(object):
         self.label_10.setFont(font)
         self.label_10.setObjectName("label_10")
         self.spinB_fine = QtWidgets.QSpinBox(self.stackedW_settings_leg)
-        self.spinB_fine.setGeometry(QtCore.QRect(20, 100, 41, 25))
+        self.spinB_fine.setGeometry(QtCore.QRect(20, 110, 41, 25))
         font = QtGui.QFont()
         font.setPointSize(7)
         self.spinB_fine.setFont(font)
@@ -218,19 +218,19 @@ class Ui_MainWindow(object):
         self.label_16.setGeometry(QtCore.QRect(20, 0, 68, 21))
         self.label_16.setObjectName("label_16")
         self.label_42 = QtWidgets.QLabel(self.stackedW_settings_leg)
-        self.label_42.setGeometry(QtCore.QRect(80, 130, 68, 19))
+        self.label_42.setGeometry(QtCore.QRect(80, 150, 68, 19))
         font = QtGui.QFont()
         font.setPointSize(7)
         self.label_42.setFont(font)
         self.label_42.setObjectName("label_42")
         self.label_40 = QtWidgets.QLabel(self.stackedW_settings_leg)
-        self.label_40.setGeometry(QtCore.QRect(20, 20, 261, 81))
+        self.label_40.setGeometry(QtCore.QRect(20, 20, 191, 81))
         font = QtGui.QFont()
         font.setPointSize(7)
         self.label_40.setFont(font)
         self.label_40.setObjectName("label_40")
         self.spinB_coarse = QtWidgets.QSpinBox(self.stackedW_settings_leg)
-        self.spinB_coarse.setGeometry(QtCore.QRect(20, 130, 51, 25))
+        self.spinB_coarse.setGeometry(QtCore.QRect(20, 150, 51, 25))
         font = QtGui.QFont()
         font.setPointSize(7)
         self.spinB_coarse.setFont(font)
@@ -265,6 +265,7 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(7)
         self.spinB_RPM.setFont(font)
+        self.spinB_RPM.setMaximum(120)
         self.spinB_RPM.setProperty("value", 30)
         self.spinB_RPM.setObjectName("spinB_RPM")
         self.spinB_max_RPM = QtWidgets.QSpinBox(self.stackedW_settings_leg)
@@ -339,6 +340,9 @@ class Ui_MainWindow(object):
         self.radioB_key_control.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.radioB_key_control.setObjectName("radioB_key_control")
         self.buttonGroup.addButton(self.radioB_key_control)
+        self.pushB_quit = QtWidgets.QPushButton(self.frame)
+        self.pushB_quit.setGeometry(QtCore.QRect(320, 340, 81, 51))
+        self.pushB_quit.setObjectName("pushB_quit")
         self.lcd_A_x = QtWidgets.QLCDNumber(self.centralwidget)
         self.lcd_A_x.setGeometry(QtCore.QRect(610, 220, 64, 21))
         self.lcd_A_x.setObjectName("lcd_A_x")
@@ -475,7 +479,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -527,9 +531,13 @@ class Ui_MainWindow(object):
         self.label_10.setText(_translate("MainWindow", "RPM"))
         self.label_16.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-weight:600;\">Settings</span></p></body></html>"))
         self.label_42.setText(_translate("MainWindow", "coarse"))
-        self.label_40.setText(_translate("MainWindow", "keyboard control: \n"
-"press up and down for fine steps \n"
-"press left and right for coarse steps "))
+        self.label_40.setText(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:7pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">keyboard control: </p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">press <span style=\" font-weight:600;\">W</span> or <span style=\" font-weight:600;\">S </span>for fine steps </p>\n"
+"<p style=\" margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">press <span style=\" font-weight:600;\">A</span> or<span style=\" font-weight:600;\"> D</span> for coarse steps </p></body></html>"))
         self.pushB_invert.setText(_translate("MainWindow", "invert direction"))
         self.label_43.setText(_translate("MainWindow", "microstep multiplicator"))
         self.label_45.setText(_translate("MainWindow", "max RPM"))
@@ -538,6 +546,7 @@ class Ui_MainWindow(object):
         self.label_11.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-weight:600;\">Modes </span></p></body></html>"))
         self.radioB_permanent_when_pushed.setText(_translate("MainWindow", "permanent / when pushed"))
         self.radioB_key_control.setText(_translate("MainWindow", "keyboard control"))
+        self.pushB_quit.setText(_translate("MainWindow", "QUIT"))
         self.label_141.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:7pt;\">Position A</span></p></body></html>"))
         self.label_142.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:7pt;\">Position B</span></p></body></html>"))
         self.label_143.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:7pt;\">Position C</span></p></body></html>"))

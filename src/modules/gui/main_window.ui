@@ -32,7 +32,7 @@
      <enum>Qt::NoFocus</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="legs">
      <attribute name="title">
@@ -683,8 +683,8 @@
     <widget class="QLabel" name="label_41">
      <property name="geometry">
       <rect>
-       <x>80</x>
-       <y>100</y>
+       <x>70</x>
+       <y>110</y>
        <width>41</width>
        <height>21</height>
       </rect>
@@ -720,7 +720,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>100</y>
+       <y>110</y>
        <width>41</width>
        <height>25</height>
       </rect>
@@ -757,7 +757,7 @@
      <property name="geometry">
       <rect>
        <x>80</x>
-       <y>130</y>
+       <y>150</y>
        <width>68</width>
        <height>19</height>
       </rect>
@@ -776,7 +776,7 @@
       <rect>
        <x>20</x>
        <y>20</y>
-       <width>261</width>
+       <width>191</width>
        <height>81</height>
       </rect>
      </property>
@@ -786,16 +786,20 @@
       </font>
      </property>
      <property name="text">
-      <string>keyboard control: 
-press up and down for fine steps 
-press left and right for coarse steps </string>
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;keyboard control: &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;press &lt;span style=&quot; font-weight:600;&quot;&gt;W&lt;/span&gt; or &lt;span style=&quot; font-weight:600;&quot;&gt;S &lt;/span&gt;for fine steps &lt;/p&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;press &lt;span style=&quot; font-weight:600;&quot;&gt;A&lt;/span&gt; or&lt;span style=&quot; font-weight:600;&quot;&gt; D&lt;/span&gt; for coarse steps &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
     <widget class="QSpinBox" name="spinB_coarse">
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>130</y>
+       <y>150</y>
        <width>51</width>
        <height>25</height>
       </rect>
@@ -891,6 +895,9 @@ press left and right for coarse steps </string>
       <font>
        <pointsize>7</pointsize>
       </font>
+     </property>
+     <property name="maximum">
+      <number>120</number>
      </property>
      <property name="value">
       <number>30</number>
@@ -1123,6 +1130,19 @@ press left and right for coarse steps </string>
      <attribute name="buttonGroup">
       <string notr="true">buttonGroup</string>
      </attribute>
+    </widget>
+    <widget class="QPushButton" name="pushB_quit">
+     <property name="geometry">
+      <rect>
+       <x>320</x>
+       <y>340</y>
+       <width>81</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>QUIT</string>
+     </property>
     </widget>
    </widget>
    <widget class="QLCDNumber" name="lcd_A_x">
