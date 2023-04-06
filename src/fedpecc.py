@@ -21,9 +21,9 @@ if __name__ == "__main__":
     except Exception:
         #pass
         print('ERROR')
-        #disconnect_motors()
+        disconnect_motors()
 
 
 # This should make a clean disconnect of the USB Serial connection after closing the main window:
-#disconnect_motors()
+disconnect_motors()
 

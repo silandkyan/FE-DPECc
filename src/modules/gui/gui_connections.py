@@ -8,6 +8,13 @@ Created on Tue Feb 21 17:38:27 2023
 # die microstep resolution muss anpassbar werden 
 # invert direction?! gebraucht oder nicht 
 
+# need proper initialization of starting values, variables, displays, etc.
+# e.g. pps, msteps, rpmBox...
+
+# permanent radiobutton should be selected on startup
+
+
+
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
 from PyQt5.QtGui import QKeyEvent
@@ -21,13 +28,25 @@ from ..Motor import Motor
 from pytrinamic.connections import ConnectionManager
 
 
-# settings...
 
-# port_list = ConnectionManager().list_connections()
-# for port in port_list:
-#     Motor(port)
+### Module setup and assignment ###
+port_list = ConnectionManager().list_connections()
+for port in port_list:
+    Motor(port)
     
-#module_zbr, module_zbc = Motor.assign_modules() # module_zdr, module_zdc, module_x, module_pr, module_cr, module_s
+# define list of all moduleIDs and sort connected modules accordingly:
+ID_list = [11, 12, 13, 14, 15, 21, 22, 23, 24]
+module_list = Motor.sort_module_list(ID_list)
+
+'''Choose names for the modules. Make sure to correctly match the correct 
+module with its descriptive variable name (e.g. motor_L) below; 
+adjust if needed.'''
+module_zbr = module_list[0]
+module_zbc = module_list[1]
+# module_C = Motor.instances[2]
+# expand list as needed...
+
+# module_zbr, module_zbc = Motor.assign_modules() # module_zdr, module_zdc, module_x, module_pr, module_cr, module_s
 
 # print(module_zbr.status_message())
 # print(module_zbc.status_message())
@@ -88,7 +107,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # hardware config takes in the mm or deg values shown by absolute pos spinBox 
         # done by one revolution of motor on specific axis
         self.hardware_config = [0, 0, 0, 0, 0, 0, 0, 0]
-                                
+        
     def RPM_master(self):
         max_RPM = self.spinB_max_RPM.value()
         self.spinB_RPM.setMaximum(max_RPM)
@@ -198,10 +217,10 @@ class Window(QMainWindow, Ui_MainWindow):
             # store_lcds matrix-like list:
             # 1st dimension = row_idx (= module_idx),
             # 2nd dimension = col_idx (= pos_idx)
-            # if module.motor == module_zbr.motor:
-            #     self.store_lcds[0][pos_idx].display(module.module_positions[pos_idx])
-            # elif module.motor == module_zbc.motor:
-            #     self.store_lcds[1][pos_idx].display(module.module_positions[pos_idx])
+            if module.motor == module_zbr.motor:
+                self.store_lcds[0][pos_idx].display(module.module_positions[pos_idx])
+            elif module.motor == module_zbc.motor:
+                self.store_lcds[1][pos_idx].display(module.module_positions[pos_idx])
             # elif module.motor == module_zdr.motor:
             #     self.store_lcds[2][pos_idx].display(module.module_positions[pos_idx])
             # elif module.motor == module_zdc.motor:
@@ -248,24 +267,25 @@ class Window(QMainWindow, Ui_MainWindow):
         boxlist = [self.checkB_zbr, self.checkB_zbc,self.checkB_zdr, self.checkB_zdc]
                         
         if select == 1:
-            #self.active_modules.append(module_zbr, module_zbc) #, module_zdr, module_zdc
+            self.active_modules.append(module_zbr) #, module_zdr, module_zdc
+            self.active_modules.append(module_zbc) # continue this list if necessary...
             print('All leg motors are selected')                              
                                        
         if select == 2:     
             for box in boxlist:
                 if box.isChecked() == True:
                     if box == self.checkB_zbr:
-                        #self.active_modules.append(module_R)
+                        self.active_modules.append(module_zbr)
                         print('ZBR appended')
                     if box == self.checkB_zbc:  
-                        #self.active_modules.append(module_L)
+                        self.active_modules.append(module_zbc)
                         print('ZBC appended')
-                    if box == self.checkB_zdr:                   
-                        #self.active_modules.append(module_zdr)
-                        print('ZDR appended')
-                    if box == self.checkB_zdc:
-                        #self.active_modules.append(module_zdc)
-                        print('ZDC appended')
+                    # if box == self.checkB_zdr:                   
+                    #     self.active_modules.append(module_zdr)
+                    #     print('ZDR appended')
+                    # if box == self.checkB_zdc:
+                    #     self.active_modules.append(module_zdc)
+                    #     print('ZDC appended')
         # update single active module and motor:
         if len(self.active_modules) == 1:
             self.module = self.active_modules[0]
@@ -274,7 +294,7 @@ class Window(QMainWindow, Ui_MainWindow):
         print('Selected motor(s):')
         for module in self.active_modules:
             print('Motor', module.moduleID)
-        
+            
     def multi_module_control(self, action):
         for module in self.active_modules:
             self.module = module
@@ -291,8 +311,8 @@ class Window(QMainWindow, Ui_MainWindow):
                 
     def refresh_lcd_displays(self):
         '''Update the status LCDs.'''
-        # self.lcd_current_zbr.display(module_zbr.motor.actual_position)
-        # self.lcd_current_zbc.display(module_zbc.motor.actual_position)
+        self.lcd_current_zbr.display(module_zbr.motor.actual_position)
+        self.lcd_current_zbc.display(module_zbc.motor.actual_position)
         # self.lcd_current_zdr.display(module_zdr.motor.actual_position)
         # self.lcd_current_zdc.display(module_zdc.motor.actual_position)
         # self.lcd_current_x.display(module_x.motor.actual_position)
@@ -317,32 +337,34 @@ class Window(QMainWindow, Ui_MainWindow):
             
     def permanent_left(self):
         if self.radioB_permanent_when_pushed.isChecked() == True:
-            #self.motor.rotate(-self.pps)
+            self.motor.rotate(-self.pps)
             print('Rotating left with', str(self.spinB_RPM.value()), 'rpm')
     
     def permanent_right(self):
         if self.radioB_permanent_when_pushed.isChecked() == True:
-            #self.motor.rotate(self.pps)
+            self.motor.rotate(self.pps)
             print('Rotating right with', str(self.spinB_RPM.value()), 'rpm')
             
     def fine_step_left(self):
-        #msteps = self.module.msteps_per_fstep * self.spinB_fine.value()
-        #self.motor.move_by(-self.msteps, self.pps)
+        msteps = self.module.msteps_per_fstep * self.spinB_fine.value()
+        # self.motor.move_by(-self.msteps, self.pps)
+        self.motor.move_by(-msteps, self.pps)
         print('Fine steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
         
     def coarse_step_left(self):
-        #msteps = self.module.msteps_per_fstep * self.spinB_coarse.value()
-        #self.motor.move_by(-self.msteps, self.pps)
+        msteps = self.module.msteps_per_fstep * self.spinB_coarse.value()
+        # self.motor.move_by(-self.msteps, self.pps)
+        self.motor.move_by(-msteps, self.pps)
         print('Coarse steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
         
     def fine_step_right(self):
-        #msteps = self.module.msteps_per_fstep * self.spinB_fine.value()
-        #self.motor.move_by(self.msteps, self.pps)
+        msteps = self.module.msteps_per_fstep * self.spinB_fine.value()
+        self.motor.move_by(msteps, self.pps)
         print('Fine steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
         
     def coarse_step_right(self):
-        #msteps = self.module.msteps_per_fstep * self.spinB_coarse.value()
-        #self.motor.move_by(self.msteps, self.pps)
+        msteps = self.module.msteps_per_fstep * self.spinB_coarse.value()
+        self.motor.move_by(msteps, self.pps)
         print('Coarse steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
 
     def keyPressEvent(self, event: QKeyEvent) -> None: 
@@ -350,21 +372,21 @@ class Window(QMainWindow, Ui_MainWindow):
         key_pressed = event.key()
         if self.radioB_key_control.isChecked() == True:
             if key_pressed == Qt.Key_S:
-                #self.multi_module_control(self.fine_step_left)
-                print('Fine steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+                self.multi_module_control(self.fine_step_left)
+                #print('Fine steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
             if key_pressed == Qt.Key_A:
-                #self.multi_module_control(self.coarse_step_left)
-                print('Coarse steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+                self.multi_module_control(self.coarse_step_left)
+                # print('Coarse steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
             if key_pressed == Qt.Key_W:
-                #self.multi_module_control(self.fine_step_right)
-                print('Fine steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+                self.multi_module_control(self.fine_step_right)
+                #print('Fine steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
             if key_pressed == Qt.Key_D:
-                #self.multi_module_control(self.coarse_step_right)
-                print('Coarse steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+                self.multi_module_control(self.coarse_step_right)
+                #print('Coarse steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
             
     def stop_motor(self):
-        #self.module.motor.stop()
-        #print('Motor', self.module.moduleID, 'stopped!')
+        self.module.motor.stop()
+        print('Motor', self.module.moduleID, 'stopped!')
         print("Motors stopped")
         
     

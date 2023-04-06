@@ -119,7 +119,6 @@ class Window(QMainWindow, Ui_MainWindow):
         self.s_right.clicked.connect(lambda: self.multi_module_control(self.right))
         self.s_stop.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
 
-        
         ### multi ###
         # Motor selection checkBoxes:
         self.motor1_checkBox.toggled.connect(self.refresh_active_modules)
