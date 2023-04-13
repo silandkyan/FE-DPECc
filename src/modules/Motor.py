@@ -44,7 +44,7 @@ class Motor(TMCM1260):
                 # match IDs of active modules with the given ID_list:
                 if inst.moduleID == ID:
                     module_list.append(inst)
-                    print('Module', inst.moduleID, 'assigned to module_list index', i)
+                    print('Module', inst.moduleID, 'assigned to module_list[', i, ']')
                     i += 1
         return module_list
     

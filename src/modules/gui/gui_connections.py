@@ -80,6 +80,9 @@ class Window(QMainWindow, Ui_MainWindow):
         ### User input values (with allowed min-max ranges)
         # rpm for all constant speed modes (single, multi, constant):
         self.spinB_RPM.setValue(20)    # default rpm
+        # initial calculation of rpm and pps:
+        self.RPM_master()
+        self.pps_calculator()
         # max allowed value for rpm: # NEEDED???
         self.spinB_max_RPM.setValue(120)    # rpm
         # amount of fsteps in coarse mode:
@@ -87,7 +90,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # amount of fsteps in fine mode:
         self.spinB_fine.setValue(1)   # amount of fsteps
         # Set default motor and module that is active initially:
-        self.reset_active_modules()
+        # self.reset_active_modules()
         
     def setup_default_buttons(self):
         # Mode selection radioB:
@@ -95,6 +98,8 @@ class Window(QMainWindow, Ui_MainWindow):
         #self.mode = 1
         # Leg motor selection radio buttons:
         self.radioB_all_motors.setChecked(True) # all motors
+        # PR/CR motor selection radio buttons:
+        self.radioB_pr.setChecked(True) # all motors
         # because radioB_all_motors is checked by default, 
         # checkBoxes for motorselection are disabled at setup:
         self.checkB_zbr.setCheckable(False)
@@ -103,12 +108,12 @@ class Window(QMainWindow, Ui_MainWindow):
         self.checkB_zdc.setCheckable(False)
         # if max RPM spinBox changes its value, the maximum of the mastered spinBoxes change accordingly
         # connect if master RPM spinBox from legs changes 
-        self.spinB_max_RPM.valueChanged.connect(self.RPM_master) ### IS THIS NEEDED? IT IS NEVER CALLED...
+        #self.spinB_max_RPM.valueChanged.connect(self.RPM_master) ### MOVED TO A PLACE WHERE IT ACTUALLY CALLED
         # connect if the given run RPM changes
-        self.spinB_RPM.valueChanged.connect(self.pps_calculator) ### IS THIS NEEDED? IT IS NEVER CALLED...
+        #self.spinB_RPM.valueChanged.connect(self.pps_calculator) ### MOVED TO A PLACE WHERE IT ACTUALLY CALLED
         # by default the first tab with all legs is selected, thus the active_module list gets fed 
         # with all the leg modules
-        #self.refresh_motor_list(1) ### NOT NEEDED because reset_active_modules is called during setup
+        #self.refresh_module_list(1) ### NOT NEEDED because reset_active_modules is called during setup
         
         # self.module = module_R
         # self.module = module_R.motor
@@ -128,7 +133,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # done by one revolution of motor on specific axis
         self.hardware_config = [0, 0, 0, 0, 0, 0, 0, 0]
         
-    def RPM_master(self):
+    def RPM_master(self): ### IS THIS NEEDED???
         max_RPM = self.spinB_max_RPM.value()
         self.spinB_RPM.setMaximum(max_RPM)
     
@@ -162,24 +167,24 @@ class Window(QMainWindow, Ui_MainWindow):
         
     # connections for checkability of leg motors
         # if single_motor is active, the checkboxes are enabled 
-        self.radioB_single_motor.clicked.connect(self.enable_motorselection)
+        self.radioB_single_motor.clicked.connect(self.enable_motorselection) # NEEDED?
         # if all_motors is active the checkboxes for the individual legs are unchackable
         self.radioB_all_motors.clicked.connect(self.all_legs_setup)
         
     # connections for leg motor selection
         # if the all leg radioButton is pressed, all the motors are selected
-        self.radioB_all_motors.clicked.connect(lambda: self.refresh_motor_list(1))
+        self.radioB_all_motors.clicked.connect(lambda: self.refresh_module_list(0))
         # if select leg motor is enabled, the list is refreshed when new motors are chosen
-        self.checkB_zbr.toggled.connect(lambda: self.refresh_motor_list(2))
-        self.checkB_zbc.toggled.connect(lambda: self.refresh_motor_list(2))
-        self.checkB_zdr.toggled.connect(lambda: self.refresh_motor_list(2))
-        self.checkB_zdc.toggled.connect(lambda: self.refresh_motor_list(2))
+        self.checkB_zbr.toggled.connect(lambda: self.refresh_module_list(1))
+        self.checkB_zbc.toggled.connect(lambda: self.refresh_module_list(1))
+        self.checkB_zdr.toggled.connect(lambda: self.refresh_module_list(1))
+        self.checkB_zdc.toggled.connect(lambda: self.refresh_module_list(1))
 
     # connections for the pr/cr radioButtons
         #self.radioB_pr.pressed.connect(lambda: self.select_module(module_pr))
         #self.radioB_cr.pressed.connect(lambda: self.select_module(module_cr))
-        self.radioB_pr.pressed.connect(lambda: print('module pr selected'))
-        self.radioB_cr.pressed.connect(lambda: print('module cr selected'))
+        self.radioB_pr.pressed.connect(lambda: print('dummy: module pr selected'))
+        self.radioB_cr.pressed.connect(lambda: print('dummy: module cr selected'))
         
     # connections for permanent and when pushed functions on their specific tab
         # permanent for legs 
@@ -255,7 +260,7 @@ class Window(QMainWindow, Ui_MainWindow):
             #     self.store_lcds[8][pos_idx].display(module.module_positions[pos_idx])
 
 
-    def select_module(self, m):
+    def select_module(self, m): # PROBABLY NOT NEEDED ANYMORE...
         '''Module selection for single module use.'''
         self.module = m
         self.motor = self.module.motor
@@ -270,34 +275,37 @@ class Window(QMainWindow, Ui_MainWindow):
     
     def reset_active_modules(self):
         if self.tabWidget.currentIndex() == 0:
-            self.refresh_motor_list(1)
-            print('modules for legs selected')
+            self.refresh_module_list(0)
+            # print('modules for legs selected')
         elif self.tabWidget.currentIndex() == 1:
-            #self.select_module(module_x)
-            print('module for x selected')
+            self.refresh_module_list(2)
+            # print('module for x selected')
         elif self.tabWidget.currentIndex() == 2:
-            #self.select_module(module_pr)
-            print('module for pr selected')
+            self.refresh_module_list(3)
+            # print('module for pr or cr selected')
         elif self.tabWidget.currentIndex() == 3:
-            #self.select_module(module_s)
-            print('module for s selected')
+            self.refresh_module_list(4)
+            # print('module for s selected')
             
-    def refresh_motor_list(self, select):
+    def refresh_module_list(self, select):
         self.active_modules = []
         boxlist = [self.checkB_zbr, self.checkB_zbc,self.checkB_zdr, self.checkB_zdc]
+        radioBlist = [self.radioB_pr, self.radioB_cr]
                         
-        if select == 1:
-            self.active_modules.append(module_zbr) #, module_zdr, module_zdc
-            self.active_modules.append(module_zbc) # continue this list if necessary...
+        if select == 0:
+            self.active_modules.append(module_zbr)
+            self.active_modules.append(module_zbc)
+            # self.active_modules.append(module_zdr)
+            # self.active_modules.append(module_zdc) # continue this list if necessary...
             print('All leg motors are selected')                              
                                        
-        if select == 2:     
+        if select == 1:     
             for box in boxlist:
                 if box.isChecked() == True:
                     if box == self.checkB_zbr:
                         self.active_modules.append(module_zbr)
                         print('ZBR appended')
-                    if box == self.checkB_zbc:  
+                    elif box == self.checkB_zbc:  
                         self.active_modules.append(module_zbc)
                         print('ZBC appended')
                     # if box == self.checkB_zdr:                   
@@ -306,14 +314,32 @@ class Window(QMainWindow, Ui_MainWindow):
                     # if box == self.checkB_zdc:
                     #     self.active_modules.append(module_zdc)
                     #     print('ZDC appended')
-        # update single active module and motor:
-        if len(self.active_modules) == 1:
-            self.module = self.active_modules[0]
-            self.motor = self.module.motor
+                    
+        if select == 2:
+            # self.active_modules = [module_]
+            print('X selected')
+                    
+        if select == 3:
+            for button in radioBlist:
+                if button.isChecked() == True:
+                    # self.self.active_modules.append(self.module_pr)
+                    print('PR selected')
+                elif button.isChecked() == True:
+                    # self.self.active_modules.append(self.module_cr)
+                    print('CR selected')
+                    
+        if select == 4:
+            # self.active_modules = [module_s]
+            print('S selected')
+            
+        # update single active module and motor: # NEEDED? probably not if all motor actions are done via multi_action...
+        # if len(self.active_modules) == 1:
+        #     self.module = self.active_modules[0]
+        #     self.motor = self.module.motor
         # Status message:
-        print('Selected motor(s):')
-        for module in self.active_modules:
-            print('Motor', module.moduleID)
+        # print('Selected motor(s):')
+        # for module in self.active_modules:
+        #     print('Motor', module.moduleID)
             
     def multi_module_control(self, action):
         for module in self.active_modules:
@@ -357,6 +383,7 @@ class Window(QMainWindow, Ui_MainWindow):
             
     def permanent_left(self):
         if self.radioB_permanent_when_pushed.isChecked() == True:
+            # correct calling of motor...
             self.motor.rotate(-self.pps)
             print('Rotating left with', str(self.spinB_RPM.value()), 'rpm')
     
