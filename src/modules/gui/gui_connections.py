@@ -8,10 +8,10 @@ Created on Tue Feb 21 17:38:27 2023
 # die microstep resolution muss anpassbar werden 
 # invert direction?! gebraucht oder nicht 
 
-# need proper initialization of starting values, variables, displays, etc.
-# e.g. pps, msteps, rpmBox...
+# need proper initialization of starting values, variables, displays, etc. 
+# e.g. pps, msteps, rpmBox... DONE
 
-# permanent radiobutton should be selected on startup
+# permanent radiobutton should be selected on startup DONE
 
 
 
@@ -70,25 +70,45 @@ class Window(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.setWindowTitle('FE_DPECc_GUI')
         # setup functions:
-        self.setup()
+        self.setup_default_values()
+        self.setup_default_buttons()
         self.connectSignalsSlots()
         self.show()
         
-    def setup(self):
-    # because radioButton for all legs is checked by default, 
-    # checkBoxes for motorselection are disabled in the setup 
+    def setup_default_values(self):
+        '''User input: Specify default values here.'''
+        ### User input values (with allowed min-max ranges)
+        # rpm for all constant speed modes (single, multi, constant):
+        self.spinB_RPM.setValue(20)    # default rpm
+        # max allowed value for rpm: # NEEDED???
+        self.spinB_max_RPM.setValue(120)    # rpm
+        # amount of fsteps in coarse mode:
+        self.spinB_coarse.setValue(10)   # amount of fsteps
+        # amount of fsteps in fine mode:
+        self.spinB_fine.setValue(1)   # amount of fsteps
+        # Set default motor and module that is active initially:
+        self.reset_active_modules()
+        
+    def setup_default_buttons(self):
+        # Mode selection radioB:
+        self.radioB_permanent_when_pushed.setChecked(True)
+        #self.mode = 1
+        # Leg motor selection radio buttons:
+        self.radioB_all_motors.setChecked(True) # all motors
+        # because radioB_all_motors is checked by default, 
+        # checkBoxes for motorselection are disabled at setup:
         self.checkB_zbr.setCheckable(False)
         self.checkB_zbc.setCheckable(False)
         self.checkB_zdr.setCheckable(False)
         self.checkB_zdc.setCheckable(False)
         # if max RPM spinBox changes its value, the maximum of the mastered spinBoxes change accordingly
         # connect if master RPM spinBox from legs changes 
-        self.spinB_max_RPM.valueChanged.connect(self.RPM_master)
+        self.spinB_max_RPM.valueChanged.connect(self.RPM_master) ### IS THIS NEEDED? IT IS NEVER CALLED...
         # connect if the given run RPM changes
-        self.spinB_RPM.valueChanged.connect(self.pps_calculator)
+        self.spinB_RPM.valueChanged.connect(self.pps_calculator) ### IS THIS NEEDED? IT IS NEVER CALLED...
         # by default the first tab with all legs is selected, thus the active_module list gets fed 
         # with all the leg modules
-        self.refresh_motor_list(1)
+        #self.refresh_motor_list(1) ### NOT NEEDED because reset_active_modules is called during setup
         
         # self.module = module_R
         # self.module = module_R.motor
@@ -252,13 +272,13 @@ class Window(QMainWindow, Ui_MainWindow):
         if self.tabWidget.currentIndex() == 0:
             self.refresh_motor_list(1)
             print('modules for legs selected')
-        if self.tabWidget.currentIndex() == 1:
+        elif self.tabWidget.currentIndex() == 1:
             #self.select_module(module_x)
             print('module for x selected')
-        if self.tabWidget.currentIndex() == 2:
+        elif self.tabWidget.currentIndex() == 2:
             #self.select_module(module_pr)
             print('module for pr selected')
-        if self.tabWidget.currentIndex() == 3:
+        elif self.tabWidget.currentIndex() == 3:
             #self.select_module(module_s)
             print('module for s selected')
             
