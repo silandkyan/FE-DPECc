@@ -13,7 +13,7 @@ Created on Thu Feb 23 16:37:43 2023
 # find good values for max_current parameter for both motor types...
 
 import sys
-#import time
+import time
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
 from pytrinamic.connections import ConnectionManager
 from .main_window_simple_ui import Ui_MainWindow
@@ -237,12 +237,16 @@ class Window(QMainWindow, Ui_MainWindow):
         the motor control functions below (e.g., single_step).'''
         # iterate over all active modules and apply the action function:
         for module in self.active_modules:
+            # Prevent blocking of the application by the while loop:
+            QApplication.processEvents()
             # initial refresh:
             self.refresh_lcd_displays()
             # set module and motor: IS THIS NEEDED?
             self.module = module
             self.motor = module.motor
             action()
+            # final refresh:
+            self.refresh_lcd_displays()
         # iterate over all active modules and refresh LCDs:
         for module in self.active_modules:
             # Check if motor is active:
@@ -334,8 +338,15 @@ class Window(QMainWindow, Ui_MainWindow):
         # self.refresh_lcd_displays()
         
     def stop_motor(self):
-        '''Stop signal, can always be sent to the motor.'''
+        '''Stop signal to all motors; can always be sent to the motors.'''
         self.module.motor.stop()
+        # ensure that the motors actually have time to slow down and stop:
+        time.sleep(0.2)
+        # set target_position to actual_position for the multi_control loop:
+        act_pos = self.module.motor.get_axis_parameter(self.module.motor.AP.ActualPosition)
+        self.module.motor.set_axis_parameter(self.module.motor.AP.TargetPosition, act_pos)
+        # targ_pos = self.module.motor.get_axis_parameter(self.module.motor.AP.TargetPosition)
+        # print('debug: stop', self.module.moduleID, act_pos, targ_pos) # debug message
         print('Motor', self.module.moduleID, 'stopped!')
         # self.refresh_lcd_displays()
         

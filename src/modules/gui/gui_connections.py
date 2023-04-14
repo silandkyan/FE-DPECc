@@ -72,6 +72,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # setup functions:
         self.setup_default_values()
         self.setup_default_buttons()
+        self.refresh_lcd_displays()
         self.connectSignalsSlots()
         self.show()
         
@@ -90,7 +91,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # amount of fsteps in fine mode:
         self.spinB_fine.setValue(1)   # amount of fsteps
         # Set default motor and module that is active initially:
-        # self.reset_active_modules()
+        self.reset_active_modules()
         
     def setup_default_buttons(self):
         # Mode selection radioB:
@@ -133,7 +134,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # done by one revolution of motor on specific axis
         self.hardware_config = [0, 0, 0, 0, 0, 0, 0, 0]
         
-    def RPM_master(self): ### IS THIS NEEDED???
+    def RPM_master(self): ### TODO: IS THIS NEEDED???
         max_RPM = self.spinB_max_RPM.value()
         self.spinB_RPM.setMaximum(max_RPM)
     
@@ -167,7 +168,7 @@ class Window(QMainWindow, Ui_MainWindow):
         
     # connections for checkability of leg motors
         # if single_motor is active, the checkboxes are enabled 
-        self.radioB_single_motor.clicked.connect(self.enable_motorselection) # NEEDED?
+        self.radioB_single_motor.clicked.connect(self.enable_motorselection) # TODO: NEEDED?
         # if all_motors is active the checkboxes for the individual legs are unchackable
         self.radioB_all_motors.clicked.connect(self.all_legs_setup)
         
@@ -188,22 +189,23 @@ class Window(QMainWindow, Ui_MainWindow):
         
     # connections for permanent and when pushed functions on their specific tab
         # permanent for legs 
-        #self.pushB_upwards1.clicked.connect(lambda: self.multi_module_control(self.permanent_left))
-        self.pushB_upwards1.clicked.connect(self.permanent_right)
-        #self.pushB_downwards1.clicked.connect(lambda: self.multi_module_control(self.permanent_right))
-        self.pushB_downwards1.clicked.connect(self.permanent_left) 
-        #self.pushB_stop_legs.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
-        self.pushB_stop_legs.clicked.connect(lambda: print('all leg motors stopped'))
+        #self.pushB_upwards1.clicked.connect(lambda: print('permanent right'))
+        self.pushB_upwards1.clicked.connect(lambda: self.multi_module_control(self.permanent_right))
+        #self.pushB_downwards1.clicked.connect(lambda: print('permanent left'))
+        self.pushB_downwards1.clicked.connect(lambda: self.multi_module_control(self.permanent_left))
+        # self.pushB_stop_legs.clicked.connect(lambda: print('all leg motors stopped'))
+        self.pushB_stop_legs.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
         # when pushed for legs 
-        #self.pushB_upwards.pressed.connect(lambda: self.multi_module_control(permanent_right))
-        #self.pushB_upwards2.released.connect(lambda: self.multi_module_control(self.stop_motor))
-        self.pushB_upwards2.pressed.connect(self.permanent_right)
-        self.pushB_upwards2.released.connect(self.stop_motor)
-        #self.pushB_downwards.pressed.connect(lambda: self.multi_module_control(self.permanent_left))
-        #self.pushB_downwards2.released.connect(lambda: self.multi_module_control(self.stop_motor))
-        self.pushB_downwards2.pressed.connect(self.permanent_left)
-        self.pushB_downwards2.released.connect(self.stop_motor)
+        self.pushB_upwards2.pressed.connect(lambda: self.multi_module_control(self.permanent_right))
+        self.pushB_upwards2.released.connect(lambda: self.multi_module_control(self.stop_motor))
+        # self.pushB_upwards2.pressed.connect(self.permanent_right)
+        # self.pushB_upwards2.released.connect(self.stop_motor)
+        self.pushB_downwards2.pressed.connect(lambda: self.multi_module_control(self.permanent_left))
+        self.pushB_downwards2.released.connect(lambda: self.multi_module_control(self.stop_motor))
+        # self.pushB_downwards2.pressed.connect(self.permanent_left)
+        # self.pushB_downwards2.released.connect(self.stop_motor)
         
+        ### TODO: TEST IF THE FOLLOWING MOTORS WORK PROPERLY
         # permanent for x 
         self.pushB_forwards1.clicked.connect(self.permanent_right)
         self.pushB_backwards1.clicked.connect(self.permanent_left)
@@ -260,7 +262,7 @@ class Window(QMainWindow, Ui_MainWindow):
             #     self.store_lcds[8][pos_idx].display(module.module_positions[pos_idx])
 
 
-    def select_module(self, m): # PROBABLY NOT NEEDED ANYMORE...
+    def select_module(self, m): # TODO: PROBABLY NOT NEEDED ANYMORE...
         '''Module selection for single module use.'''
         self.module = m
         self.motor = self.module.motor
@@ -332,7 +334,7 @@ class Window(QMainWindow, Ui_MainWindow):
             # self.active_modules = [module_s]
             print('S selected')
             
-        # update single active module and motor: # NEEDED? probably not if all motor actions are done via multi_action...
+        # update single active module and motor: # TODO: NEEDED? probably not if all motor actions are done via multi_action...
         # if len(self.active_modules) == 1:
         #     self.module = self.active_modules[0]
         #     self.motor = self.module.motor
@@ -340,12 +342,22 @@ class Window(QMainWindow, Ui_MainWindow):
         # print('Selected motor(s):')
         # for module in self.active_modules:
         #     print('Motor', module.moduleID)
-            
+    
     def multi_module_control(self, action):
+        '''Add multi motor control capability. Argument "action" is one of
+        the motor control functions below (e.g., single_step).'''
+        # iterate over all active modules and apply the action function:
         for module in self.active_modules:
+            # Prevent blocking of the application by the while loop:
+            QApplication.processEvents()
+            # initial refresh:
+            self.refresh_lcd_displays()
+            # set module and motor: TODO: IS THIS NEEDED?
             self.module = module
             self.motor = module.motor
             action()
+            # final refresh:
+            self.refresh_lcd_displays()
         # iterate over all active modules and refresh LCDs:
         for module in self.active_modules:
             # Check if motor is active:
@@ -354,6 +366,7 @@ class Window(QMainWindow, Ui_MainWindow):
                 QApplication.processEvents()
                 # Refresh LCD
                 self.refresh_lcd_displays()
+                
                 
     def refresh_lcd_displays(self):
         '''Update the status LCDs.'''
@@ -365,7 +378,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # self.lcd_current_pr.display(module_pr.motor.actual_position)
         # self.lcd_current_cr.display(module_cr.motor.actual_position)
         # self.lcd_current_s.display(module_s.motor.actual_position)
-        # time.sleep(0.1)
+        # time.sleep(0.1) # DO NOT sleep here, breaks motor behaviour...
         
         
         
@@ -432,9 +445,15 @@ class Window(QMainWindow, Ui_MainWindow):
                 #print('Coarse steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
             
     def stop_motor(self):
+        '''Stop signal to all motors; can always be sent to the motors.'''
         self.module.motor.stop()
+        # ensure that the motors actually have time to slow down and stop:
+        time.sleep(0.2)
+        # set target_position to actual_position for the multi_control loop:
+        act_pos = self.module.motor.get_axis_parameter(self.module.motor.AP.ActualPosition)
+        self.module.motor.set_axis_parameter(self.module.motor.AP.TargetPosition, act_pos)
+        # print status message
         print('Motor', self.module.moduleID, 'stopped!')
-        print("Motors stopped")
         
     
     # functions for enabling checkability 
