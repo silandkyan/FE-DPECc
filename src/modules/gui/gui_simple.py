@@ -13,11 +13,12 @@ Created on Thu Feb 23 16:37:43 2023
 # find good values for max_current parameter for both motor types...
 
 import sys
-#import time
+import time
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
 from pytrinamic.connections import ConnectionManager
 from .main_window_simple_ui import Ui_MainWindow
 from ..Motor import Motor
+
 
 
 ### Module setup and assignment ###
@@ -105,9 +106,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.storeButtonA.clicked.connect(lambda: self.store_pos(0))
         self.storeButtonB.clicked.connect(lambda: self.store_pos(1))
         # Go to stored position:
-        self.goto_buttonA.clicked.connect(lambda: self.goto(0))
-        self.goto_buttonB.clicked.connect(lambda: self.goto(1))
-        #self.goto_2.clicked.connect(lambda: self.goto(module_R.motor, round(self.lcd_stored_2.value())))
+        self.goto_buttonA.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(0)))
+        self.goto_buttonB.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(1)))
         
         ### single ###
         # Motor selection radioButtons:
@@ -117,7 +117,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.s_left.clicked.connect(lambda: self.multi_module_control(self.left))
         self.s_right.clicked.connect(lambda: self.multi_module_control(self.right))
         self.s_stop.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
-        
+
         ### multi ###
         # Motor selection checkBoxes:
         self.motor1_checkBox.toggled.connect(self.refresh_active_modules)
@@ -131,7 +131,7 @@ class Window(QMainWindow, Ui_MainWindow):
         '''Module selection for single module control.'''
         self.module = m
         self.motor = self.module.motor
-        # override list of active modules:
+        # overwrite list of active modules:
         self.active_modules = [self.module]
         print('Selected motor: Motor', self.module.moduleID)
         #print(self.module.status_message())
@@ -236,12 +236,16 @@ class Window(QMainWindow, Ui_MainWindow):
         the motor control functions below (e.g., single_step).'''
         # iterate over all active modules and apply the action function:
         for module in self.active_modules:
+            # Prevent blocking of the application by the while loop:
+            QApplication.processEvents()
             # initial refresh:
             self.refresh_lcd_displays()
             # set module and motor: IS THIS NEEDED?
             self.module = module
             self.motor = module.motor
             action()
+            # final refresh:
+            self.refresh_lcd_displays()
         # iterate over all active modules and refresh LCDs:
         for module in self.active_modules:
             # Check if motor is active:
@@ -250,24 +254,13 @@ class Window(QMainWindow, Ui_MainWindow):
                 QApplication.processEvents()
                 # Refresh LCD
                 self.refresh_lcd_displays()
-                  
-    def goto(self, pos_idx):
-        # iterate over all active modules and apply the action function:
-        for module in self.active_modules:
-            # initial refresh:
-            #self.refresh_lcd_displays()
-            pps = round(self.rpmBox.value() * module.msteps_per_rev/60)
-            pos = module.module_positions[pos_idx]
-            module.motor.move_to(pos, pps)
-            print('go to', pos)
-        for module in self.active_modules:
-            # Check if motor is active:
-            while not module.motor.get_position_reached():
-                # Prevent blocking of the application by the while loop:
-                QApplication.processEvents()
-                # Refresh LCD
-                self.refresh_lcd_displays()
             
+    def goto(self, pos_idx):
+        pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
+        pos = self.module.module_positions[pos_idx]
+        self.module.motor.move_to(pos, pps)
+        print('go to', pos)
+        
     def single_step_left(self):
         '''Single fullstep mode. Required amount of msteps and pulse freqency
         are calculated from the module settings and the value of rpmBox.'''
@@ -333,8 +326,15 @@ class Window(QMainWindow, Ui_MainWindow):
         # self.refresh_lcd_displays()
         
     def stop_motor(self):
-        '''Stop signal, can always be sent to the motor.'''
+        '''Stop signal to all motors; can always be sent to the motors.'''
         self.module.motor.stop()
+        # ensure that the motors actually have time to slow down and stop:
+        time.sleep(0.2)
+        # set target_position to actual_position for the multi_control loop:
+        act_pos = self.module.motor.get_axis_parameter(self.module.motor.AP.ActualPosition)
+        self.module.motor.set_axis_parameter(self.module.motor.AP.TargetPosition, act_pos)
+        # targ_pos = self.module.motor.get_axis_parameter(self.module.motor.AP.TargetPosition)
+        # print('debug: stop', self.module.moduleID, act_pos, targ_pos) # debug message
         print('Motor', self.module.moduleID, 'stopped!')
         # self.refresh_lcd_displays()
         
