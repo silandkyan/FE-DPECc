@@ -96,6 +96,10 @@ class Window(QMainWindow, Ui_MainWindow):
         self.spinB_coarse.setValue(10)   # amount of fsteps
         # amount of fsteps in fine mode:
         self.spinB_fine.setValue(1)   # amount of fsteps
+        # Store lists for checkboxes and radioButtons:
+        self.legs_boxlist = [self.checkB_zbr, self.checkB_zbc, self.checkB_zdr, self.checkB_zdc]
+        self.legs_radioBlist = [self.radioB_all_motors, self.radioB_single_motor]
+        self.rot_radioBlist = [self.radioB_pr, self.radioB_cr]
         # Set default motor and module that is active initially:
         self.reset_active_modules()
         
@@ -214,7 +218,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_counterclockwise2.released.connect(self.stop_motor)
 
         ##  MOTOR SELECTION  ##
-        # Activate correct module(s) tab change:
+        # Activate correct module(s) on tab change:
         self.tabWidget.currentChanged.connect(self.reset_active_modules)
         # Leg motor selection:
         # TODO: when changing to select mode, all boxes are unselected but modules are active. fix!
@@ -331,13 +335,15 @@ class Window(QMainWindow, Ui_MainWindow):
         
     def reset_active_modules(self):
         '''Reset list of active modules to tab default.'''
+        # Legs:
         if self.tabWidget.currentIndex() == 0:
-            # leg control -- all legs:
-            if self.radioB_all_motors.checked == True:
-                self.refresh_module_list(0)
-                # leg control -- selected legs:
-            elif self.radioB_single_motor.checked == True:
-                self.refresh_module_list(1)
+            # set buttons correctly:
+            self.radioB_all_motors.setChecked(True)
+            self.radioB_single_motor.setChecked(False)
+            for box in self.legs_boxlist:
+                box.setChecked(False)
+            # refresh active module list:
+            self.refresh_module_list(0)
             # print('modules for legs selected')
         
         # X:
@@ -347,6 +353,8 @@ class Window(QMainWindow, Ui_MainWindow):
         
         # PR/CR:
         elif self.tabWidget.currentIndex() == 2:
+            self.radioB_pr.setChecked(True)
+            self.radioB_cr.setChecked(False)
             self.refresh_module_list(3)
             # print('module for pr or cr selected')
         
@@ -357,8 +365,6 @@ class Window(QMainWindow, Ui_MainWindow):
             
     def refresh_module_list(self, select):
         self.active_modules = []
-        boxlist = [self.checkB_zbr, self.checkB_zbc,self.checkB_zdr, self.checkB_zdc]
-        radioBlist = [self.radioB_pr, self.radioB_cr]
                         
         if select == 0:
             self.active_modules.append(module_zbr)
@@ -368,12 +374,12 @@ class Window(QMainWindow, Ui_MainWindow):
             print('All leg motors are selected')                              
                                        
         if select == 1:     
-            for box in boxlist:
+            for box in self.legs_boxlist:
                 if box.isChecked() == True:
                     if box == self.checkB_zbr:
                         self.active_modules.append(module_zbr)
                         print('ZBR appended')
-                    elif box == self.checkB_zbc:  
+                    if box == self.checkB_zbc:  
                         self.active_modules.append(module_zbc)
                         print('ZBC appended')
                     # if box == self.checkB_zdr:                   
@@ -384,20 +390,20 @@ class Window(QMainWindow, Ui_MainWindow):
                     #     print('ZDC appended')
                     
         if select == 2:
-            # self.active_modules = [module_]
+            # self.active_modules = [module_] # TODO
             print('X selected')
                     
         if select == 3:
-            for button in radioBlist:
+            for button in self.legs_radioBlist:
                 if button.isChecked() == True:
-                    # self.self.active_modules.append(self.module_pr)
+                    # self.self.active_modules.append(self.module_pr) # TODO
                     print('PR selected')
                 elif button.isChecked() == True:
-                    # self.self.active_modules.append(self.module_cr)
+                    # self.self.active_modules.append(self.module_cr) # TODO
                     print('CR selected')
                     
         if select == 4:
-            # self.active_modules = [module_s]
+            # self.active_modules = [module_s] # TODO
             print('S selected')
             
         # update single active module and motor: # TODO: NEEDED? probably not if all motor actions are done via multi_action...
