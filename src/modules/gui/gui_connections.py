@@ -153,9 +153,12 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_store_B.clicked.connect(lambda: self.store_pos(1))
         self.pushB_store_C.clicked.connect(lambda: self.store_pos(2))
     # connections for positional pushButtons
-        self.pushB_go_to_A.clicked.connect(lambda: self.goto(0))
-        self.pushB_go_to_B.clicked.connect(lambda: self.goto(1))
-        self.pushB_go_to_C.clicked.connect(lambda: self.goto(2))
+        # self.pushB_go_to_A.clicked.connect(lambda: self.goto(0))
+        # self.pushB_go_to_B.clicked.connect(lambda: self.goto(1))
+        # self.pushB_go_to_C.clicked.connect(lambda: self.goto(2))
+        self.pushB_go_to_A.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(0)))
+        self.pushB_go_to_B.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(1)))
+        self.pushB_go_to_C.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(2)))
         
     # connections for absolute position pushButtons:
         # absolute for x
@@ -477,22 +480,28 @@ class Window(QMainWindow, Ui_MainWindow):
         self.checkB_zdc.setCheckable(False)
                
     # this function lets the motors drive to the position which are shown by the LCDs in microsteps    
+    # def goto(self, pos_idx):
+    #     # iterate over all active modules and apply the action function:
+    #     for module in self.active_modules:
+    #         # initial refresh:
+    #         #self.refresh_lcd_displays()
+    #         pps = round(self.rpmBox.value() * module.msteps_per_rev/60)
+    #         pos = module.module_positions[pos_idx]
+    #         module.motor.move_to(pos, pps)
+    #         print('go to', pos)
+    #     for module in self.active_modules:
+    #         # Check if motor is active:
+    #         while not module.motor.get_position_reached():
+    #             # Prevent blocking of the application by the while loop:
+    #             QApplication.processEvents()
+    #             # Refresh LCD
+    #             self.refresh_lcd_displays()
+    
     def goto(self, pos_idx):
-        # iterate over all active modules and apply the action function:
-        for module in self.active_modules:
-            # initial refresh:
-            #self.refresh_lcd_displays()
-            pps = round(self.rpmBox.value() * module.msteps_per_rev/60)
-            pos = module.module_positions[pos_idx]
-            module.motor.move_to(pos, pps)
-            print('go to', pos)
-        for module in self.active_modules:
-            # Check if motor is active:
-            while not module.motor.get_position_reached():
-                # Prevent blocking of the application by the while loop:
-                QApplication.processEvents()
-                # Refresh LCD
-                self.refresh_lcd_displays()
+        pps = round(self.spinB_RPM.value() * self.module.msteps_per_rev/60)
+        pos = self.module.module_positions[pos_idx]
+        self.module.motor.move_to(pos, pps)
+        print('go to', pos)
 
     def abs_pos(self, motor): 
         if motor == 0:

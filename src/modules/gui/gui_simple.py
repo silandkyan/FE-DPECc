@@ -106,9 +106,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.storeButtonA.clicked.connect(lambda: self.store_pos(0))
         self.storeButtonB.clicked.connect(lambda: self.store_pos(1))
         # Go to stored position:
-        self.goto_buttonA.clicked.connect(lambda: self.goto(0))
-        self.goto_buttonB.clicked.connect(lambda: self.goto(1))
-        #self.goto_2.clicked.connect(lambda: self.goto(module_R.motor, round(self.lcd_stored_2.value())))
+        self.goto_buttonA.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(0)))
+        self.goto_buttonB.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(1)))
         
         ### single ###
         # Motor selection radioButtons:
@@ -255,24 +254,13 @@ class Window(QMainWindow, Ui_MainWindow):
                 QApplication.processEvents()
                 # Refresh LCD
                 self.refresh_lcd_displays()
-                  
-    def goto(self, pos_idx):
-        # iterate over all active modules and apply the action function:
-        for module in self.active_modules:
-            # initial refresh:
-            #self.refresh_lcd_displays()
-            pps = round(self.rpmBox.value() * module.msteps_per_rev/60)
-            pos = module.module_positions[pos_idx]
-            module.motor.move_to(pos, pps)
-            print('go to', pos)
-        for module in self.active_modules:
-            # Check if motor is active:
-            while not module.motor.get_position_reached():
-                # Prevent blocking of the application by the while loop:
-                QApplication.processEvents()
-                # Refresh LCD
-                self.refresh_lcd_displays()
             
+    def goto(self, pos_idx):
+        pps = round(self.rpmBox.value() * self.module.msteps_per_rev/60)
+        pos = self.module.module_positions[pos_idx]
+        self.module.motor.move_to(pos, pps)
+        print('go to', pos)
+        
     def single_step_left(self):
         '''Single fullstep mode. Required amount of msteps and pulse freqency
         are calculated from the module settings and the value of rpmBox.'''
