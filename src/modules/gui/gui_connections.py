@@ -221,7 +221,6 @@ class Window(QMainWindow, Ui_MainWindow):
         # Activate correct module(s) on tab change:
         self.tabWidget.currentChanged.connect(self.reset_active_modules)
         # Leg motor selection:
-        # TODO: when changing to select mode, all boxes are unselected but modules are active. fix!
         # if the all_motors radioB is clicked, all leg motors are selected:
         self.radioB_all_motors.clicked.connect(lambda: self.refresh_module_list(0))
         # active_module list is refreshed when single_motor radioB and single_motor checkBoxes are clicked:
