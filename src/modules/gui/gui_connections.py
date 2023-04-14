@@ -46,6 +46,8 @@ module_zbc = module_list[1]
 # module_C = Motor.instances[2]
 # expand list as needed...
 
+# TODO: probably better with inst_var module_name or so...
+
 # module_zbr, module_zbc = Motor.assign_modules() # module_zdr, module_zdc, module_x, module_pr, module_cr, module_s
 
 # print(module_zbr.status_message())
@@ -76,6 +78,10 @@ class Window(QMainWindow, Ui_MainWindow):
         self.connectSignalsSlots()
         self.show()
         
+        
+        
+    ###   SETUP DEFAULTS   ###
+    
     def setup_default_values(self):
         '''User input: Specify default values here.'''
         ### User input values (with allowed min-max ranges)
@@ -134,6 +140,10 @@ class Window(QMainWindow, Ui_MainWindow):
         # done by one revolution of motor on specific axis
         self.hardware_config = [0, 0, 0, 0, 0, 0, 0, 0]
         
+        
+        
+    ###   CALCULATORS (for unit conversion to pps)   ###
+        
     def RPM_master(self): ### TODO: IS THIS NEEDED???
         max_RPM = self.spinB_max_RPM.value()
         self.spinB_RPM.setMaximum(max_RPM)
@@ -146,95 +156,115 @@ class Window(QMainWindow, Ui_MainWindow):
         msteps = round(mm_deg / self.hardware_config[hrdwr_idx]* 200*16, 3)
         self.msteps = msteps
     
+    
+    
+    ###   BUTTON SIGNAL AND SLOT CONNECTIONS   ###
+    
     def connectSignalsSlots(self):
-    # connections for store buttons 
-        # given parameters represent the coulmn index of the store_lcd matrix 
+        
+        ##  STORE BUTTONS  ##
+        # store_pos argument represents the coulmn index of the store_lcd matrix:
         self.pushB_store_A.clicked.connect(lambda: self.store_pos(0))
         self.pushB_store_B.clicked.connect(lambda: self.store_pos(1))
         self.pushB_store_C.clicked.connect(lambda: self.store_pos(2))
-    # connections for positional pushButtons
-        # self.pushB_go_to_A.clicked.connect(lambda: self.goto(0))
-        # self.pushB_go_to_B.clicked.connect(lambda: self.goto(1))
-        # self.pushB_go_to_C.clicked.connect(lambda: self.goto(2))
+        
+        ##  GOTO BUTTONS  ##
+        # goto argument represents the coulmn index of the store_lcd matrix:
         self.pushB_go_to_A.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(0)))
         self.pushB_go_to_B.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(1)))
         self.pushB_go_to_C.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(2)))
         
-    # connections for absolute position pushButtons:
-        # absolute for x
+        ##  ABSOLUTE POSITION BUTTONS  ##
+        # abs_pos argument represents the motor: 0 = X, 1 = PR/CR
         self.pushB_start_x.clicked.connect(lambda: self.abs_pos(0))
-        #ablsolute for pr and cr
         self.pushB_start_pr_cr.clicked.connect(lambda: self.abs_pos(1))
         
-    # connections for selecting right module(s) for the right tab 
-        self.tabWidget.currentChanged.connect(self.reset_active_modules)
+        ### TODO: TEST IF X, CR/PR and S MOTORS WORK PROPERLY
         
-    # connections for checkability of leg motors
-        # if single_motor is active, the checkboxes are enabled 
-        self.radioB_single_motor.clicked.connect(self.enable_motorselection) # TODO: NEEDED?
-        # if all_motors is active the checkboxes for the individual legs are unchackable
-        self.radioB_all_motors.clicked.connect(self.all_legs_setup)
-        
-    # connections for leg motor selection
-        # if the all leg radioButton is pressed, all the motors are selected
-        self.radioB_all_motors.clicked.connect(lambda: self.refresh_module_list(0))
-        # if select leg motor is enabled, the list is refreshed when new motors are chosen
-        self.checkB_zbr.toggled.connect(lambda: self.refresh_module_list(1))
-        self.checkB_zbc.toggled.connect(lambda: self.refresh_module_list(1))
-        self.checkB_zdr.toggled.connect(lambda: self.refresh_module_list(1))
-        self.checkB_zdc.toggled.connect(lambda: self.refresh_module_list(1))
-
-    # connections for the pr/cr radioButtons
-        #self.radioB_pr.pressed.connect(lambda: self.select_module(module_pr))
-        #self.radioB_cr.pressed.connect(lambda: self.select_module(module_cr))
-        self.radioB_pr.pressed.connect(lambda: print('dummy: module pr selected'))
-        self.radioB_cr.pressed.connect(lambda: print('dummy: module cr selected'))
-        
-    # connections for permanent and when pushed functions on their specific tab
-        # permanent for legs 
-        #self.pushB_upwards1.clicked.connect(lambda: print('permanent right'))
+        ##  PERMANENT MOVE  ##
+        # Z: 
         self.pushB_upwards1.clicked.connect(lambda: self.multi_module_control(self.permanent_right))
-        #self.pushB_downwards1.clicked.connect(lambda: print('permanent left'))
         self.pushB_downwards1.clicked.connect(lambda: self.multi_module_control(self.permanent_left))
-        # self.pushB_stop_legs.clicked.connect(lambda: print('all leg motors stopped'))
         self.pushB_stop_legs.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
-        # when pushed for legs 
-        self.pushB_upwards2.pressed.connect(lambda: self.multi_module_control(self.permanent_right))
-        self.pushB_upwards2.released.connect(lambda: self.multi_module_control(self.stop_motor))
-        # self.pushB_upwards2.pressed.connect(self.permanent_right)
-        # self.pushB_upwards2.released.connect(self.stop_motor)
-        self.pushB_downwards2.pressed.connect(lambda: self.multi_module_control(self.permanent_left))
-        self.pushB_downwards2.released.connect(lambda: self.multi_module_control(self.stop_motor))
-        # self.pushB_downwards2.pressed.connect(self.permanent_left)
-        # self.pushB_downwards2.released.connect(self.stop_motor)
-        
-        ### TODO: TEST IF THE FOLLOWING MOTORS WORK PROPERLY
-        # permanent for x 
+        # self.pushB_stop_legs.clicked.connect(lambda: print('all leg motors stopped'))
+        # X: 
         self.pushB_forwards1.clicked.connect(self.permanent_right)
         self.pushB_backwards1.clicked.connect(self.permanent_left)
         self.pushB_stop_x.clicked.connect(self.stop_motor)
-        # when pushed for x 
+        # PR/CR:
+        self.pushB_clockwise1.clicked.connect(self.permanent_right)
+        self.pushB_counterclockwise1.clicked.connect(self.permanent_left)
+        self.pushB_stop_pr_cr.clicked.connect(self.stop_motor)
+        
+        ##  WHEN PUSHED MOVE  ##
+        # Z:
+        self.pushB_upwards2.pressed.connect(lambda: self.multi_module_control(self.permanent_right))
+        self.pushB_upwards2.released.connect(lambda: self.multi_module_control(self.stop_motor))
+        self.pushB_downwards2.pressed.connect(lambda: self.multi_module_control(self.permanent_left))
+        self.pushB_downwards2.released.connect(lambda: self.multi_module_control(self.stop_motor))
+        # X:
         self.pushB_forwards2.pressed.connect(self.permanent_right)
         self.pushB_forwards2.released.connect(self.stop_motor)
         self.pushB_backwards2.pressed.connect(self.permanent_left)
         self.pushB_backwards2.released.connect(self.stop_motor)
-
-        # permanent for pr and cr    
-        self.pushB_clockwise1.clicked.connect(self.permanent_right)
-        self.pushB_counterclockwise1.clicked.connect(self.permanent_left)
-        self.pushB_stop_pr_cr.clicked.connect(self.stop_motor)
-        # when pushed for pr and cr 
+        # PR/CR:
         self.pushB_clockwise2.pressed.connect(self.permanent_right)
         self.pushB_clockwise2.released.connect(self.stop_motor)
         self.pushB_counterclockwise2.pressed.connect(self.permanent_left)
         self.pushB_counterclockwise2.released.connect(self.stop_motor)
-        # quit application and end program 
-        self.pushB_quit.clicked.connect(self.close)
-        
-        
-        #self.pushB_switch.clicked.connect(self.permanent_left)
 
+        ##  MOTOR SELECTION  ##
+        # Activate correct module(s) tab change:
+        self.tabWidget.currentChanged.connect(self.reset_active_modules)
+        # Leg motor selection:
+        # TODO: when changing to select mode, all boxes are unselected but modules are active. fix!
+        # if the all_motors radioB is clicked, all leg motors are selected:
+        self.radioB_all_motors.clicked.connect(lambda: self.refresh_module_list(0))
+        # active_module list is refreshed when single_motor radioB and single_motor checkBoxes are clicked:
+        self.checkB_zbr.toggled.connect(lambda: self.refresh_module_list(1))
+        self.checkB_zbc.toggled.connect(lambda: self.refresh_module_list(1))
+        self.checkB_zdr.toggled.connect(lambda: self.refresh_module_list(1))
+        self.checkB_zdc.toggled.connect(lambda: self.refresh_module_list(1))
+        # PR/CR selection: # TODO
+        # self.radioB_pr.pressed.connect(lambda: self.select_module(module_pr))
+        # self.radioB_cr.pressed.connect(lambda: self.select_module(module_cr))
+        self.radioB_pr.pressed.connect(lambda: print('dummy: module pr selected'))
+        self.radioB_cr.pressed.connect(lambda: print('dummy: module cr selected'))
         
+        ##  GENERAL GUI BEHAVIOUR  ##
+        # Leg motor checkbox checkability:
+        # if single_motor is active, the checkboxes are enabled 
+        self.radioB_single_motor.clicked.connect(self.enable_motorselection) # TODO: NEEDED?
+        # if all_motors is active the checkboxes for the individual legs are unchackable
+        self.radioB_all_motors.clicked.connect(self.all_legs_setup)
+        # quit application and end program: 
+        self.pushB_quit.clicked.connect(self.close)
+
+
+
+    ###   KEYBOARD CONTROL   ###
+    
+    def keyPressEvent(self, event: QKeyEvent) -> None: 
+        # event gets defined and keys are specified below 
+        key_pressed = event.key() # TODO: can this line also be within the outer if-loop? might be more efficient...
+        if self.radioB_key_control.isChecked() == True:
+            if key_pressed == Qt.Key_S:
+                self.multi_module_control(self.fine_step_left)
+                #print('Fine steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+            if key_pressed == Qt.Key_A:
+                self.multi_module_control(self.coarse_step_left)
+                # print('Coarse steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+            if key_pressed == Qt.Key_W:
+                self.multi_module_control(self.fine_step_right)
+                #print('Fine steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+            if key_pressed == Qt.Key_D:
+                self.multi_module_control(self.coarse_step_right)
+                #print('Coarse steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+            
+            
+            
+    ###   LCD TABLE FUNCTIONS   ###
+    
     def store_pos(self, pos_idx):
         '''Store position of current active modules in a special instance
         variable for later use. Argument pos_idx (type=int) refers to the 
@@ -263,31 +293,64 @@ class Window(QMainWindow, Ui_MainWindow):
             #     self.store_lcds[7][pos_idx].display(module.module_positions[pos_idx])
             # elif module.motor == module_s.motor:
             #     self.store_lcds[8][pos_idx].display(module.module_positions[pos_idx])
-
-
-    def select_module(self, m): # TODO: PROBABLY NOT NEEDED ANYMORE...
+            
+    def refresh_lcd_displays(self):
+        '''Update the status LCDs.'''
+        self.lcd_current_zbr.display(module_zbr.motor.actual_position)
+        self.lcd_current_zbc.display(module_zbc.motor.actual_position)
+        # self.lcd_current_zdr.display(module_zdr.motor.actual_position)
+        # self.lcd_current_zdc.display(module_zdc.motor.actual_position)
+        # self.lcd_current_x.display(module_x.motor.actual_position)
+        # self.lcd_current_pr.display(module_pr.motor.actual_position)
+        # self.lcd_current_cr.display(module_cr.motor.actual_position)
+        # self.lcd_current_s.display(module_s.motor.actual_position)
+        # time.sleep(0.1) # DO NOT sleep here, breaks motor behaviour...
+        
+    def goto(self, pos_idx):
+        '''Motor moves to the stored module_position on index pos_idx.'''
+        # calculate correct pps:
+        pps = round(self.spinB_RPM.value() * self.module.msteps_per_rev/60)
+        # get pos to move to:
+        pos = self.module.module_positions[pos_idx]
+        # move motor to pos and print status message:
+        self.module.motor.move_to(pos, pps)
+        print('go to', pos)
+    
+    
+    
+    ###   MODULE MANAGEMENT   ###
+    
+    def select_module(self, m): # TODO: MAYBE NOT NEEDED ANYMORE...
         '''Module selection for single module use.'''
         self.module = m
         self.motor = self.module.motor
         # override list of active modules:
         self.active_modules = [self.module]
         print('Selected motor: Motor', self.module.moduleID)
-        #print(self.module.status_message()) 
-
-    # def set_mode(self, mode):
-    #     self.mode = mode
-    #     print('Mode:', mode)
-    
+        #print(self.module.status_message())
+        
     def reset_active_modules(self):
+        '''Reset list of active modules to tab default.'''
         if self.tabWidget.currentIndex() == 0:
-            self.refresh_module_list(0)
+            # leg control -- all legs:
+            if self.radioB_all_motors.checked == True:
+                self.refresh_module_list(0)
+                # leg control -- selected legs:
+            elif self.radioB_single_motor.checked == True:
+                self.refresh_module_list(1)
             # print('modules for legs selected')
+        
+        # X:
         elif self.tabWidget.currentIndex() == 1:
             self.refresh_module_list(2)
             # print('module for x selected')
+        
+        # PR/CR:
         elif self.tabWidget.currentIndex() == 2:
             self.refresh_module_list(3)
             # print('module for pr or cr selected')
+        
+        # S:
         elif self.tabWidget.currentIndex() == 3:
             self.refresh_module_list(4)
             # print('module for s selected')
@@ -370,33 +433,32 @@ class Window(QMainWindow, Ui_MainWindow):
                 # Refresh LCD
                 self.refresh_lcd_displays()
                 
+    def abs_pos(self, motor): # TODO: check if this works
+        if motor == 0:
+            # self.mm_deg_to_steps(self.dspinB_deg_axis_x.value(), 0)
+            # self.motor.move_to(self.msteps, self.pps)
+            print('Motor x moving to position:', str(self.dspinB_mm_axis_x.value()))
+        elif motor == 1:
+            # self.mm_deg_to_steps(self.dspinB_deg_axis_pr_cr.value(), 1)
+            # self.motor.move_to(self.msteps, self.pps)
+            print('Motor pr moving to position:', str(self.dspinB_deg_axis_pr_cr.value()))
+            
                 
-    def refresh_lcd_displays(self):
-        '''Update the status LCDs.'''
-        self.lcd_current_zbr.display(module_zbr.motor.actual_position)
-        self.lcd_current_zbc.display(module_zbc.motor.actual_position)
-        # self.lcd_current_zdr.display(module_zdr.motor.actual_position)
-        # self.lcd_current_zdc.display(module_zdc.motor.actual_position)
-        # self.lcd_current_x.display(module_x.motor.actual_position)
-        # self.lcd_current_pr.display(module_pr.motor.actual_position)
-        # self.lcd_current_cr.display(module_cr.motor.actual_position)
-        # self.lcd_current_s.display(module_s.motor.actual_position)
-        # time.sleep(0.1) # DO NOT sleep here, breaks motor behaviour...
         
-        
-        
-    # def left(self):
-    #     print('Mode:', self.mode)
-    #     if self.mode == 1:
-    #         self.permanent_left()
-
-        
-    # def right(self):
-    #     print('Mode:', self.mode)
-    #     if self.mode == 1:
-    #         self.permanent_right()
-            
-            
+    ###   MOTOR CONTROL FUNCTIONS   ###
+    
+    def stop_motor(self):
+        '''Stop signal to all motors; can always be sent to the motors.'''
+        self.module.motor.stop()
+        # ensure that the motors actually have time to slow down and stop:
+        # (with current acceleration, 0.2 sec seems fine...)
+        time.sleep(0.2)
+        # set target_position to actual_position for the multi_control loop:
+        act_pos = self.module.motor.get_axis_parameter(self.module.motor.AP.ActualPosition)
+        self.module.motor.set_axis_parameter(self.module.motor.AP.TargetPosition, act_pos)
+        # print status message
+        print('Motor', self.module.moduleID, 'stopped!')
+    
     def permanent_left(self):
         if self.radioB_permanent_when_pushed.isChecked() == True:
             # correct calling of motor...
@@ -412,54 +474,28 @@ class Window(QMainWindow, Ui_MainWindow):
         msteps = self.module.msteps_per_fstep * self.spinB_fine.value()
         # self.motor.move_by(-self.msteps, self.pps)
         self.motor.move_by(-msteps, self.pps)
-        print('Fine steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+        print('Fine step left with Module', str(self.module.moduleID), 'at', str(self.spinB_RPM.value()), 'RPM')
         
     def coarse_step_left(self):
         msteps = self.module.msteps_per_fstep * self.spinB_coarse.value()
         # self.motor.move_by(-self.msteps, self.pps)
         self.motor.move_by(-msteps, self.pps)
-        print('Coarse steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+        print('Coarse step left with Module:', str(self.module.moduleID), 'at', str(self.spinB_RPM.value()), 'RPM')
         
     def fine_step_right(self):
         msteps = self.module.msteps_per_fstep * self.spinB_fine.value()
         self.motor.move_by(msteps, self.pps)
-        print('Fine steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+        print('Fine step right with Module:', str(self.module.moduleID), 'at', str(self.spinB_RPM.value()), 'RPM')
         
     def coarse_step_right(self):
         msteps = self.module.msteps_per_fstep * self.spinB_coarse.value()
         self.motor.move_by(msteps, self.pps)
-        print('Coarse steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
+        print('Coarse step right with Module:', str(self.module.moduleID), 'at', str(self.spinB_RPM.value()), 'RPM')
 
-    def keyPressEvent(self, event: QKeyEvent) -> None: 
-        # event gets defined and keys are specified below 
-        key_pressed = event.key()
-        if self.radioB_key_control.isChecked() == True:
-            if key_pressed == Qt.Key_S:
-                self.multi_module_control(self.fine_step_left)
-                #print('Fine steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
-            if key_pressed == Qt.Key_A:
-                self.multi_module_control(self.coarse_step_left)
-                # print('Coarse steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
-            if key_pressed == Qt.Key_W:
-                self.multi_module_control(self.fine_step_right)
-                #print('Fine steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
-            if key_pressed == Qt.Key_D:
-                self.multi_module_control(self.coarse_step_right)
-                #print('Coarse steps right with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
-            
-    def stop_motor(self):
-        '''Stop signal to all motors; can always be sent to the motors.'''
-        self.module.motor.stop()
-        # ensure that the motors actually have time to slow down and stop:
-        time.sleep(0.2)
-        # set target_position to actual_position for the multi_control loop:
-        act_pos = self.module.motor.get_axis_parameter(self.module.motor.AP.ActualPosition)
-        self.module.motor.set_axis_parameter(self.module.motor.AP.TargetPosition, act_pos)
-        # print status message
-        print('Motor', self.module.moduleID, 'stopped!')
-        
-    
-    # functions for enabling checkability 
+
+
+    ###   CHECKABILITY   ###
+ 
     def enable_motorselection(self):
         # make checkboxes for leg motors checkable 
         self.checkB_zbr.setCheckable(True)
@@ -478,44 +514,9 @@ class Window(QMainWindow, Ui_MainWindow):
         self.checkB_zbc.setCheckable(False)
         self.checkB_zdr.setCheckable(False)
         self.checkB_zdc.setCheckable(False)
-               
-    # this function lets the motors drive to the position which are shown by the LCDs in microsteps    
-    # def goto(self, pos_idx):
-    #     # iterate over all active modules and apply the action function:
-    #     for module in self.active_modules:
-    #         # initial refresh:
-    #         #self.refresh_lcd_displays()
-    #         pps = round(self.rpmBox.value() * module.msteps_per_rev/60)
-    #         pos = module.module_positions[pos_idx]
-    #         module.motor.move_to(pos, pps)
-    #         print('go to', pos)
-    #     for module in self.active_modules:
-    #         # Check if motor is active:
-    #         while not module.motor.get_position_reached():
-    #             # Prevent blocking of the application by the while loop:
-    #             QApplication.processEvents()
-    #             # Refresh LCD
-    #             self.refresh_lcd_displays()
-    
-    def goto(self, pos_idx):
-        pps = round(self.spinB_RPM.value() * self.module.msteps_per_rev/60)
-        pos = self.module.module_positions[pos_idx]
-        self.module.motor.move_to(pos, pps)
-        print('go to', pos)
-
-    def abs_pos(self, motor): 
-        if motor == 0:
-            # self.mm_deg_to_steps(self.dspinB_deg_axis_x.value(), 0)
-            # self.motor.move_to(self.msteps, self.pps)
-            print('Motor x moving to position:', str(self.dspinB_mm_axis_x.value()))
-        elif motor == 1:
-            # self.mm_deg_to_steps(self.dspinB_deg_axis_pr_cr.value(), 1)
-            # self.motor.move_to(self.msteps, self.pps)
-            print('Motor pr moving to position:', str(self.dspinB_deg_axis_pr_cr.value()))
-
         
-
-                
+        
+        
 def run_app():   
     app = 0
     # Initialize GUI control flow management. Requires passing
