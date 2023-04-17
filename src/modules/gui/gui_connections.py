@@ -8,11 +8,6 @@ Created on Tue Feb 21 17:38:27 2023
 # die microstep resolution muss anpassbar werden 
 # invert direction?! gebraucht oder nicht 
 
-# need proper initialization of starting values, variables, displays, etc. 
-# e.g. pps, msteps, rpmBox... DONE
-
-# permanent radiobutton should be selected on startup DONE
-
 
 
 import sys
@@ -43,7 +38,12 @@ module with its descriptive variable name (e.g. motor_L) below;
 adjust if needed.'''
 module_zbr = module_list[0]
 module_zbc = module_list[1]
-# module_C = Motor.instances[2]
+# module_zdr = module_list[2]
+# module_zdc = module_list[3]
+# module_x = module_list[4]
+# module_pr = module_list[5]
+# module_cr = module_list[6]
+# module_s = module_list[7]
 # expand list as needed...
 
 # TODO: probably better with inst_var module_name or so...
@@ -87,8 +87,7 @@ class Window(QMainWindow, Ui_MainWindow):
         ### User input values (with allowed min-max ranges)
         # rpm for all constant speed modes (single, multi, constant):
         self.spinB_RPM.setValue(20)    # default rpm
-        # initial calculation of rpm and pps:
-        self.RPM_master()
+        # initial calculation of pps:
         self.pps_calculator()
         # max allowed value for rpm: # NEEDED???
         self.spinB_max_RPM.setValue(120)    # rpm
@@ -121,7 +120,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # connect if master RPM spinBox from legs changes 
         #self.spinB_max_RPM.valueChanged.connect(self.RPM_master) ### MOVED TO A PLACE WHERE IT ACTUALLY CALLED
         # connect if the given run RPM changes
-        #self.spinB_RPM.valueChanged.connect(self.pps_calculator) ### MOVED TO A PLACE WHERE IT ACTUALLY CALLED
+        # self.spinB_RPM.valueChanged.connect(self.pps_calculator) ### MOVED TO A PLACE WHERE IT ACTUALLY CALLED
         # by default the first tab with all legs is selected, thus the active_module list gets fed 
         # with all the leg modules
         #self.refresh_module_list(1) ### NOT NEEDED because reset_active_modules is called during setup
@@ -153,8 +152,9 @@ class Window(QMainWindow, Ui_MainWindow):
         self.spinB_RPM.setMaximum(max_RPM)
     
     def pps_calculator(self):
-        pps = round(self.spinB_RPM.value() * 200*16 / 60) 
-        self.pps = pps
+        for module in module_list:
+            module.rpm = self.spinB_RPM.value()
+            module.pps = round(module.rpm * module.msteps_per_rev/60) 
         
     def mm_deg_to_steps(self, mm_deg ,hrdwr_idx):
         msteps = round(mm_deg / self.hardware_config[hrdwr_idx]* 200*16, 3)
@@ -179,7 +179,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_go_to_C.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(2)))
         
         ##  ABSOLUTE POSITION BUTTONS  ##
-        # abs_pos argument represents the motor: 0 = X, 1 = PR/CR
+        # abs_pos argument represents the motor: 0 = X, 1 = PR/CR # TODO
         self.pushB_start_x.clicked.connect(lambda: self.abs_pos(0))
         self.pushB_start_pr_cr.clicked.connect(lambda: self.abs_pos(1))
         
@@ -231,17 +231,19 @@ class Window(QMainWindow, Ui_MainWindow):
         # PR/CR selection: # TODO
         # self.radioB_pr.pressed.connect(lambda: self.select_module(module_pr))
         # self.radioB_cr.pressed.connect(lambda: self.select_module(module_cr))
-        self.radioB_pr.pressed.connect(lambda: print('dummy: module pr selected'))
-        self.radioB_cr.pressed.connect(lambda: print('dummy: module cr selected'))
+        self.radioB_pr.clicked.connect(lambda: print('dummy: module pr selected'))
+        self.radioB_cr.clicked.connect(lambda: print('dummy: module cr selected'))
         
         ##  GENERAL GUI BEHAVIOUR  ##
         # Leg motor checkbox checkability:
         # if single_motor is active, the checkboxes are enabled 
-        self.radioB_single_motor.clicked.connect(self.enable_motorselection) # TODO: NEEDED?
+        self.radioB_single_motor.clicked.connect(self.enable_motorselection)
         # if all_motors is active the checkboxes for the individual legs are unchackable
         self.radioB_all_motors.clicked.connect(self.all_legs_setup)
         # quit application and end program: 
         self.pushB_quit.clicked.connect(self.close)
+        # refresh rpm when value is changed:
+        self.spinB_RPM.valueChanged.connect(self.pps_calculator)
 
 
 
@@ -249,8 +251,8 @@ class Window(QMainWindow, Ui_MainWindow):
     
     def keyPressEvent(self, event: QKeyEvent) -> None: 
         # event gets defined and keys are specified below 
-        key_pressed = event.key() # TODO: can this line also be within the outer if-loop? might be more efficient...
         if self.radioB_key_control.isChecked() == True:
+            key_pressed = event.key()
             if key_pressed == Qt.Key_S:
                 self.multi_module_control(self.fine_step_left)
                 #print('Fine steps left with:', str(self.active_modules), 'and', str(self.spinB_RPM.value()), 'RPM')
@@ -312,18 +314,18 @@ class Window(QMainWindow, Ui_MainWindow):
     def goto(self, pos_idx):
         '''Motor moves to the stored module_position on index pos_idx.'''
         # calculate correct pps:
-        pps = round(self.spinB_RPM.value() * self.module.msteps_per_rev/60)
+        # pps = round(self.spinB_RPM.value() * self.module.msteps_per_rev/60)
         # get pos to move to:
         pos = self.module.module_positions[pos_idx]
         # move motor to pos and print status message:
-        self.module.motor.move_to(pos, pps)
+        self.module.motor.move_to(pos, self.module.pps)
         print('go to', pos)
     
     
     
     ###   MODULE MANAGEMENT   ###
     
-    def select_module(self, m): # TODO: MAYBE NOT NEEDED ANYMORE...
+    def select_module(self, m):
         '''Module selection for single module use.'''
         self.module = m
         self.motor = self.module.motor
@@ -354,7 +356,7 @@ class Window(QMainWindow, Ui_MainWindow):
         elif self.tabWidget.currentIndex() == 2:
             self.radioB_pr.setChecked(True)
             self.radioB_cr.setChecked(False)
-            self.refresh_module_list(3)
+            # self.select_module(module.module_pr)
             # print('module for pr or cr selected')
         
         # S:
@@ -364,6 +366,8 @@ class Window(QMainWindow, Ui_MainWindow):
             
     def refresh_module_list(self, select):
         self.active_modules = []
+        # TODO: after switching from single to all legs, motors do not respond 
+        # even though they are in the list of active_modules... fix!
                         
         if select == 0:
             self.active_modules.append(module_zbr)
@@ -389,30 +393,20 @@ class Window(QMainWindow, Ui_MainWindow):
                     #     print('ZDC appended')
                     
         if select == 2:
-            # self.active_modules = [module_] # TODO
+            # self.select_module(module_x) # TODO
+            # print('moduleID', module_x.moduleID, 'selected')
             print('X selected')
                     
         if select == 3:
-            for button in self.legs_radioBlist:
-                if button.isChecked() == True:
-                    # self.self.active_modules.append(self.module_pr) # TODO
-                    print('PR selected')
-                elif button.isChecked() == True:
-                    # self.self.active_modules.append(self.module_cr) # TODO
-                    print('CR selected')
+            # self.select_module(module_pr) # TODO
+            # print('moduleID', module_pr.moduleID, 'selected')
+            print('moduleID dummy selected')
                     
         if select == 4:
-            # self.active_modules = [module_s] # TODO
+            # self.select_module(module_s) # TODO
+            # print('moduleID', module_s.moduleID, 'selected')
             print('S selected')
             
-        # update single active module and motor: # TODO: NEEDED? probably not if all motor actions are done via multi_action...
-        # if len(self.active_modules) == 1:
-        #     self.module = self.active_modules[0]
-        #     self.motor = self.module.motor
-        # Status message:
-        # print('Selected motor(s):')
-        # for module in self.active_modules:
-        #     print('Motor', module.moduleID)
     
     def multi_module_control(self, action):
         '''Add multi motor control capability. Argument "action" is one of
@@ -441,11 +435,11 @@ class Window(QMainWindow, Ui_MainWindow):
     def abs_pos(self, motor): # TODO: check if this works
         if motor == 0:
             # self.mm_deg_to_steps(self.dspinB_deg_axis_x.value(), 0)
-            # self.motor.move_to(self.msteps, self.pps)
+            # self.motor.move_to(self.msteps, self.module.pps)
             print('Motor x moving to position:', str(self.dspinB_mm_axis_x.value()))
         elif motor == 1:
             # self.mm_deg_to_steps(self.dspinB_deg_axis_pr_cr.value(), 1)
-            # self.motor.move_to(self.msteps, self.pps)
+            # self.motor.move_to(self.msteps, self.module.pps)
             print('Motor pr moving to position:', str(self.dspinB_deg_axis_pr_cr.value()))
             
                 
@@ -455,9 +449,7 @@ class Window(QMainWindow, Ui_MainWindow):
     def stop_motor(self):
         '''Stop signal to all motors; can always be sent to the motors.'''
         self.module.motor.stop()
-        # ensure that the motors actually have time to slow down and stop:
-        # (with current acceleration, 0.2 sec seems fine...)
-        time.sleep(0.2)
+        # do not use time.sleep here!
         # set target_position to actual_position for the multi_control loop:
         act_pos = self.module.motor.get_axis_parameter(self.module.motor.AP.ActualPosition)
         self.module.motor.set_axis_parameter(self.module.motor.AP.TargetPosition, act_pos)
@@ -467,34 +459,34 @@ class Window(QMainWindow, Ui_MainWindow):
     def permanent_left(self):
         if self.radioB_permanent_when_pushed.isChecked() == True:
             # correct calling of motor...
-            self.motor.rotate(-self.pps)
+            self.motor.rotate(-self.module.pps)
             print('Rotating left with', str(self.spinB_RPM.value()), 'rpm')
     
     def permanent_right(self):
         if self.radioB_permanent_when_pushed.isChecked() == True:
-            self.motor.rotate(self.pps)
+            self.motor.rotate(self.module.pps)
             print('Rotating right with', str(self.spinB_RPM.value()), 'rpm')
             
     def fine_step_left(self):
         msteps = self.module.msteps_per_fstep * self.spinB_fine.value()
         # self.motor.move_by(-self.msteps, self.pps)
-        self.motor.move_by(-msteps, self.pps)
+        self.motor.move_by(-msteps, self.module.pps)
         print('Fine step left with Module', str(self.module.moduleID), 'at', str(self.spinB_RPM.value()), 'RPM')
         
     def coarse_step_left(self):
         msteps = self.module.msteps_per_fstep * self.spinB_coarse.value()
         # self.motor.move_by(-self.msteps, self.pps)
-        self.motor.move_by(-msteps, self.pps)
+        self.motor.move_by(-msteps, self.module.pps)
         print('Coarse step left with Module:', str(self.module.moduleID), 'at', str(self.spinB_RPM.value()), 'RPM')
         
     def fine_step_right(self):
         msteps = self.module.msteps_per_fstep * self.spinB_fine.value()
-        self.motor.move_by(msteps, self.pps)
+        self.motor.move_by(msteps, self.module.pps)
         print('Fine step right with Module:', str(self.module.moduleID), 'at', str(self.spinB_RPM.value()), 'RPM')
         
     def coarse_step_right(self):
         msteps = self.module.msteps_per_fstep * self.spinB_coarse.value()
-        self.motor.move_by(msteps, self.pps)
+        self.motor.move_by(msteps, self.module.pps)
         print('Coarse step right with Module:', str(self.module.moduleID), 'at', str(self.spinB_RPM.value()), 'RPM')
 
 
@@ -507,6 +499,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.checkB_zbc.setCheckable(True)
         self.checkB_zdr.setCheckable(True)
         self.checkB_zdc.setCheckable(True)
+        self.active_modules = []
     
     def all_legs_setup(self):
         # unchecking the chekBoxes of the individual motor selection

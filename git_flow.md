@@ -62,9 +62,13 @@ publish the modifications in the central remote repo (will be reviewed before me
 
 when the branch goal is reached, it can be merged with main branch in github.
 
+Delete connections of local branches to remote branches that are inexistent:
+
+`git remote prune origin`
+
 After the branch was merged with main in github, the branch can be deleted directly on github. After that, update your local copy of the repo. If not needed anymore, the merged branch can now be deleted locally:
 
-`git branch -d branch-name`)
+`git branch -d branch-name`
 
 
 (Avoid merging with main locally):
