@@ -94,6 +94,10 @@ class Motor(TMCM1260):
         # calculate msteps/revolution
         self.msteps_per_fstep = 2 ** self.mstep_res_factor
         self.msteps_per_rev = self.msteps_per_fstep * self.fsteps_per_rev
+        # store pps value:
+        self.pps = self.msteps_per_rev / 60
+        # store rpm value:
+        self.rpm = 20 # default = 20 rpm
         # Toggle step interpolation (works only with 16 microsteps):
         motor.set_axis_parameter(motor.AP.Intpol, value=1)
         # Toggle RelativePositioningOption:
