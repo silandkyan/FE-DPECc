@@ -7,8 +7,9 @@ Created on Tue Feb 21 17:38:27 2023
 
 # die microstep resolution muss anpassbar werden 
 # invert direction?! gebraucht oder nicht 
-
-
+# go to zero pushButton DONE
+# Umrechnung für LCD Anzeige: Keine externe Funktion sonst zu hohe Rechenleistung? sondern einfach 
+# Umrechnungsfaktoren einbauen? in die Ausgabe 
 
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
@@ -84,23 +85,16 @@ class Window(QMainWindow, Ui_MainWindow):
     
     def setup_default_values(self):
         '''User input: Specify default values here.'''
-        ### User input values (with allowed min-max ranges)
-        # rpm for all constant speed modes (single, multi, constant):
-        self.spinB_RPM.setValue(20)    # default rpm
+        ### User input values (with allowed min-max range)
         # initial calculation of pps:
         self.pps_calculator()
-        # max allowed value for rpm: # NEEDED???
-        self.spinB_max_RPM.setValue(120)    # rpm
-        # amount of fsteps in coarse mode:
-        self.spinB_coarse.setValue(10)   # amount of fsteps
-        # amount of fsteps in fine mode:
-        self.spinB_fine.setValue(1)   # amount of fsteps
         # Store lists for checkboxes and radioButtons:
         self.legs_boxlist = [self.checkB_zbr, self.checkB_zbc, self.checkB_zdr, self.checkB_zdc]
         self.legs_radioBlist = [self.radioB_all_motors, self.radioB_single_motor]
         self.rot_radioBlist = [self.radioB_pr, self.radioB_cr]
         # Set default motor and module that is active initially:
         self.reset_active_modules()
+        self.goto_zero()
         
     def setup_default_buttons(self):
         # Mode selection radioB:
@@ -157,7 +151,7 @@ class Window(QMainWindow, Ui_MainWindow):
             module.pps = round(module.rpm * module.msteps_per_rev/60) 
         
     def mm_deg_to_steps(self, mm_deg ,hrdwr_idx):
-        msteps = round(mm_deg / self.hardware_config[hrdwr_idx]* 200*16, 3)
+        msteps = round(mm_deg / self.hardware_config[hrdwr_idx]* self.msteps_per_rev, 3)
         self.msteps = msteps
     
     
@@ -177,6 +171,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_go_to_A.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(0)))
         self.pushB_go_to_B.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(1)))
         self.pushB_go_to_C.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(2)))
+        self.pushB_go_to_0.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(3)))
         
         ##  ABSOLUTE POSITION BUTTONS  ##
         # abs_pos argument represents the motor: 0 = X, 1 = PR/CR # TODO
@@ -316,12 +311,19 @@ class Window(QMainWindow, Ui_MainWindow):
         # calculate correct pps:
         # pps = round(self.spinB_RPM.value() * self.module.msteps_per_rev/60)
         # get pos to move to:
-        pos = self.module.module_positions[pos_idx]
-        # move motor to pos and print status message:
-        self.module.motor.move_to(pos, self.module.pps)
-        print('go to', pos)
+        if pos_idx == 3:
+            self.module.motor.move_to(self.module.pos_zero, self.module.pps)
+            print('go to 0')
+        else:
+            pos = self.module.module_positions[pos_idx]
+            # move motor to pos and print status message:
+            self.module.motor.move_to(pos, self.module.pps)
+            print('go to', pos)
     
-    
+    def goto_zero(self):
+        for module in self.module_list:
+            # Save zero module position.
+            module.pos_zero = module.motor.actual_position
     
     ###   MODULE MANAGEMENT   ###
     
@@ -441,8 +443,6 @@ class Window(QMainWindow, Ui_MainWindow):
             # self.mm_deg_to_steps(self.dspinB_deg_axis_pr_cr.value(), 1)
             # self.motor.move_to(self.msteps, self.module.pps)
             print('Motor pr moving to position:', str(self.dspinB_deg_axis_pr_cr.value()))
-            
-                
         
     ###   MOTOR CONTROL FUNCTIONS   ###
     
