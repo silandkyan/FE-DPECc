@@ -282,28 +282,28 @@ class Window(QMainWindow, Ui_MainWindow):
             elif module.motor == module_zbc.motor:
                 self.store_lcds[1][pos_idx].display(module_zbc.factor*module.module_positions[pos_idx])
             # elif module.motor == module_zdr.motor:
-            #     self.store_lcds[2][pos_idx].display(module.module_positions[pos_idx])
+            #     self.store_lcds[2][pos_idx].display(module_zdr.factor*module.module_positions[pos_idx])
             # elif module.motor == module_zdc.motor:
-            #     self.store_lcds[3][pos_idx].display(module.module_positions[pos_idx])
+            #     self.store_lcds[3][pos_idx].display(module_zdc.factor*module.module_positions[pos_idx])
             # elif module.motor == module_x.motor:
-            #     self.store_lcds[4][pos_idx].display(module.module_positions[pos_idx])
+            #     self.store_lcds[4][pos_idx].display(module_x.factor*module.module_positions[pos_idx])
             # elif module.motor == module_pr.motor:
-            #     self.store_lcds[5][pos_idx].display(module.module_positions[pos_idx])
+            #     self.store_lcds[5][pos_idx].display(module_pr.factor*module.module_positions[pos_idx])
             # elif module.motor == module_cr.motor:
-            #     self.store_lcds[7][pos_idx].display(module.module_positions[pos_idx])
+            #     self.store_lcds[7][pos_idx].display(module_cr.factor*module.module_positions[pos_idx])
             # elif module.motor == module_s.motor:
-            #     self.store_lcds[8][pos_idx].display(module.module_positions[pos_idx])
+            #     self.store_lcds[8][pos_idx].display(module_s.factor*module.module_positions[pos_idx])
             
     def refresh_lcd_displays(self):
         '''Update the status LCDs.'''
         self.lcd_current_zbr.display(module_zbr.factor*module_zbr.motor.actual_position)
         self.lcd_current_zbc.display(module_zbc.factor*module_zbc.motor.actual_position)
-        # self.lcd_current_zdr.display(module_zdr.motor.actual_position)
-        # self.lcd_current_zdc.display(module_zdc.motor.actual_position)
-        # self.lcd_current_x.display(module_x.motor.actual_position)
-        # self.lcd_current_pr.display(module_pr.motor.actual_position)
-        # self.lcd_current_cr.display(module_cr.motor.actual_position)
-        # self.lcd_current_s.display(module_s.motor.actual_position)
+        # self.lcd_current_zdr.display(module_zdr.factor*module_zdr.motor.actual_position)
+        # self.lcd_current_zdc.display(module_zdc.factor*module_zdc.motor.actual_position)
+        # self.lcd_current_x.display(module_x.factor*module_x.motor.actual_position)
+        # self.lcd_current_pr.display(module_pr.factor*module_pr.motor.actual_position)
+        # self.lcd_current_cr.displaymodule_cr.factor*(module_cr.motor.actual_position)
+        # self.lcd_current_s.display(module_s.factor*module_s.motor.actual_position)
         # time.sleep(0.1) # DO NOT sleep here, breaks motor behaviour...
         
     def goto(self, pos_idx):
