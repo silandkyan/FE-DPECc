@@ -50,7 +50,7 @@ module_zbc = module_list[1]
 # hardware_config takes the mm or deg done on specific axis with one revolution of a motor
 # the order follows the scheme from module_list
 # pr and cr ([5], [6]) have deg units, the rest has mm
-hardware_config = [0.5, 0.5, 0.5, 0.5, 0.2, 0.3, 0.3, 0.1]
+hardware_config = [0.5, 0.2, 0.5, 0.5, 0.2, 0.3, 0.3, 0.1]
 
 # TODO: probably better with inst_var module_name or so...
 
@@ -278,9 +278,9 @@ class Window(QMainWindow, Ui_MainWindow):
             # 1st dimension = row_idx (= module_idx),
             # 2nd dimension = col_idx (= pos_idx)
             if module.motor == module_zbr.motor:
-                self.store_lcds[0][pos_idx].display(module.module_positions[pos_idx])
+                self.store_lcds[0][pos_idx].display(module_zbr.factor*module.module_positions[pos_idx])
             elif module.motor == module_zbc.motor:
-                self.store_lcds[1][pos_idx].display(module.module_positions[pos_idx])
+                self.store_lcds[1][pos_idx].display(module_zbc.factor*module.module_positions[pos_idx])
             # elif module.motor == module_zdr.motor:
             #     self.store_lcds[2][pos_idx].display(module.module_positions[pos_idx])
             # elif module.motor == module_zdc.motor:
@@ -312,7 +312,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # pps = round(self.spinB_RPM.value() * self.module.msteps_per_rev/60)
         # get pos to move to:
         if pos_idx == 3:
-            self.module.motor.move_to(-self.motor.actual_position, self.module.pps)
+            self.module.motor.move_to(0, self.module.pps)
             print('go to 0')
         else:
             pos = self.module.module_positions[pos_idx]
