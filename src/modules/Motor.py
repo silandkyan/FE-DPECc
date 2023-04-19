@@ -156,22 +156,4 @@ class Motor(TMCM1260):
     #         time.sleep(0.2)
     #     print('Moving completed.')
 
-
-### Motor assignment ###
-
-# port_list = ConnectionManager().list_connections()
-# for port in port_list:
-#     Motor(port)
-    
-# m1, m2 = Motor.assign_modules()
-
-# print(m1.status_message())
-# print(m2.status_message())
-
-# m1.motor.rotate(10000)
-# time.sleep(1)
-# m1.motor.stop()
-
-# time.sleep(2)
-# m1.motor.move_by(- 10*m1.msteps_per_fstep, 10000)
 #

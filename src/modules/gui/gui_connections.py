@@ -14,10 +14,10 @@ import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QKeySequence
-from PyQt5.QtWidgets import QShortcut
+# from PyQt5.QtGui import QKeySequence
+# from PyQt5.QtWidgets import QShortcut
 from modules.gui.main_window_ui import Ui_MainWindow
-import time 
+# import time 
 
 from ..Motor import Motor 
 from pytrinamic.connections import ConnectionManager
