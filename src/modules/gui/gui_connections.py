@@ -47,6 +47,11 @@ module_zbc = module_list[1]
 # module_s = module_list[7]
 # expand list as needed...
 
+# hardware_config takes the mm or deg done on specific axis with one revolution of a motor
+# the order follows the scheme from module_list
+# pr and cr ([5], [6]) have deg units, the rest has mm
+hardware_config = [0.5, 0.5, 0.5, 0.5, 0.2, 0.3, 0.3, 0.1]
+
 # TODO: probably better with inst_var module_name or so...
 
 # module_zbr, module_zbc = Motor.assign_modules() # module_zdr, module_zdc, module_x, module_pr, module_cr, module_s
@@ -94,7 +99,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.rot_radioBlist = [self.radioB_pr, self.radioB_cr]
         # Set default motor and module that is active initially:
         self.reset_active_modules()
-        self.goto_zero()
+        self.unit_conversion()
         
     def setup_default_buttons(self):
         # Mode selection radioB:
@@ -133,18 +138,9 @@ class Window(QMainWindow, Ui_MainWindow):
                            [self.lcd_A_pr, self.lcd_B_pr, self.lcd_C_pr],
                            [self.lcd_A_cr, self.lcd_B_cr, self.lcd_C_cr],
                            [self.lcd_A_s, self.lcd_B_s, self.lcd_C_s]]
-        # hardware config takes in the mm or deg values shown by absolute pos spinBox 
-        # done by one revolution of motor on specific axis
-        self.hardware_config = [0, 0, 0, 0, 0, 0, 0, 0]
-        
-        
         
     ###   CALCULATORS (for unit conversion to pps)   ###
         
-    def RPM_master(self): ### TODO: IS THIS NEEDED???
-        max_RPM = self.spinB_max_RPM.value()
-        self.spinB_RPM.setMaximum(max_RPM)
-    
     def pps_calculator(self):
         for module in module_list:
             module.rpm = self.spinB_RPM.value()
@@ -154,7 +150,11 @@ class Window(QMainWindow, Ui_MainWindow):
         msteps = round(mm_deg / self.hardware_config[hrdwr_idx]* self.msteps_per_rev, 3)
         self.msteps = msteps
     
-    
+    def unit_conversion(self):
+        i = 0
+        for module in module_list:
+            module.factor = hardware_config[i]/module.msteps_per_rev
+            i += 1
     
     ###   BUTTON SIGNAL AND SLOT CONNECTIONS   ###
     
@@ -296,8 +296,8 @@ class Window(QMainWindow, Ui_MainWindow):
             
     def refresh_lcd_displays(self):
         '''Update the status LCDs.'''
-        self.lcd_current_zbr.display(module_zbr.motor.actual_position)
-        self.lcd_current_zbc.display(module_zbc.motor.actual_position)
+        self.lcd_current_zbr.display(module_zbr.factor*module_zbr.motor.actual_position)
+        self.lcd_current_zbc.display(module_zbc.factor*module_zbc.motor.actual_position)
         # self.lcd_current_zdr.display(module_zdr.motor.actual_position)
         # self.lcd_current_zdc.display(module_zdc.motor.actual_position)
         # self.lcd_current_x.display(module_x.motor.actual_position)
@@ -312,7 +312,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # pps = round(self.spinB_RPM.value() * self.module.msteps_per_rev/60)
         # get pos to move to:
         if pos_idx == 3:
-            self.module.motor.move_to(self.module.pos_zero, self.module.pps)
+            self.module.motor.move_to(-self.motor.actual_position, self.module.pps)
             print('go to 0')
         else:
             pos = self.module.module_positions[pos_idx]
@@ -320,10 +320,6 @@ class Window(QMainWindow, Ui_MainWindow):
             self.module.motor.move_to(pos, self.module.pps)
             print('go to', pos)
     
-    def goto_zero(self):
-        for module in self.module_list:
-            # Save zero module position.
-            module.pos_zero = module.motor.actual_position
     
     ###   MODULE MANAGEMENT   ###
     
