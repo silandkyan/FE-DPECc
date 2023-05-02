@@ -78,6 +78,10 @@ class Window(QMainWindow, Ui_MainWindow):
         self.connectSignalsSlots()
         self.show()
         
+        # test run save and load pos
+        self.save_pos()
+        self.load_pos()
+        
         
         
     ###   SETUP DEFAULTS   ###
@@ -143,6 +147,23 @@ class Window(QMainWindow, Ui_MainWindow):
         # done by one revolution of motor on specific axis
         self.hardware_config = [0, 0, 0, 0, 0, 0, 0, 0]
         
+        
+        
+    ###   SAVE AND LOAD POSITIONS   ###
+    
+    def save_pos(self):
+        # comment...
+        with open('saved_positions.txt', 'w') as f:
+            for line in self.store_lcds:
+                for col in line:
+                    # print(col.value())
+                    f.write("%s\n" % col.value())
+            
+    def load_pos(self):
+        with open('saved_positions.txt', 'r') as f:
+            self.content = f.readlines()
+            
+        print(self.content)
         
         
     ###   CALCULATORS (for unit conversion to pps)   ###
