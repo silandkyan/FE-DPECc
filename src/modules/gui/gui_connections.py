@@ -78,10 +78,6 @@ class Window(QMainWindow, Ui_MainWindow):
         self.connectSignalsSlots()
         self.show()
         
-        # test run save and load pos
-        self.save_pos()
-        self.load_pos()
-        
         
         
     ###   SETUP DEFAULTS   ###
@@ -152,19 +148,51 @@ class Window(QMainWindow, Ui_MainWindow):
     ###   SAVE AND LOAD POSITIONS   ###
     
     def save_pos(self):
-        # comment...
+        '''Save stored module positions (displayed in store_lcds) to external file.'''
         with open('saved_positions.txt', 'w') as f:
-            for line in self.store_lcds:
-                for col in line:
+            for row in self.store_lcds:
+                for col in row:
                     # print(col.value())
-                    f.write("%s\n" % col.value())
-            
-    def load_pos(self):
-        with open('saved_positions.txt', 'r') as f:
-            self.content = f.readlines()
-            
-        print(self.content)
+                    f.write("%s " % int(col.value()))
+                f.write("\n")
+        print('Saved all positions to file!')
         
+    def load_pos(self):
+        '''Load module positions from external file:'''
+        with open('saved_positions.txt', 'r') as f:
+            i = 0
+            for row in f:
+                rowlist = row[:-2].split() # drop trailing '\n' and split at '\s'
+                for j in range(0, len(self.store_lcds[0])):
+                    self.store_lcds[i][j].display(rowlist[j]) # update lcd
+                i += 1 # set counter for next module_idx
+        # update module positions from the values in store_lcds:
+        for pos_idx in range (0, len(self.store_lcds[0])):
+            self.update_pos(pos_idx)
+        # Status message:
+        print('Loaded all saved positions from file!')
+        
+    def update_pos(self, pos_idx):
+        '''Update module positions from store_lcds values.'''
+        for module in self.active_modules:
+            if module.motor == module_zbr.motor:
+                module.module_positions[pos_idx] = int(self.store_lcds[0][pos_idx].value())
+            elif module.motor == module_zbc.motor:
+                module.module_positions[pos_idx] = int(self.store_lcds[1][pos_idx].value())
+            # elif module.motor == module_zdr.motor:
+            #     module.module_positions[pos_idx] = int(self.store_lcds[2][pos_idx].value())
+            # elif module.motor == module_zdc.motor:
+            #     module.module_positions[pos_idx] = int(self.store_lcds[3][pos_idx].value())
+            # elif module.motor == module_x.motor:
+            #     module.module_positions[pos_idx] = int(self.store_lcds[4][pos_idx].value())
+            # elif module.motor == module_pr.motor:
+            #     module.module_positions[pos_idx] = int(self.store_lcds[5][pos_idx].value())
+            # elif module.motor == module_cr.motor:
+            #     module.module_positions[pos_idx] = int(self.store_lcds[6][pos_idx].value())
+            # elif module.motor == module_s.motor:
+            #     module.module_positions[pos_idx] = int(self.store_lcds[7][pos_idx].value())
+            
+            
         
     ###   CALCULATORS (for unit conversion to pps)   ###
         
@@ -203,6 +231,10 @@ class Window(QMainWindow, Ui_MainWindow):
         # abs_pos argument represents the motor: 0 = X, 1 = PR/CR # TODO
         self.pushB_start_x.clicked.connect(lambda: self.abs_pos(0))
         self.pushB_start_pr_cr.clicked.connect(lambda: self.abs_pos(1))
+        
+        ## SAVE AND LOAD POSITIONS TO FILE BUTTONS ##
+        self.pushB_savepos.clicked.connect(self.save_pos)
+        self.pushB_loadpos.clicked.connect(self.load_pos)
         
         ### TODO: TEST IF X, CR/PR and S MOTORS WORK PROPERLY
         
