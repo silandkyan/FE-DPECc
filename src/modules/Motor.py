@@ -9,16 +9,18 @@ Created on Tue Mar 21 11:24:03 2023
 from pytrinamic.connections import ConnectionManager
 from pytrinamic.modules import TMCM1260
 from pytrinamic.modules import TMCLModule
-#import time
+import time
 
 
 ##### General functions #####
 
 def disconnect_motors():
     '''Disconnection routine; should be run at the end of the program.'''
+    time.sleep(0.2)
     for inst in Motor.instances:
         inst.motor.stop()
     ConnectionManager().disconnect
+    time.sleep(0.2)
     print('Motors disconnected!')
 
 
