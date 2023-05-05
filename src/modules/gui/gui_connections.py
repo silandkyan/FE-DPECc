@@ -8,7 +8,18 @@ Created on Tue Feb 21 17:38:27 2023
 # die microstep resolution muss anpassbar werden 
 # invert direction?! gebraucht oder nicht 
 
-
+''' known bugs:
+    # sometimes, clicking quit button does not result in clean motor disconnection.
+    # in leg control: when switching from "selected leg control" radio button 
+        to "all legs" radio button, the list of active motors is not properly 
+        refreshed and no motors are active, even though the respective functions 
+        runs. klicking on the radio button again then refreshes the module list.
+    #
+'''
+#
+''' test runs:
+    # tested all 4 leg motors, works as espected.
+'''
 
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
@@ -34,10 +45,10 @@ ID_list = [11, 12, 13, 14, 15, 21, 22, 23, 24]
 module_list = Motor.sort_module_list(ID_list)
 
 '''Choose names for the modules. Make sure to correctly match the correct 
-module with its descriptive variable name (e.g. motor_L) below; 
+module with its descriptive variable name (e.g. motor_x) below; 
 adjust if needed.'''
-module_zbr = module_list[0]
-module_zbc = module_list[1]
+# module_zbr = module_list[0]
+# module_zbc = module_list[1]
 # module_zdr = module_list[2]
 # module_zdc = module_list[3]
 # module_x = module_list[4]
@@ -45,6 +56,11 @@ module_zbc = module_list[1]
 # module_cr = module_list[6]
 # module_s = module_list[7]
 # expand list as needed...
+# for testing:
+module_x = module_list[0]
+module_pr = module_list[1]
+module_cr = module_list[2]
+module_s = module_list[3]
 
 # TODO: probably better with inst_var module_name or so...
 
@@ -54,9 +70,10 @@ module_zbc = module_list[1]
 # print(module_zbc.status_message())
 # print(module_zdr.status_message())
 # print(module_zdc.status_message())
-# print(module_pr.status_message())
-# print(module_cr.status_message())
-# print(module_s.status_message())
+print(module_x.status_message())
+print(module_pr.status_message())
+print(module_cr.status_message())
+print(module_s.status_message())
 
 
 
@@ -98,7 +115,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # Store lists for checkboxes and radioButtons:
         self.legs_boxlist = [self.checkB_zbr, self.checkB_zbc, self.checkB_zdr, self.checkB_zdc]
         self.legs_radioBlist = [self.radioB_all_motors, self.radioB_single_motor]
-        self.rot_radioBlist = [self.radioB_pr, self.radioB_cr]
+        self.rot_radioBlist = [self.radioB_cr, self.radioB_pr]
         # Set default motor and module that is active initially:
         self.reset_active_modules()
         
@@ -109,7 +126,8 @@ class Window(QMainWindow, Ui_MainWindow):
         # Leg motor selection radio buttons:
         self.radioB_all_motors.setChecked(True) # all motors
         # PR/CR motor selection radio buttons:
-        self.radioB_pr.setChecked(True) # all motors
+        self.radioB_pr.setChecked(False)
+        self.radioB_cr.setChecked(True)
         # because radioB_all_motors is checked by default, 
         # checkBoxes for motorselection are disabled at setup:
         self.checkB_zbr.setCheckable(False)
@@ -174,24 +192,26 @@ class Window(QMainWindow, Ui_MainWindow):
         
     def update_pos(self, pos_idx):
         '''Update module positions from store_lcds values.'''
-        for module in self.active_modules:
-            if module.motor == module_zbr.motor:
-                module.module_positions[pos_idx] = int(self.store_lcds[0][pos_idx].value())
-            elif module.motor == module_zbc.motor:
-                module.module_positions[pos_idx] = int(self.store_lcds[1][pos_idx].value())
+        for module in module_list:
+            # if module.motor == module_zbr.motor:
+            #     module.module_positions[pos_idx] = int(self.store_lcds[0][pos_idx].value())
+            # elif module.motor == module_zbc.motor:
+            #     module.module_positions[pos_idx] = int(self.store_lcds[1][pos_idx].value())
             # elif module.motor == module_zdr.motor:
             #     module.module_positions[pos_idx] = int(self.store_lcds[2][pos_idx].value())
             # elif module.motor == module_zdc.motor:
             #     module.module_positions[pos_idx] = int(self.store_lcds[3][pos_idx].value())
+            if module.motor == module_x.motor:
             # elif module.motor == module_x.motor:
-            #     module.module_positions[pos_idx] = int(self.store_lcds[4][pos_idx].value())
-            # elif module.motor == module_pr.motor:
-            #     module.module_positions[pos_idx] = int(self.store_lcds[5][pos_idx].value())
-            # elif module.motor == module_cr.motor:
-            #     module.module_positions[pos_idx] = int(self.store_lcds[6][pos_idx].value())
-            # elif module.motor == module_s.motor:
-            #     module.module_positions[pos_idx] = int(self.store_lcds[7][pos_idx].value())
-            
+                module.module_positions[pos_idx] = int(self.store_lcds[4][pos_idx].value())
+            elif module.motor == module_pr.motor:
+                module.module_positions[pos_idx] = int(self.store_lcds[5][pos_idx].value())
+            elif module.motor == module_cr.motor:
+                module.module_positions[pos_idx] = int(self.store_lcds[6][pos_idx].value())
+            elif module.motor == module_s.motor:
+                module.module_positions[pos_idx] = int(self.store_lcds[7][pos_idx].value())
+            # for testing:
+            # print(self.active_modules, module.module_positions[pos_idx])
             
         
     ###   CALCULATORS (for unit conversion to pps)   ###
@@ -245,13 +265,13 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_stop_legs.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
         # self.pushB_stop_legs.clicked.connect(lambda: print('all leg motors stopped'))
         # X: 
-        self.pushB_forwards1.clicked.connect(self.permanent_right)
-        self.pushB_backwards1.clicked.connect(self.permanent_left)
-        self.pushB_stop_x.clicked.connect(self.stop_motor)
+        self.pushB_forwards1.clicked.connect(lambda: self.multi_module_control(self.permanent_right))
+        self.pushB_backwards1.clicked.connect(lambda: self.multi_module_control(self.permanent_left))
+        self.pushB_stop_x.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
         # PR/CR:
-        self.pushB_clockwise1.clicked.connect(self.permanent_right)
-        self.pushB_counterclockwise1.clicked.connect(self.permanent_left)
-        self.pushB_stop_pr_cr.clicked.connect(self.stop_motor)
+        self.pushB_clockwise1.clicked.connect(lambda: self.multi_module_control(self.permanent_right))
+        self.pushB_counterclockwise1.clicked.connect(lambda: self.multi_module_control(self.permanent_left))
+        self.pushB_stop_pr_cr.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
         
         ##  WHEN PUSHED MOVE  ##
         # Z:
@@ -260,15 +280,15 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_downwards2.pressed.connect(lambda: self.multi_module_control(self.permanent_left))
         self.pushB_downwards2.released.connect(lambda: self.multi_module_control(self.stop_motor))
         # X:
-        self.pushB_forwards2.pressed.connect(self.permanent_right)
-        self.pushB_forwards2.released.connect(self.stop_motor)
-        self.pushB_backwards2.pressed.connect(self.permanent_left)
-        self.pushB_backwards2.released.connect(self.stop_motor)
+        self.pushB_forwards2.pressed.connect(lambda: self.multi_module_control(self.permanent_right))
+        self.pushB_forwards2.released.connect(lambda: self.multi_module_control(self.stop_motor))
+        self.pushB_backwards2.pressed.connect(lambda: self.multi_module_control(self.permanent_left))
+        self.pushB_backwards2.released.connect(lambda: self.multi_module_control(self.stop_motor))
         # PR/CR:
-        self.pushB_clockwise2.pressed.connect(self.permanent_right)
-        self.pushB_clockwise2.released.connect(self.stop_motor)
-        self.pushB_counterclockwise2.pressed.connect(self.permanent_left)
-        self.pushB_counterclockwise2.released.connect(self.stop_motor)
+        self.pushB_clockwise2.pressed.connect(lambda: self.multi_module_control(self.permanent_right))
+        self.pushB_clockwise2.released.connect(lambda: self.multi_module_control(self.stop_motor))
+        self.pushB_counterclockwise2.pressed.connect(lambda: self.multi_module_control(self.permanent_left))
+        self.pushB_counterclockwise2.released.connect(lambda: self.multi_module_control(self.stop_motor))
 
         ##  MOTOR SELECTION  ##
         # Activate correct module(s) on tab change:
@@ -282,10 +302,10 @@ class Window(QMainWindow, Ui_MainWindow):
         self.checkB_zdr.toggled.connect(lambda: self.refresh_module_list(1))
         self.checkB_zdc.toggled.connect(lambda: self.refresh_module_list(1))
         # PR/CR selection: # TODO
-        # self.radioB_pr.pressed.connect(lambda: self.select_module(module_pr))
-        # self.radioB_cr.pressed.connect(lambda: self.select_module(module_cr))
-        self.radioB_pr.clicked.connect(lambda: print('dummy: module pr selected'))
-        self.radioB_cr.clicked.connect(lambda: print('dummy: module cr selected'))
+        self.radioB_pr.toggled.connect(lambda: self.refresh_module_list(3))
+        self.radioB_cr.toggled.connect(lambda: self.refresh_module_list(3))
+        # self.radioB_pr.clicked.connect(lambda: print('dummy: module pr selected'))
+        # self.radioB_cr.clicked.connect(lambda: print('dummy: module cr selected'))
         
         ##  GENERAL GUI BEHAVIOUR  ##
         # Leg motor checkbox checkability:
@@ -335,33 +355,36 @@ class Window(QMainWindow, Ui_MainWindow):
             # store_lcds matrix-like list:
             # 1st dimension = row_idx (= module_idx),
             # 2nd dimension = col_idx (= pos_idx)
-            if module.motor == module_zbr.motor:
-                self.store_lcds[0][pos_idx].display(module.module_positions[pos_idx])
-            elif module.motor == module_zbc.motor:
-                self.store_lcds[1][pos_idx].display(module.module_positions[pos_idx])
+            # if module.motor == module_zbr.motor:
+            #     self.store_lcds[0][pos_idx].display(module.module_positions[pos_idx])
+            # elif module.motor == module_zbc.motor:
+            #     self.store_lcds[1][pos_idx].display(module.module_positions[pos_idx])
             # elif module.motor == module_zdr.motor:
             #     self.store_lcds[2][pos_idx].display(module.module_positions[pos_idx])
             # elif module.motor == module_zdc.motor:
             #     self.store_lcds[3][pos_idx].display(module.module_positions[pos_idx])
             # elif module.motor == module_x.motor:
-            #     self.store_lcds[4][pos_idx].display(module.module_positions[pos_idx])
-            # elif module.motor == module_pr.motor:
-            #     self.store_lcds[5][pos_idx].display(module.module_positions[pos_idx])
-            # elif module.motor == module_cr.motor:
-            #     self.store_lcds[7][pos_idx].display(module.module_positions[pos_idx])
-            # elif module.motor == module_s.motor:
-            #     self.store_lcds[8][pos_idx].display(module.module_positions[pos_idx])
+            if module.motor == module_x.motor:
+                self.store_lcds[4][pos_idx].display(module.module_positions[pos_idx])
+            elif module.motor == module_pr.motor:
+                self.store_lcds[5][pos_idx].display(module.module_positions[pos_idx])
+            elif module.motor == module_cr.motor:
+                self.store_lcds[6][pos_idx].display(module.module_positions[pos_idx])
+            elif module.motor == module_s.motor:
+                self.store_lcds[7][pos_idx].display(module.module_positions[pos_idx])
+            # for testing:
+            # print(pos_idx, module.module_positions[pos_idx])
             
     def refresh_lcd_displays(self):
         '''Update the status LCDs.'''
-        self.lcd_current_zbr.display(module_zbr.motor.actual_position)
-        self.lcd_current_zbc.display(module_zbc.motor.actual_position)
+        # self.lcd_current_zbr.display(module_zbr.motor.actual_position)
+        # self.lcd_current_zbc.display(module_zbc.motor.actual_position)
         # self.lcd_current_zdr.display(module_zdr.motor.actual_position)
         # self.lcd_current_zdc.display(module_zdc.motor.actual_position)
-        # self.lcd_current_x.display(module_x.motor.actual_position)
-        # self.lcd_current_pr.display(module_pr.motor.actual_position)
-        # self.lcd_current_cr.display(module_cr.motor.actual_position)
-        # self.lcd_current_s.display(module_s.motor.actual_position)
+        self.lcd_current_x.display(module_x.motor.actual_position)
+        self.lcd_current_pr.display(module_pr.motor.actual_position)
+        self.lcd_current_cr.display(module_cr.motor.actual_position)
+        self.lcd_current_s.display(module_s.motor.actual_position)
         # time.sleep(0.1) # DO NOT sleep here, breaks motor behaviour...
         
     def goto(self, pos_idx):
@@ -373,6 +396,8 @@ class Window(QMainWindow, Ui_MainWindow):
         # move motor to pos and print status message:
         self.module.motor.move_to(pos, self.module.pps)
         print('go to', pos)
+        # for testing:
+        # print(pos_idx, self.module.module_positions[pos_idx])
     
     
     
@@ -407,9 +432,10 @@ class Window(QMainWindow, Ui_MainWindow):
         
         # PR/CR:
         elif self.tabWidget.currentIndex() == 2:
-            self.radioB_pr.setChecked(True)
-            self.radioB_cr.setChecked(False)
-            # self.select_module(module.module_pr)
+            self.radioB_pr.setChecked(False)
+            self.radioB_cr.setChecked(True)
+            self.select_module(module_cr)
+            #self.refresh_module_list(3)
             # print('module for pr or cr selected')
         
         # S:
@@ -422,42 +448,48 @@ class Window(QMainWindow, Ui_MainWindow):
         # TODO: after switching from single to all legs, motors do not respond 
         # even though they are in the list of active_modules... fix!
                         
-        if select == 0:
-            self.active_modules.append(module_zbr)
-            self.active_modules.append(module_zbc)
+        # if select == 0:
+            # self.active_modules.append(module_zbr)
+            # self.active_modules.append(module_zbc)
             # self.active_modules.append(module_zdr)
-            # self.active_modules.append(module_zdc) # continue this list if necessary...
-            print('All leg motors are selected')                              
+            # self.active_modules.append(module_zdc)
+            # print('All leg motors are selected')                              
                                        
-        if select == 1:     
-            for box in self.legs_boxlist:
-                if box.isChecked() == True:
-                    if box == self.checkB_zbr:
-                        self.active_modules.append(module_zbr)
-                        print('ZBR appended')
-                    if box == self.checkB_zbc:  
-                        self.active_modules.append(module_zbc)
-                        print('ZBC appended')
-                    # if box == self.checkB_zdr:                   
-                    #     self.active_modules.append(module_zdr)
-                    #     print('ZDR appended')
-                    # if box == self.checkB_zdc:
-                    #     self.active_modules.append(module_zdc)
-                    #     print('ZDC appended')
+        # if select == 1:     
+        #     for box in self.legs_boxlist:
+        #         if box.isChecked() == True:
+        #             if box == self.checkB_zbr:
+        #                 self.active_modules.append(module_zbr)
+        #                 print('ZBR appended')
+        #             if box == self.checkB_zbc:  
+        #                 self.active_modules.append(module_zbc)
+        #                 print('ZBC appended')
+        #             if box == self.checkB_zdr:                   
+        #                 self.active_modules.append(module_zdr)
+        #                 print('ZDR appended')
+        #             if box == self.checkB_zdc:
+        #                 self.active_modules.append(module_zdc)
+        #                 print('ZDC appended')
                     
         if select == 2:
-            # self.select_module(module_x) # TODO
-            # print('moduleID', module_x.moduleID, 'selected')
+            self.select_module(module_x) # TODO
+            print('moduleID', module_x.moduleID, 'selected')
             print('X selected')
                     
         if select == 3:
-            # self.select_module(module_pr) # TODO
-            # print('moduleID', module_pr.moduleID, 'selected')
-            print('moduleID dummy selected')
+            for button in self.rot_radioBlist:
+                if button.isChecked() == True:
+                    if button == self.radioB_cr:
+                        self.select_module(module_cr) # TODO
+                        print('moduleID', self.module.moduleID, 'selected')
+                    elif button == self.radioB_pr:
+                        self.select_module(module_pr) # TODO
+                        print('moduleID', self.module.moduleID, 'selected')
+            # print('moduleID dummy selected')
                     
         if select == 4:
-            # self.select_module(module_s) # TODO
-            # print('moduleID', module_s.moduleID, 'selected')
+            self.select_module(module_s) # TODO
+            print('moduleID', module_s.moduleID, 'selected')
             print('S selected')
             
     
