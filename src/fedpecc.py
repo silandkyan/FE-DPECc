@@ -27,6 +27,4 @@ if __name__ == "__main__":
         disconnect_motors()
 
 
-# This should make a clean disconnect of the USB Serial connection after closing the main window:
-# disconnect_motors()
 

@@ -19,8 +19,8 @@ def disconnect_motors():
     time.sleep(0.2)
     for inst in Motor.instances:
         inst.motor.stop()
-    ConnectionManager().disconnect
     time.sleep(0.2)
+    ConnectionManager().disconnect
     print('Motors disconnected!')
 
 
