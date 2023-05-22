@@ -161,3 +161,6 @@ cython_debug/
 
 # Windows
 desktop.ini
+
+# Project-related
+saved_positions.txt
