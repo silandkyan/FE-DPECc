@@ -11,6 +11,10 @@ Created on Tue Feb 21 17:38:27 2023
 # Umrechnung für LCD Anzeige: Keine externe Funktion sonst zu hohe Rechenleistung? sondern einfach 
 # Umrechnungsfaktoren einbauen? in die Ausgabe 
 
+# Einheit des Stroms: 255 für 100% (2.8 und 5.5A)
+
+
+
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
 from PyQt5.QtGui import QKeyEvent
@@ -83,8 +87,6 @@ class Window(QMainWindow, Ui_MainWindow):
         self.refresh_lcd_displays()
         self.connectSignalsSlots()
         self.show()
-        
-        
         
     ###   SETUP DEFAULTS   ###
     
