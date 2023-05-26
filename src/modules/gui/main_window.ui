@@ -32,7 +32,7 @@
      <enum>Qt::NoFocus</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="legs">
      <attribute name="title">
@@ -1434,7 +1434,7 @@ p, li { white-space: pre-wrap; }
      <string>go to</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_15">
+   <widget class="QLabel" name="label_zbr">
     <property name="geometry">
      <rect>
       <x>460</x>
@@ -1447,7 +1447,7 @@ p, li { white-space: pre-wrap; }
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;ZBR&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_163">
+   <widget class="QLabel" name="label_zdr">
     <property name="geometry">
      <rect>
       <x>460</x>
@@ -1460,7 +1460,7 @@ p, li { white-space: pre-wrap; }
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;ZDR&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_170">
+   <widget class="QLabel" name="label_zbc">
     <property name="geometry">
      <rect>
       <x>460</x>
@@ -1473,7 +1473,7 @@ p, li { white-space: pre-wrap; }
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;ZBC&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_171">
+   <widget class="QLabel" name="label_zdc">
     <property name="geometry">
      <rect>
       <x>460</x>
@@ -1486,7 +1486,7 @@ p, li { white-space: pre-wrap; }
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;ZDC&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_183">
+   <widget class="QLabel" name="label_x">
     <property name="geometry">
      <rect>
       <x>460</x>
@@ -1499,7 +1499,7 @@ p, li { white-space: pre-wrap; }
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;X&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_184">
+   <widget class="QLabel" name="label_pr">
     <property name="geometry">
      <rect>
       <x>460</x>
@@ -1512,7 +1512,7 @@ p, li { white-space: pre-wrap; }
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;PR&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_185">
+   <widget class="QLabel" name="label_cr">
     <property name="geometry">
      <rect>
       <x>460</x>
@@ -1525,7 +1525,7 @@ p, li { white-space: pre-wrap; }
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:7pt;&quot;&gt;CR&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_346">
+   <widget class="QLabel" name="label_s">
     <property name="geometry">
      <rect>
       <x>460</x>
