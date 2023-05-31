@@ -23,18 +23,10 @@
       <height>231</height>
      </rect>
     </property>
-    <property name="font">
-     <font>
-      <pointsize>7</pointsize>
-     </font>
-    </property>
-    <property name="focusPolicy">
-     <enum>Qt::NoFocus</enum>
-    </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
-    <widget class="QWidget" name="legs">
+    <widget class="QWidget" name="tab_0">
      <attribute name="title">
       <string>Leg control</string>
      </attribute>
@@ -53,6 +45,9 @@
       <property name="text">
        <string>ZBR</string>
       </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
      </widget>
      <widget class="QCheckBox" name="checkB_zbc">
       <property name="geometry">
@@ -68,6 +63,9 @@
       </property>
       <property name="text">
        <string>ZBC</string>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
       </property>
      </widget>
      <widget class="QRadioButton" name="radioB_all_motors">
@@ -119,6 +117,9 @@
       </property>
       <property name="text">
        <string>ZDR</string>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
       </property>
      </widget>
      <widget class="QLabel" name="label_12">
@@ -207,6 +208,15 @@
       <property name="text">
        <string>ZDC</string>
       </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
+      <property name="tristate">
+       <bool>false</bool>
+      </property>
      </widget>
      <widget class="QPushButton" name="pushB_upwards2">
       <property name="geometry">
@@ -254,7 +264,7 @@
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab_2">
+    <widget class="QWidget" name="tab_1">
      <attribute name="title">
       <string>X direction</string>
      </attribute>
@@ -414,9 +424,9 @@
       </property>
      </widget>
     </widget>
-    <widget class="QWidget" name="tab_3">
+    <widget class="QWidget" name="tab_2">
      <attribute name="title">
-      <string>PR / CR</string>
+      <string>PR</string>
      </attribute>
      <widget class="QLabel" name="label_5">
       <property name="geometry">
@@ -431,12 +441,12 @@
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Absolute position&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushB_stop_pr_cr">
+     <widget class="QPushButton" name="pushB_stop_pr">
       <property name="geometry">
        <rect>
         <x>200</x>
         <y>90</y>
-        <width>211</width>
+        <width>221</width>
         <height>31</height>
        </rect>
       </property>
@@ -444,7 +454,7 @@
        <string>Stop</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushB_start_pr_cr">
+     <widget class="QPushButton" name="pushB_start_pr">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -470,7 +480,7 @@
        <string>deg on axis</string>
       </property>
      </widget>
-     <widget class="QDoubleSpinBox" name="dspinB_deg_axis_pr_cr">
+     <widget class="QDoubleSpinBox" name="dspinB_deg_axis_pr">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -489,7 +499,7 @@
        <double>30.000000000000000</double>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushB_clockwise1">
+     <widget class="QPushButton" name="pushB_clockwise_pr1">
       <property name="geometry">
        <rect>
         <x>200</x>
@@ -505,12 +515,12 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushB_counterclockwise1">
+     <widget class="QPushButton" name="pushB_counterclockwise_pr1">
       <property name="geometry">
        <rect>
         <x>290</x>
         <y>50</y>
-        <width>121</width>
+        <width>131</width>
         <height>31</height>
        </rect>
       </property>
@@ -520,44 +530,6 @@
       <property name="autoRepeat">
        <bool>false</bool>
       </property>
-     </widget>
-     <widget class="QRadioButton" name="radioB_pr">
-      <property name="geometry">
-       <rect>
-        <x>110</x>
-        <y>100</y>
-        <width>51</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="focusPolicy">
-       <enum>Qt::NoFocus</enum>
-      </property>
-      <property name="text">
-       <string>PR</string>
-      </property>
-      <attribute name="buttonGroup">
-       <string notr="true">buttonGroup_2</string>
-      </attribute>
-     </widget>
-     <widget class="QRadioButton" name="radioB_cr">
-      <property name="geometry">
-       <rect>
-        <x>110</x>
-        <y>130</y>
-        <width>51</width>
-        <height>23</height>
-       </rect>
-      </property>
-      <property name="focusPolicy">
-       <enum>Qt::NoFocus</enum>
-      </property>
-      <property name="text">
-       <string>CR</string>
-      </property>
-      <attribute name="buttonGroup">
-       <string notr="true">buttonGroup_2</string>
-      </attribute>
      </widget>
      <widget class="QLabel" name="label_6">
       <property name="geometry">
@@ -572,12 +544,12 @@
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Permanent &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushB_counterclockwise2">
+     <widget class="QPushButton" name="pushB_counterclockwise_pr2">
       <property name="geometry">
        <rect>
         <x>290</x>
         <y>160</y>
-        <width>121</width>
+        <width>131</width>
         <height>31</height>
        </rect>
       </property>
@@ -601,7 +573,152 @@
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;When pushed&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushB_clockwise2">
+     <widget class="QPushButton" name="pushB_clockwise_pr2">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>160</y>
+        <width>81</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>clockwise</string>
+      </property>
+      <property name="autoRepeat">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab_3">
+     <attribute name="title">
+      <string>CR</string>
+     </attribute>
+     <widget class="QPushButton" name="pushB_counterclockwise_cr2">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>160</y>
+        <width>131</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>counterclockwise</string>
+      </property>
+      <property name="autoRepeat">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QDoubleSpinBox" name="dspinB_deg_axis_cr">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>60</y>
+        <width>68</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="maximum">
+       <double>180.000000000000000</double>
+      </property>
+      <property name="singleStep">
+       <double>1.000000000000000</double>
+      </property>
+      <property name="value">
+       <double>30.000000000000000</double>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushB_counterclockwise_cr1">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>50</y>
+        <width>131</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>counterclockwise</string>
+      </property>
+      <property name="autoRepeat">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_152">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>60</y>
+        <width>91</width>
+        <height>19</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>deg on axis</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushB_stop_cr">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>90</y>
+        <width>221</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Stop</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushB_clockwise_cr1">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>50</y>
+        <width>81</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>clockwise</string>
+      </property>
+      <property name="autoRepeat">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushB_start_cr">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>100</y>
+        <width>51</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Start</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_15">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>20</y>
+        <width>91</width>
+        <height>19</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Permanent &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushB_clockwise_cr2">
       <property name="geometry">
        <rect>
         <x>200</x>
@@ -617,8 +734,34 @@
        <bool>false</bool>
       </property>
      </widget>
+     <widget class="QLabel" name="label_183">
+      <property name="geometry">
+       <rect>
+        <x>200</x>
+        <y>130</y>
+        <width>111</width>
+        <height>19</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;When pushed&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_17">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>20</y>
+        <width>151</width>
+        <height>19</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Absolute position&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
     </widget>
-    <widget class="QWidget" name="tab">
+    <widget class="QWidget" name="tab_4">
      <attribute name="title">
       <string>Switch</string>
      </attribute>
@@ -971,7 +1114,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>510</x>
-      <y>300</y>
+      <y>320</y>
       <width>64</width>
       <height>21</height>
      </rect>
@@ -1137,7 +1280,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>610</x>
-      <y>300</y>
+      <y>320</y>
       <width>64</width>
       <height>21</height>
      </rect>
@@ -1217,7 +1360,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>710</x>
-      <y>300</y>
+      <y>320</y>
       <width>64</width>
       <height>21</height>
      </rect>
@@ -1297,7 +1440,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>810</x>
-      <y>300</y>
+      <y>320</y>
       <width>64</width>
       <height>21</height>
      </rect>
@@ -1439,8 +1582,8 @@ p, li { white-space: pre-wrap; }
      <rect>
       <x>460</x>
       <y>80</y>
-      <width>31</width>
-      <height>19</height>
+      <width>41</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -1452,8 +1595,8 @@ p, li { white-space: pre-wrap; }
      <rect>
       <x>460</x>
       <y>140</y>
-      <width>31</width>
-      <height>19</height>
+      <width>41</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -1465,8 +1608,8 @@ p, li { white-space: pre-wrap; }
      <rect>
       <x>460</x>
       <y>110</y>
-      <width>31</width>
-      <height>19</height>
+      <width>41</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -1478,8 +1621,8 @@ p, li { white-space: pre-wrap; }
      <rect>
       <x>460</x>
       <y>170</y>
-      <width>31</width>
-      <height>19</height>
+      <width>41</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -1491,8 +1634,8 @@ p, li { white-space: pre-wrap; }
      <rect>
       <x>460</x>
       <y>220</y>
-      <width>16</width>
-      <height>19</height>
+      <width>31</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -1504,8 +1647,8 @@ p, li { white-space: pre-wrap; }
      <rect>
       <x>460</x>
       <y>270</y>
-      <width>21</width>
-      <height>19</height>
+      <width>41</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -1516,9 +1659,9 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>460</x>
-      <y>300</y>
-      <width>31</width>
-      <height>19</height>
+      <y>320</y>
+      <width>41</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -1530,8 +1673,8 @@ p, li { white-space: pre-wrap; }
      <rect>
       <x>460</x>
       <y>350</y>
-      <width>16</width>
-      <height>19</height>
+      <width>31</width>
+      <height>21</height>
      </rect>
     </property>
     <property name="text">
@@ -1672,7 +1815,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>880</x>
-      <y>300</y>
+      <y>320</y>
       <width>31</width>
       <height>19</height>
      </rect>

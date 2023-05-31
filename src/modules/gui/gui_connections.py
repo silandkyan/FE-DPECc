@@ -7,20 +7,22 @@ Created on Tue Feb 21 17:38:27 2023
 
 # die microstep resolution muss anpassbar werden 
 # invert direction?! gebraucht oder nicht 
-# go to zero pushButton DONE
 # (Einheit des Stroms: 255 für 100% (2.8 und 5.5A))
+
+# Checkboxen der single leg motoren sind gecheckt ABER: es muss einmal der Radiobutton geswitcht werden?!
+
 # Für abs pos und die Keyboard funktionen wird eine when_reached abfrage nötig sein um die 
 # label_farbe nach erreichen wieder zu ändern 
-# Die Schriftgröße der Labels lässt sich noch nicht verändern
-# für select_module im Falle von pr und cr funktioniert die Farbänderung noch nicht 
 
+# Cr hat jetzt aktuell wieder die gleichen funktionen wir Pr: benötigt zum einstellen?!
 
+# Legt man Cr mit S zusammen?
 
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
 from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtGui import QKeySequence
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QTextFormat
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtWidgets import QShortcut
@@ -72,9 +74,6 @@ hardware_config = [0.5, 0.2, 0.5, 0.5, 0.2, 0.3, 0.3, 0.1]
 # print(module_s.status_message())
 
 
-font = QFont()
-
-
 class Window(QMainWindow, Ui_MainWindow):
     '''This custom class inherits from QMainWindow class and the custom 
     Ui_MainWindow class from main_window_ui.py file. That file is created 
@@ -103,7 +102,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # Store lists for checkboxes and radioButtons:
         self.legs_boxlist = [self.checkB_zbr, self.checkB_zbc, self.checkB_zdr, self.checkB_zdc]
         self.legs_radioBlist = [self.radioB_all_motors, self.radioB_single_motor]
-        self.rot_radioBlist = [self.radioB_pr, self.radioB_cr]
+        # self.rot_radioBlist = [self.radioB_pr, self.radioB_cr]
         # list of all labels:
         self.label_list = [self.label_zbr, self.label_zbc, self.label_zdr, self.label_zdc,
                            self.label_x, self.label_pr, self.label_cr, self.label_s]
@@ -111,6 +110,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.reset_active_modules()
         self.all_legs_setup()
         self.unit_conversion()
+
         
     def setup_default_buttons(self):
         # Mode selection radioB:
@@ -119,7 +119,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # Leg motor selection radio buttons:
         self.radioB_all_motors.setChecked(True) # all motors
         # PR/CR motor selection radio buttons:
-        self.radioB_pr.setChecked(True) # all motors
+        #self.radioB_pr.setChecked(True) # all motors
         # because radioB_all_motors is checked by default, 
         # checkBoxes for motorselection are disabled at setup:
         self.checkB_zbr.setCheckable(False)
@@ -157,8 +157,8 @@ class Window(QMainWindow, Ui_MainWindow):
             module.rpm = self.spinB_RPM.value()
             module.pps = round(module.rpm * module.msteps_per_rev/60) 
         
-    def mm_deg_to_steps(self, mm_deg ,hrdwr_idx):
-        msteps = round(mm_deg / self.hardware_config[hrdwr_idx]* self.msteps_per_rev, 3)
+    def mm_deg_to_steps(self, mm_deg ,i):
+        msteps = round(mm_deg / hardware_config[i]* self.msteps_per_rev, 3)
         self.msteps = msteps
     
     def unit_conversion(self):
@@ -187,7 +187,8 @@ class Window(QMainWindow, Ui_MainWindow):
         ##  ABSOLUTE POSITION BUTTONS  ##
         # abs_pos argument represents the motor: 0 = X, 1 = PR/CR # TODO
         self.pushB_start_x.clicked.connect(lambda: self.abs_pos(0))
-        self.pushB_start_pr_cr.clicked.connect(lambda: self.abs_pos(1))
+        self.pushB_start_pr.clicked.connect(lambda: self.abs_pos(1))
+        self.pushB_start_pr.clicked.connect(lambda: self.abs_pos(1))
         
         ### TODO: TEST IF X, CR/PR and S MOTORS WORK PROPERLY
         
@@ -201,10 +202,14 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_forwards1.clicked.connect(self.permanent_right)
         self.pushB_backwards1.clicked.connect(self.permanent_left)
         self.pushB_stop_x.clicked.connect(self.stop_motor)
-        # PR/CR:
-        self.pushB_clockwise1.clicked.connect(self.permanent_right)
-        self.pushB_counterclockwise1.clicked.connect(self.permanent_left)
-        self.pushB_stop_pr_cr.clicked.connect(self.stop_motor)
+        # PR:
+        self.pushB_clockwise_pr1.clicked.connect(self.permanent_right)
+        self.pushB_counterclockwise_pr1.clicked.connect(self.permanent_left)
+        self.pushB_stop_pr.clicked.connect(self.stop_motor)
+        # CR:
+        self.pushB_clockwise_cr1.clicked.connect(self.permanent_right)
+        self.pushB_counterclockwise_cr1.clicked.connect(self.permanent_left)
+        self.pushB_stop_cr.clicked.connect(self.stop_motor)
         
         ##  WHEN PUSHED MOVE  ##
         # Z:
@@ -217,12 +222,16 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_forwards2.released.connect(self.stop_motor)
         self.pushB_backwards2.pressed.connect(self.permanent_left)
         self.pushB_backwards2.released.connect(self.stop_motor)
-        # PR/CR:
-        self.pushB_clockwise2.pressed.connect(self.permanent_right)
-        self.pushB_clockwise2.released.connect(self.stop_motor)
-        self.pushB_counterclockwise2.pressed.connect(self.permanent_left)
-        self.pushB_counterclockwise2.released.connect(self.stop_motor)
-
+        # PR:
+        self.pushB_clockwise_pr2.pressed.connect(self.permanent_right)
+        self.pushB_clockwise_pr2.released.connect(self.stop_motor)
+        self.pushB_counterclockwise_pr2.pressed.connect(self.permanent_left)
+        self.pushB_counterclockwise_pr2.released.connect(self.stop_motor)
+        # CR:
+        self.pushB_clockwise_cr2.pressed.connect(self.permanent_right)
+        self.pushB_clockwise_cr2.released.connect(self.stop_motor)
+        self.pushB_counterclockwise_cr2.pressed.connect(self.permanent_left)
+        self.pushB_counterclockwise_cr2.released.connect(self.stop_motor)
         ##  MOTOR SELECTION  ##
         # Activate correct module(s) on tab change:
         self.tabWidget.currentChanged.connect(self.reset_active_modules)
@@ -234,11 +243,6 @@ class Window(QMainWindow, Ui_MainWindow):
         self.checkB_zbc.toggled.connect(lambda: self.refresh_module_list(1))
         self.checkB_zdr.toggled.connect(lambda: self.refresh_module_list(1))
         self.checkB_zdc.toggled.connect(lambda: self.refresh_module_list(1))
-        # PR/CR selection: # TODO
-        # self.radioB_pr.pressed.connect(lambda: self.select_module(module_pr))
-        # self.radioB_cr.pressed.connect(lambda: self.select_module(module_cr))
-        self.radioB_pr.clicked.connect(lambda: print('dummy: module pr selected'))
-        self.radioB_cr.clicked.connect(lambda: print('dummy: module cr selected'))
         
         ##  GENERAL GUI BEHAVIOUR  ##
         # Leg motor checkbox checkability:
@@ -360,16 +364,19 @@ class Window(QMainWindow, Ui_MainWindow):
             self.refresh_module_list(2)
             # print('module for x selected')
         
-        # PR/CR:
+        # PR:
         elif self.tabWidget.currentIndex() == 2:
-            self.radioB_pr.setChecked(True)
-            self.radioB_cr.setChecked(False)
-            # self.select_module(module.module_pr)
-            # print('module for pr or cr selected')
+            self.refresh_module_list(3)
+           # print('module for pr selected')
         
-        # S:
+        # CR:
         elif self.tabWidget.currentIndex() == 3:
             self.refresh_module_list(4)
+           # print('module for cr selected')
+            
+        # S:
+        elif self.tabWidget.currentIndex() == 4:
+            self.refresh_module_list(5)
             # print('module for s selected')
             
     def refresh_module_list(self, select):
@@ -383,6 +390,8 @@ class Window(QMainWindow, Ui_MainWindow):
             # self.active_modules.append(module_zbc)
             # self.active_modules.append(module_zdr)
             # self.active_modules.append(module_zdc) # continue this list if necessary...
+            
+            # set labels active along with modules to keep track which motor is running
             self.active_label_list.append(self.label_zbr)
             self.active_label_list.append(self.label_zbc)
             # self.active_label_list.append(self.label_zdr)
@@ -411,19 +420,25 @@ class Window(QMainWindow, Ui_MainWindow):
                     
         if select == 2:
             # self.select_module(module_x) # TODO
-            self.active_label_list.append(self.label_x)
+            self.active_label_list = [self.label_x]
             # print('moduleID', module_x.moduleID, 'selected')
             print('X selected')
                     
         if select == 3:
             # self.select_module(module_pr) # TODO
-            # self.active_label_list.append(self.label_pr)
+            # self.active_label_list = [self.label_pr]
             # print('moduleID', module_pr.moduleID, 'selected')
-            print('moduleID dummy selected')
-                    
+            print('PR selected')
+            
         if select == 4:
+            # self.select_module(module_cr) # TODO
+            # self.active_label_list = [self.label_cr]
+            # print('moduleID', module_cr.moduleID, 'selected')
+            print('CR selected')
+                    
+        if select == 5:
             # self.select_module(module_s) # TODO
-            # self.active_label_list.append(self.label_s)
+            # self.active_label_list = [self.label_s]
             # print('moduleID', module_s.moduleID, 'selected')
             print('S selected')
         
@@ -437,7 +452,6 @@ class Window(QMainWindow, Ui_MainWindow):
             # Changing label color of active motors 
             for label in self.active_label_list:
                 label.setStyleSheet('color: red')
-                font.setWeight(20)
             # Prevent blocking of the application by the while loop:
             QApplication.processEvents()
             # initial refresh:
@@ -460,15 +474,18 @@ class Window(QMainWindow, Ui_MainWindow):
     def abs_pos(self, motor): # TODO: check if this works
         for label in self.active_label_list:
             label.setStyleSheet('color: red')
-            font.setWeight(75)
-        if motor == 0:
-            # self.mm_deg_to_steps(self.dspinB_deg_axis_x.value(), 0)
-            # self.motor.move_to(self.msteps, self.module.pps)
-            print('Motor x moving to position:', str(self.dspinB_mm_axis_x.value()))
-        elif motor == 1:
-            # self.mm_deg_to_steps(self.dspinB_deg_axis_pr_cr.value(), 1)
-            # self.motor.move_to(self.msteps, self.module.pps)
-            print('Motor pr moving to position:', str(self.dspinB_deg_axis_pr_cr.value()))
+        # if motor == 0:
+        #     # self.mm_deg_to_steps(self.dspinB_deg_axis_x.value(), 4)
+        #     # self.motor.move_to(self.msteps, self.module.pps)
+        #     print('Motor x moving to position:', str(self.dspinB_mm_axis_x.value()))
+        # elif motor == 1:
+        #     # self.mm_deg_to_steps(self.dspinB_deg_axis_pr.value(), 5)
+        #     # self.motor.move_to(self.msteps, self.module.pps)
+        #     print('Motor pr moving to position:', str(self.dspinB_deg_axis_pr.value()))
+        # elif motor == 2:
+        #     # self.mm_deg_to_steps(self.dspinB_deg_axis_cr.value(), 6)
+        #     # self.motor.move_to(self.msteps, self.module.pps)
+        #     print('Motor cr moving to position:', str(self.dspinB_deg_axis_cr.value()))
         
     ###   MOTOR CONTROL FUNCTIONS   ###
     
@@ -476,7 +493,6 @@ class Window(QMainWindow, Ui_MainWindow):
         '''Stop signal to all motors; can always be sent to the motors.'''
         for label in self.active_label_list:    #TODO
           label.setStyleSheet('color: black')
-          self.label.setFont(QFont('Arial', 5))
         self.module.motor.stop()
         # do not use time.sleep here!
         # set target_position to actual_position for the multi_control loop:
@@ -486,13 +502,11 @@ class Window(QMainWindow, Ui_MainWindow):
         print('Motor', self.module.moduleID, 'stopped!')
         # Reset label color of motor to black 
         # for label in self.active_label_list:    #TODO
-        #   label.setStyleSheet('color: black')
-        #   font.setWeight(75)
+
     
     def permanent_left(self):
         for label in self.active_label_list:    #TODO
           label.setStyleSheet('color: red')
-          self.label.setFont(QFont('Arial', 10))
         if self.radioB_permanent_when_pushed.isChecked() == True:
             # correct calling of motor...
             self.motor.rotate(-self.module.pps)
@@ -501,7 +515,6 @@ class Window(QMainWindow, Ui_MainWindow):
     def permanent_right(self):
         for label in self.active_label_list:    #TODO
           label.setStyleSheet('color: red')
-          self.label.setFont(QFont('Arial', 10))
         if self.radioB_permanent_when_pushed.isChecked() == True:
             self.motor.rotate(self.module.pps)
             print('Rotating right with', str(self.spinB_RPM.value()), 'rpm')
@@ -537,7 +550,8 @@ class Window(QMainWindow, Ui_MainWindow):
         # make checkboxes for leg motors checkable
         for box in self.legs_boxlist:
             box.setChecked(False)
-            box.setCheckable(True) 
+            box.setCheckable(True)
+            box.setEnabled(True) 
         self.active_modules = []
     
     def all_legs_setup(self):
@@ -545,7 +559,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # setting checkBoxes uncheckable 
         for box in self.legs_boxlist:
             box.setChecked(True)
-            box.setCheckable(False)
+            box.setEnabled(False)
         
     
 def run_app():   
