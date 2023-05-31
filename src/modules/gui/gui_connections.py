@@ -9,14 +9,15 @@ Created on Tue Feb 21 17:38:27 2023
 # invert direction?! gebraucht oder nicht 
 # (Einheit des Stroms: 255 für 100% (2.8 und 5.5A))
 
-# Checkboxen der single leg motoren sind gecheckt ABER: es muss einmal der Radiobutton geswitcht werden?!
+# -Checkboxen der single leg motoren sind gecheckt ABER: es muss einmal der Radiobutton 
+# geswitcht werden?!
 
-# Für abs pos und die Keyboard funktionen wird eine when_reached abfrage nötig sein um die 
+# -Für abs pos und die Keyboard funktionen wird eine when_reached abfrage nötig sein um die 
 # label_farbe nach erreichen wieder zu ändern 
 
-# Cr hat jetzt aktuell wieder die gleichen funktionen wir Pr: benötigt zum einstellen?!
+# -Cr hat jetzt aktuell wieder die gleichen funktionen wir Pr: benötigt zum einstellen?!
 
-# Legt man Cr mit S zusammen?
+# -Legt man Cr mit S zusammen?
 
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
@@ -188,7 +189,7 @@ class Window(QMainWindow, Ui_MainWindow):
         # abs_pos argument represents the motor: 0 = X, 1 = PR/CR # TODO
         self.pushB_start_x.clicked.connect(lambda: self.abs_pos(0))
         self.pushB_start_pr.clicked.connect(lambda: self.abs_pos(1))
-        self.pushB_start_pr.clicked.connect(lambda: self.abs_pos(1))
+        self.pushB_start_cr.clicked.connect(lambda: self.abs_pos(2))
         
         ### TODO: TEST IF X, CR/PR and S MOTORS WORK PROPERLY
         
@@ -403,11 +404,11 @@ class Window(QMainWindow, Ui_MainWindow):
                 if box.isChecked() == True:
                     if box == self.checkB_zbr:
                         #self.active_modules.append(module_zbr)
-                        #self.active_label_list.append(self.label_zbr)
+                        self.active_label_list.append(self.label_zbr)
                         print('ZBR appended')
                     if box == self.checkB_zbc:  
                         #self.active_modules.append(module_zbc)
-                        #self.active_label_list.append(self.label_zbc)
+                        self.active_label_list.append(self.label_zbc)
                         print('ZBC appended')
                     # if box == self.checkB_zdr:                   
                     #     self.active_modules.append(module_zdr)
@@ -426,19 +427,19 @@ class Window(QMainWindow, Ui_MainWindow):
                     
         if select == 3:
             # self.select_module(module_pr) # TODO
-            # self.active_label_list = [self.label_pr]
+            self.active_label_list = [self.label_pr]
             # print('moduleID', module_pr.moduleID, 'selected')
             print('PR selected')
             
         if select == 4:
             # self.select_module(module_cr) # TODO
-            # self.active_label_list = [self.label_cr]
+            self.active_label_list = [self.label_cr]
             # print('moduleID', module_cr.moduleID, 'selected')
             print('CR selected')
                     
         if select == 5:
             # self.select_module(module_s) # TODO
-            # self.active_label_list = [self.label_s]
+            self.active_label_list = [self.label_s]
             # print('moduleID', module_s.moduleID, 'selected')
             print('S selected')
         
