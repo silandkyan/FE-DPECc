@@ -23,6 +23,24 @@
       <height>231</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">QTabBar::tab
+{
+    background: white;
+    color: green;   
+}
+QTabBar::tab:last
+{
+    background: white;
+    color: blue;   
+}
+
+
+</string>
+    </property>
+    <property name="tabShape">
+     <enum>QTabWidget::Rounded</enum>
+    </property>
     <property name="currentIndex">
      <number>3</number>
     </property>
@@ -1854,6 +1872,5 @@ p, li { white-space: pre-wrap; }
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroup"/>
-  <buttongroup name="buttonGroup_2"/>
  </buttongroups>
 </ui>

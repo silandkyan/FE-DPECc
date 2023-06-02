@@ -9,6 +9,12 @@ Created on Tue Feb 21 17:38:27 2023
 # invert direction?! gebraucht oder nicht 
 # (Einheit des Stroms: 255 für 100% (2.8 und 5.5A))
 
+# PROBLEME: 
+    # motoren highlighten wenn ausgewählt und in gebrauch (Done)
+    # checkboxen akitvieren und disabled wenn all leg modus (Done)
+    # Farbliche codierung der motoren in tabbar 
+    # pr und cr trennen Done
+        
 # -Checkboxen der single leg motoren sind gecheckt ABER: es muss einmal der Radiobutton 
 # geswitcht werden?!
 
@@ -121,12 +127,6 @@ class Window(QMainWindow, Ui_MainWindow):
         self.radioB_all_motors.setChecked(True) # all motors
         # PR/CR motor selection radio buttons:
         #self.radioB_pr.setChecked(True) # all motors
-        # because radioB_all_motors is checked by default, 
-        # checkBoxes for motorselection are disabled at setup:
-        self.checkB_zbr.setCheckable(False)
-        self.checkB_zbc.setCheckable(False)
-        self.checkB_zdr.setCheckable(False)
-        self.checkB_zdc.setCheckable(False)
         # if max RPM spinBox changes its value, the maximum of the mastered spinBoxes change accordingly
         # connect if master RPM spinBox from legs changes 
         #self.spinB_max_RPM.valueChanged.connect(self.RPM_master) ### MOVED TO A PLACE WHERE IT ACTUALLY CALLED
@@ -395,8 +395,8 @@ class Window(QMainWindow, Ui_MainWindow):
             # set labels active along with modules to keep track which motor is running
             self.active_label_list.append(self.label_zbr)
             self.active_label_list.append(self.label_zbc)
-            # self.active_label_list.append(self.label_zdr)
-            # self.active_label_list.append(self.label_zdc)
+            self.active_label_list.append(self.label_zdr)
+            self.active_label_list.append(self.label_zdc)
             print('All leg motors are selected')                            
                                        
         if select == 1:     
@@ -465,13 +465,14 @@ class Window(QMainWindow, Ui_MainWindow):
             self.refresh_lcd_displays()
         # iterate over all active modules and refresh LCDs:
         for module in self.active_modules:
+            print(module.motor.get_position_reached())
             # Check if motor is active:
             while not module.motor.get_position_reached():
                 # Prevent blocking of the application by the while loop:
                 QApplication.processEvents()
                 # Refresh LCD
                 self.refresh_lcd_displays()
-                
+            
     def abs_pos(self, motor): # TODO: check if this works
         for label in self.active_label_list:
             label.setStyleSheet('color: red')
@@ -492,7 +493,7 @@ class Window(QMainWindow, Ui_MainWindow):
     
     def stop_motor(self):
         '''Stop signal to all motors; can always be sent to the motors.'''
-        for label in self.active_label_list:    #TODO
+        for label in self.active_label_list:    
           label.setStyleSheet('color: black')
         self.module.motor.stop()
         # do not use time.sleep here!
@@ -502,11 +503,11 @@ class Window(QMainWindow, Ui_MainWindow):
         # print status message
         print('Motor', self.module.moduleID, 'stopped!')
         # Reset label color of motor to black 
-        # for label in self.active_label_list:    #TODO
-
+        # for label in self.active_label_list:    
+        #   label.setStyleSheet('color: black')
     
     def permanent_left(self):
-        for label in self.active_label_list:    #TODO
+        for label in self.active_label_list:    
           label.setStyleSheet('color: red')
         if self.radioB_permanent_when_pushed.isChecked() == True:
             # correct calling of motor...
@@ -514,7 +515,7 @@ class Window(QMainWindow, Ui_MainWindow):
             print('Rotating left with', str(self.spinB_RPM.value()), 'rpm')
     
     def permanent_right(self):
-        for label in self.active_label_list:    #TODO
+        for label in self.active_label_list:    
           label.setStyleSheet('color: red')
         if self.radioB_permanent_when_pushed.isChecked() == True:
             self.motor.rotate(self.module.pps)
@@ -561,7 +562,8 @@ class Window(QMainWindow, Ui_MainWindow):
         for box in self.legs_boxlist:
             box.setChecked(True)
             box.setEnabled(False)
-        
+  
+          
     
 def run_app():   
     app = 0
