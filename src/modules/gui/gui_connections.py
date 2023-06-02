@@ -25,7 +25,7 @@ from PyQt5.QtGui import QKeyEvent
 from PyQt5.QtGui import QKeySequence
 from PyQt5.QtGui import QTextFormat
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QKeySequence
+from PyQt5.QtGui import QKeySequence, QFont
 from PyQt5.QtWidgets import QShortcut
 from modules.gui.main_window_ui import Ui_MainWindow
 import time 
@@ -36,21 +36,22 @@ from pytrinamic.connections import ConnectionManager
 
 
 ### Module setup and assignment ###
-# port_list = ConnectionManager().list_connections()
-# for port in port_list:
-#     Motor(port)
+port_list = ConnectionManager().list_connections()
+for port in port_list:
+    Motor(port)
     
 # # define list of all moduleIDs and sort connected modules accordingly:
 ID_list = [11, 12, 13, 14, 15, 21, 22, 23, 24]
 module_list = Motor.sort_module_list(ID_list)
+# print(module_list)
 
 # '''Choose names for the modules. Make sure to correctly match the correct 
 # module with its descriptive variable name (e.g. motor_L) below; 
 # adjust if needed.'''
-# module_zbr = module_list[0]
-# module_zbc = module_list[1]
-# module_zdr = module_list[2]
-# module_zdc = module_list[3]
+module_zbr = module_list[0]
+module_zbc = module_list[1]
+module_zdr = module_list[2]
+module_zdc = module_list[3]
 # module_x = module_list[4]
 # module_pr = module_list[5]
 # module_cr = module_list[6]
@@ -123,10 +124,10 @@ class Window(QMainWindow, Ui_MainWindow):
         #self.radioB_pr.setChecked(True) # all motors
         # because radioB_all_motors is checked by default, 
         # checkBoxes for motorselection are disabled at setup:
-        self.checkB_zbr.setCheckable(False)
-        self.checkB_zbc.setCheckable(False)
-        self.checkB_zdr.setCheckable(False)
-        self.checkB_zdc.setCheckable(False)
+        # self.checkB_zbr.setCheckable(False)
+        # self.checkB_zbc.setCheckable(False)
+        # self.checkB_zdr.setCheckable(False)
+        # self.checkB_zdc.setCheckable(False)
         # if max RPM spinBox changes its value, the maximum of the mastered spinBoxes change accordingly
         # connect if master RPM spinBox from legs changes 
         #self.spinB_max_RPM.valueChanged.connect(self.RPM_master) ### MOVED TO A PLACE WHERE IT ACTUALLY CALLED
@@ -293,14 +294,14 @@ class Window(QMainWindow, Ui_MainWindow):
             # store_lcds matrix-like list:
             # 1st dimension = row_idx (= module_idx),
             # 2nd dimension = col_idx (= pos_idx)
-            # if module.motor == module_zbr.motor:
-            #     self.store_lcds[0][pos_idx].display(module_zbr.factor*module.module_positions[pos_idx])
-            # elif module.motor == module_zbc.motor:
-            #     self.store_lcds[1][pos_idx].display(module_zbc.factor*module.module_positions[pos_idx])
-            # elif module.motor == module_zdr.motor:
-            #     self.store_lcds[2][pos_idx].display(module_zdr.factor*module.module_positions[pos_idx])
-            # elif module.motor == module_zdc.motor:
-            #     self.store_lcds[3][pos_idx].display(module_zdc.factor*module.module_positions[pos_idx])
+            if module.motor == module_zbr.motor:
+                self.store_lcds[0][pos_idx].display(module_zbr.factor*module.module_positions[pos_idx])
+            elif module.motor == module_zbc.motor:
+                self.store_lcds[1][pos_idx].display(module_zbc.factor*module.module_positions[pos_idx])
+            elif module.motor == module_zdr.motor:
+                self.store_lcds[2][pos_idx].display(module_zdr.factor*module.module_positions[pos_idx])
+            elif module.motor == module_zdc.motor:
+                self.store_lcds[3][pos_idx].display(module_zdc.factor*module.module_positions[pos_idx])
             # elif module.motor == module_x.motor:
             #     self.store_lcds[4][pos_idx].display(module_x.factor*module.module_positions[pos_idx])
             # elif module.motor == module_pr.motor:
@@ -312,10 +313,10 @@ class Window(QMainWindow, Ui_MainWindow):
             
     def refresh_lcd_displays(self):
         '''Update the status LCDs.'''
-        # self.lcd_current_zbr.display(module_zbr.factor*module_zbr.motor.actual_position)
-        # self.lcd_current_zbc.display(module_zbc.factor*module_zbc.motor.actual_position)
-        # self.lcd_current_zdr.display(module_zdr.factor*module_zdr.motor.actual_position)
-        # self.lcd_current_zdc.display(module_zdc.factor*module_zdc.motor.actual_position)
+        self.lcd_current_zbr.display(module_zbr.factor*module_zbr.motor.actual_position)
+        self.lcd_current_zbc.display(module_zbc.factor*module_zbc.motor.actual_position)
+        self.lcd_current_zdr.display(module_zdr.factor*module_zdr.motor.actual_position)
+        self.lcd_current_zdc.display(module_zdc.factor*module_zdc.motor.actual_position)
         # self.lcd_current_x.display(module_x.factor*module_x.motor.actual_position)
         # self.lcd_current_pr.display(module_pr.factor*module_pr.motor.actual_position)
         # self.lcd_current_cr.displaymodule_cr.factor*(module_cr.motor.actual_position)
@@ -381,43 +382,46 @@ class Window(QMainWindow, Ui_MainWindow):
             # print('module for s selected')
             
     def refresh_module_list(self, select):
+        for label in self.label_list:
+            label.setFont(QFont('Arial', 20, weight=QFont.Normal))
+            
         self.active_modules = []
         self.active_label_list = []
         # TODO: after switching from single to all legs, motors do not respond 
         # even though they are in the list of active_modules... fix!
                         
         if select == 0:
-            # self.active_modules.append(module_zbr)
-            # self.active_modules.append(module_zbc)
-            # self.active_modules.append(module_zdr)
-            # self.active_modules.append(module_zdc) # continue this list if necessary...
+            self.active_modules.append(module_zbr)
+            self.active_modules.append(module_zbc)
+            self.active_modules.append(module_zdr)
+            self.active_modules.append(module_zdc) # continue this list if necessary...
             
             # set labels active along with modules to keep track which motor is running
             self.active_label_list.append(self.label_zbr)
             self.active_label_list.append(self.label_zbc)
-            # self.active_label_list.append(self.label_zdr)
-            # self.active_label_list.append(self.label_zdc)
+            self.active_label_list.append(self.label_zdr)
+            self.active_label_list.append(self.label_zdc)
             print('All leg motors are selected')                            
                                        
         if select == 1:     
             for box in self.legs_boxlist:
                 if box.isChecked() == True:
                     if box == self.checkB_zbr:
-                        #self.active_modules.append(module_zbr)
+                        self.active_modules.append(module_zbr)
                         self.active_label_list.append(self.label_zbr)
                         print('ZBR appended')
                     if box == self.checkB_zbc:  
-                        #self.active_modules.append(module_zbc)
+                        self.active_modules.append(module_zbc)
                         self.active_label_list.append(self.label_zbc)
                         print('ZBC appended')
-                    # if box == self.checkB_zdr:                   
-                    #     self.active_modules.append(module_zdr)
-                    #     self.active_label_list.append(self.label_zdr)
-                    #     print('ZDR appended')
-                    # if box == self.checkB_zdc:
-                    #     self.active_modules.append(module_zdc)
-                    #     self.active_label_list.append(self.label_zdc)
-                    #     print('ZDC appended')
+                    if box == self.checkB_zdr:                   
+                        self.active_modules.append(module_zdr)
+                        self.active_label_list.append(self.label_zdr)
+                        print('ZDR appended')
+                    if box == self.checkB_zdc:
+                        self.active_modules.append(module_zdc)
+                        self.active_label_list.append(self.label_zdc)
+                        print('ZDC appended')
                     
         if select == 2:
             # self.select_module(module_x) # TODO
@@ -443,6 +447,8 @@ class Window(QMainWindow, Ui_MainWindow):
             # print('moduleID', module_s.moduleID, 'selected')
             print('S selected')
         
+        for label in self.active_label_list:
+            label.setFont(QFont('Arial', 20, weight=QFont.Bold))
 
     
     def multi_module_control(self, action):
@@ -465,12 +471,15 @@ class Window(QMainWindow, Ui_MainWindow):
             self.refresh_lcd_displays()
         # iterate over all active modules and refresh LCDs:
         for module in self.active_modules:
+            print(module.motor.get_position_reached())
             # Check if motor is active:
-            while not module.motor.get_position_reached():
+            while not (module.motor.get_position_reached() == 1):
                 # Prevent blocking of the application by the while loop:
                 QApplication.processEvents()
                 # Refresh LCD
                 self.refresh_lcd_displays()
+        for label in self.active_label_list:
+            label.setStyleSheet('color: black')
                 
     def abs_pos(self, motor): # TODO: check if this works
         for label in self.active_label_list:
