@@ -10,20 +10,14 @@ Created on Tue Feb 21 17:38:27 2023
 # (Einheit des Stroms: 255 für 100% (2.8 und 5.5A))
 
 # PROBLEME: 
-    # motoren highlighten wenn ausgewählt und in gebrauch (Done)
-    # checkboxen akitvieren und disabled wenn all leg modus (Done)
     # Farbliche codierung der motoren in tabbar 
     # pr und cr trennen Done
         
-# -Checkboxen der single leg motoren sind gecheckt ABER: es muss einmal der Radiobutton 
-# geswitcht werden?!
 
 # -Für abs pos und die Keyboard funktionen wird eine when_reached abfrage nötig sein um die 
 # label_farbe nach erreichen wieder zu ändern 
 
 # -Cr hat jetzt aktuell wieder die gleichen funktionen wir Pr: benötigt zum einstellen?!
-
-# -Legt man Cr mit S zusammen?
 
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
