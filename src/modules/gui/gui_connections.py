@@ -8,7 +8,10 @@ Created on Tue Feb 21 17:38:27 2023
 # die microstep resolution muss anpassbar werden 
 # invert direction
 # (Einheit des Stroms: 255 für 100% (2.8 und 5.5A))
+# Einheiten werden aktuell noch nicht angezeigt!!
 
+# Save and load pos nur nötig beim start des Programms um, alte Positionen 
+# wieder zu bekommen die resetet wurden?
 
 # TODO: try if the program works with all 8 motors connected
 
