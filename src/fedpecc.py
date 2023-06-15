@@ -4,6 +4,9 @@
 Created on Thu Feb 23 16:38:18 2023
 
 @author: pgross
+
+When running this program with Spyder, make sure that all variables are 
+cleared before execution in the settings.
 """
 
 #####   Importing Packages   #####
@@ -27,6 +30,4 @@ if __name__ == "__main__":
         disconnect_motors()
 
 
-# This should make a clean disconnect of the USB Serial connection after closing the main window:
-# disconnect_motors()
 

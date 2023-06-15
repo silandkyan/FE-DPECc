@@ -9,15 +9,17 @@ Created on Tue Mar 21 11:24:03 2023
 from pytrinamic.connections import ConnectionManager
 from pytrinamic.modules import TMCM1260
 from pytrinamic.modules import TMCLModule
-#import time
+import time
 
 
 ##### General functions #####
 
 def disconnect_motors():
     '''Disconnection routine; should be run at the end of the program.'''
+    time.sleep(0.2)
     for inst in Motor.instances:
         inst.motor.stop()
+    time.sleep(0.2)
     ConnectionManager().disconnect
     print('Motors disconnected!')
 
@@ -156,22 +158,4 @@ class Motor(TMCM1260):
     #         time.sleep(0.2)
     #     print('Moving completed.')
 
-
-### Motor assignment ###
-
-# port_list = ConnectionManager().list_connections()
-# for port in port_list:
-#     Motor(port)
-    
-# m1, m2 = Motor.assign_modules()
-
-# print(m1.status_message())
-# print(m2.status_message())
-
-# m1.motor.rotate(10000)
-# time.sleep(1)
-# m1.motor.stop()
-
-# time.sleep(2)
-# m1.motor.move_by(- 10*m1.msteps_per_fstep, 10000)
 #
