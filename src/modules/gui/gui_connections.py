@@ -68,10 +68,10 @@ module_list = Motor.sort_module_list(ID_list)
 module with its descriptive variable name (e.g. motor_x) below; 
 adjust if needed.'''
 # TODO when connected motors are changed
-# module_zbr = module_list[0]
-# module_zbc = module_list[1]
-# module_zdr = module_list[2]
-# module_zdc = module_list[3]
+module_zbr = module_list[0]
+module_zbc = module_list[1]
+module_zdr = module_list[2]
+module_zdc = module_list[3]
 # module_x = module_list[4]
 # module_pr = module_list[5]
 # module_cr = module_list[6]
@@ -137,6 +137,7 @@ class Window(QMainWindow, Ui_MainWindow):
                            self.label_x, self.label_pr, self.label_cr, self.label_s]
         # Set default motor and module that is active initially:
         self.reset_active_modules()
+        self.goto_zero_setup()
         self.all_legs_setup()
         self.unit_conversion()
         # setting Tabbar colors right 
@@ -205,16 +206,16 @@ class Window(QMainWindow, Ui_MainWindow):
         
     def update_pos(self, pos_idx):
         '''Update module positions from store_lcds values.'''
-        # for module in module_list:
+        for module in module_list:
         #     # TODO when connected motors are changed
-        #     if module.motor == module_zbr.motor:
-        #         module.module_positions[pos_idx] = int(self.store_lcds[0][pos_idx].value())
-        #     elif module.motor == module_zbc.motor:
-        #         module.module_positions[pos_idx] = int(self.store_lcds[1][pos_idx].value())
-        #     elif module.motor == module_zdr.motor:
-        #         module.module_positions[pos_idx] = int(self.store_lcds[2][pos_idx].value())
-        #     elif module.motor == module_zdc.motor:
-        #         module.module_positions[pos_idx] = int(self.store_lcds[3][pos_idx].value())
+            if module.motor == module_zbr.motor:
+                module.module_positions[pos_idx] = int(self.store_lcds[0][pos_idx].value())
+            elif module.motor == module_zbc.motor:
+                module.module_positions[pos_idx] = int(self.store_lcds[1][pos_idx].value())
+            elif module.motor == module_zdr.motor:
+                module.module_positions[pos_idx] = int(self.store_lcds[2][pos_idx].value())
+            elif module.motor == module_zdc.motor:
+                module.module_positions[pos_idx] = int(self.store_lcds[3][pos_idx].value())
             # if module.motor == module_x.motor:
             # elif module.motor == module_x.motor:
             #     module.module_positions[pos_idx] = int(self.store_lcds[4][pos_idx].value())
@@ -260,6 +261,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_go_to_A.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(0)))
         self.pushB_go_to_B.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(1)))
         self.pushB_go_to_C.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(2)))
+        self.pushB_go_to_0.clicked.connect(lambda: self.multi_module_control(lambda: self.goto(3)))
         
         ##  ABSOLUTE POSITION BUTTONS  ##
         # abs_pos argument represents the motor: 0 = X, 1 = PR/CR
@@ -373,14 +375,14 @@ class Window(QMainWindow, Ui_MainWindow):
             # store_lcds matrix-like list:
             # 1st dimension = row_idx (= module_idx),
             # 2nd dimension = col_idx (= pos_idx)
-            # if module.motor == module_zbr.motor:
-            #     self.store_lcds[0][pos_idx].display(module_zbr.factor*module.module_positions[pos_idx])
-            # elif module.motor == module_zbc.motor:
-            #     self.store_lcds[1][pos_idx].display(module_zbc.factor*module.module_positions[pos_idx])
-            # elif module.motor == module_zdr.motor:
-            #     self.store_lcds[2][pos_idx].display(module_zdr.factor*module.module_positions[pos_idx])
-            # elif module.motor == module_zdc.motor:
-            #     self.store_lcds[3][pos_idx].display(module_zdc.factor*module.module_positions[pos_idx])
+            if module.motor == module_zbr.motor:
+                self.store_lcds[0][pos_idx].display(module_zbr.factor*module.module_positions[pos_idx])
+            elif module.motor == module_zbc.motor:
+                self.store_lcds[1][pos_idx].display(module_zbc.factor*module.module_positions[pos_idx])
+            elif module.motor == module_zdr.motor:
+                self.store_lcds[2][pos_idx].display(module_zdr.factor*module.module_positions[pos_idx])
+            elif module.motor == module_zdc.motor:
+                self.store_lcds[3][pos_idx].display(module_zdc.factor*module.module_positions[pos_idx])
             # elif module.motor == module_x.motor:
             #     self.store_lcds[4][pos_idx].display(module_x.factor*module.module_positions[pos_idx])
 
@@ -409,13 +411,18 @@ class Window(QMainWindow, Ui_MainWindow):
         # pps = round(self.spinB_RPM.value() * self.module.msteps_per_rev/60)
         # get pos to move to:
         if pos_idx == 3:
-            self.module.motor.move_to(0, self.module.pps)
+            self.module.motor.move_to(self.module.pos_zero, self.module.pps)
             print('go to 0')
         else:
             pos = self.module.module_positions[pos_idx]
             # move motor to pos and print status message:
             self.module.motor.move_to(pos, self.module.pps)
             print('go to', pos)
+            
+    def goto_zero_setup(self):
+        for module in module_list:
+            # Save zero module position.
+            module.pos_zero = module.motor.actual_position
 
     
     
@@ -474,10 +481,10 @@ class Window(QMainWindow, Ui_MainWindow):
         # even though they are in the list of active_modules... fix!
                         
         if select == 0:
-            # self.active_modules.append(module_zbr)
-            # self.active_modules.append(module_zbc)
-            # self.active_modules.append(module_zdr)
-            # self.active_modules.append(module_zdc) # continue this list if necessary...
+            self.active_modules.append(module_zbr)
+            self.active_modules.append(module_zbc)
+            self.active_modules.append(module_zdr)
+            self.active_modules.append(module_zdc) # continue this list if necessary...
             
             # set labels active along with modules to keep track which motor is running
             self.active_label_list.append(self.label_zbr)
@@ -490,19 +497,19 @@ class Window(QMainWindow, Ui_MainWindow):
             for box in self.legs_boxlist:
                 if box.isChecked() == True:
                     if box == self.checkB_zbr:
-                        #self.active_modules.append(module_zbr)
+                        self.active_modules.append(module_zbr)
                         self.active_label_list.append(self.label_zbr)
                         print('ZBR appended')
                     if box == self.checkB_zbc:  
-                        #self.active_modules.append(module_zbc)
+                        self.active_modules.append(module_zbc)
                         self.active_label_list.append(self.label_zbc)
                         print('ZBC appended')
                     if box == self.checkB_zdr:                   
-                        #self.active_modules.append(module_zdr)
+                        self.active_modules.append(module_zdr)
                         self.active_label_list.append(self.label_zdr)
                         print('ZDR appended')
                     if box == self.checkB_zdc:
-                        #self.active_modules.append(module_zdc)
+                        self.active_modules.append(module_zdc)
                         self.active_label_list.append(self.label_zdc)
                         print('ZDC appended')
                     

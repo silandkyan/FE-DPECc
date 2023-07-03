@@ -1937,7 +1937,7 @@ p, li { white-space: pre-wrap; }
      <string>deg</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushB_got_to_0">
+   <widget class="QPushButton" name="pushB_go_to_0">
     <property name="geometry">
      <rect>
       <x>510</x>
@@ -2016,7 +2016,7 @@ p, li { white-space: pre-wrap; }
    <zorder>label_14</zorder>
    <zorder>label_15</zorder>
    <zorder>label_17</zorder>
-   <zorder>pushB_got_to_0</zorder>
+   <zorder>pushB_go_to_0</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

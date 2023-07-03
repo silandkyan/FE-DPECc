@@ -554,9 +554,9 @@ class Ui_MainWindow(object):
         self.label_17 = QtWidgets.QLabel(self.centralwidget)
         self.label_17.setGeometry(QtCore.QRect(880, 320, 31, 19))
         self.label_17.setObjectName("label_17")
-        self.pushB_got_to_0 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushB_got_to_0.setGeometry(QtCore.QRect(510, 400, 61, 34))
-        self.pushB_got_to_0.setObjectName("pushB_got_to_0")
+        self.pushB_go_to_0 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushB_go_to_0.setGeometry(QtCore.QRect(510, 400, 61, 34))
+        self.pushB_go_to_0.setObjectName("pushB_go_to_0")
         self.frame_2.raise_()
         self.frame_3.raise_()
         self.tabWidget.raise_()
@@ -623,7 +623,7 @@ class Ui_MainWindow(object):
         self.label_14.raise_()
         self.label_15.raise_()
         self.label_17.raise_()
-        self.pushB_got_to_0.raise_()
+        self.pushB_go_to_0.raise_()
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 932, 22))
@@ -739,7 +739,7 @@ class Ui_MainWindow(object):
         self.label_14.setText(_translate("MainWindow", "mm"))
         self.label_15.setText(_translate("MainWindow", "deg"))
         self.label_17.setText(_translate("MainWindow", "deg"))
-        self.pushB_got_to_0.setText(_translate("MainWindow", "Go to 0"))
+        self.pushB_go_to_0.setText(_translate("MainWindow", "Go to 0"))
 
 
 if __name__ == "__main__":
