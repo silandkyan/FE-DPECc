@@ -31,7 +31,7 @@ Created on Tue Feb 21 17:38:27 2023
 
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
-from PyQt5.QtGui import QKeyEvent
+from PyQt5.QtGui import QKeyEvent, QColor
 from PyQt5.QtCore import Qt
 # from PyQt5.QtGui import QKeySequence
 # from PyQt5.QtWidgets import QShortcut
@@ -124,6 +124,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.rot_radioBlist = [self.radioB_cr, self.radioB_pr]
         # Set default motor and module that is active initially:
         self.reset_active_modules()
+        self.tabWidget.tabBar().setTabTextColor(1,QColor('red'))
         
     def setup_default_buttons(self):
         # Mode selection radioB:
