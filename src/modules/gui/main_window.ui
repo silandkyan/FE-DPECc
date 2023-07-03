@@ -1937,6 +1937,19 @@ p, li { white-space: pre-wrap; }
      <string>deg</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushB_got_to_0">
+    <property name="geometry">
+     <rect>
+      <x>510</x>
+      <y>400</y>
+      <width>61</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Go to 0</string>
+    </property>
+   </widget>
    <zorder>frame_2</zorder>
    <zorder>frame_3</zorder>
    <zorder>tabWidget</zorder>
@@ -2003,6 +2016,7 @@ p, li { white-space: pre-wrap; }
    <zorder>label_14</zorder>
    <zorder>label_15</zorder>
    <zorder>label_17</zorder>
+   <zorder>pushB_got_to_0</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -2010,7 +2024,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>932</width>
-     <height>31</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -2020,6 +2034,5 @@ p, li { white-space: pre-wrap; }
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroup"/>
-  <buttongroup name="buttonGroup_2"/>
  </buttongroups>
 </ui>
