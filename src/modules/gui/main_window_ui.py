@@ -164,11 +164,6 @@ class Ui_MainWindow(object):
         self.pushB_clockwise_pr2.setGeometry(QtCore.QRect(200, 160, 81, 31))
         self.pushB_clockwise_pr2.setAutoRepeat(False)
         self.pushB_clockwise_pr2.setObjectName("pushB_clockwise_pr2")
-        self.frame_4 = QtWidgets.QFrame(self.tab_3)
-        self.frame_4.setGeometry(QtCore.QRect(410, 110, 461, 151))
-        self.frame_4.setFrameShape(QtWidgets.QFrame.StyledPanel)
-        self.frame_4.setFrameShadow(QtWidgets.QFrame.Raised)
-        self.frame_4.setObjectName("frame_4")
         self.tabWidget.addTab(self.tab_3, "")
         self.tab_4 = QtWidgets.QWidget()
         self.tab_4.setObjectName("tab_4")
@@ -634,7 +629,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(3)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

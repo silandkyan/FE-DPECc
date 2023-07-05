@@ -187,7 +187,7 @@ class Window(QMainWindow, Ui_MainWindow):
                     # print(col.value())
                     f.write("%s " % int(col.value()))
                 f.write("\n")
-        print('Saved all positions to file!')
+        print('Saved all positions to file!') #TODO: fix store to save msteps, not mm/deg!
         
     def load_pos(self):
         '''Load module positions from external file:'''
@@ -207,7 +207,8 @@ class Window(QMainWindow, Ui_MainWindow):
     def update_pos(self, pos_idx):
         '''Update module positions from store_lcds values.'''
         for module in module_list:
-        #     # TODO when connected motors are changed
+        #TODO: when connected motors are changed
+        #TODO: store module_positions as msteps, not in real units
             if module.motor == module_zbr.motor:
                 module.module_positions[pos_idx] = int(self.store_lcds[0][pos_idx].value())
             elif module.motor == module_zbc.motor:
@@ -395,10 +396,10 @@ class Window(QMainWindow, Ui_MainWindow):
             
     def refresh_lcd_displays(self):
         '''Update the status LCDs.'''
-        # self.lcd_current_zbr.display(module_zbr.factor*module_zbr.motor.actual_position)
-        # self.lcd_current_zbc.display(module_zbc.factor*module_zbc.motor.actual_position)
-        # self.lcd_current_zdr.display(module_zdr.factor*module_zdr.motor.actual_position)
-        # self.lcd_current_zdc.display(module_zdc.factor*module_zdc.motor.actual_position)
+        self.lcd_current_zbr.display(module_zbr.factor*module_zbr.motor.actual_position)
+        self.lcd_current_zbc.display(module_zbc.factor*module_zbc.motor.actual_position)
+        self.lcd_current_zdr.display(module_zdr.factor*module_zdr.motor.actual_position)
+        self.lcd_current_zdc.display(module_zdc.factor*module_zdc.motor.actual_position)
         # self.lcd_current_x.display(module_x.factor*module_x.motor.actual_position)
         # self.lcd_current_pr.display(module_pr.factor*module_pr.motor.actual_position)
         # self.lcd_current_cr.displaymodule_cr.factor*(module_cr.motor.actual_position)
@@ -422,7 +423,10 @@ class Window(QMainWindow, Ui_MainWindow):
     def goto_zero_setup(self):
         for module in module_list:
             # Save zero module position.
-            module.pos_zero = module.motor.actual_position
+            module.pos_zero = 0
+            #TODO: add set_zero button and add save last position, both in same file
+            #TODO: add initialization that restores all positions after module disconnect; 
+            # maybe there is a way to save the last pos on the module and restore automatically?
 
     
     
