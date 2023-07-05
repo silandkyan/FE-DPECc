@@ -37,7 +37,6 @@ Created on Tue Feb 21 17:38:27 2023
 
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
-
 from PyQt5.QtGui import QKeyEvent, QTextFormat, QKeySequence, QKeySequence, QFont, QColor
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QShortcut
