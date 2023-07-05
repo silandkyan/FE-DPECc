@@ -281,17 +281,17 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_stop_legs.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
         # self.pushB_stop_legs.clicked.connect(lambda: print('all leg motors stopped'))
         # X: 
-        self.pushB_forwards1.clicked.connect(self.permanent_right)
-        self.pushB_backwards1.clicked.connect(self.permanent_left)
-        self.pushB_stop_x.clicked.connect(self.stop_motor)
+        self.pushB_forwards1.clicked.connect(lambda: self.multi_module_control(self.permanent_right))
+        self.pushB_backwards1.clicked.connect(lambda: self.multi_module_control(self.permanent_left))
+        self.pushB_stop_x.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
         # PR:
-        self.pushB_clockwise_pr1.clicked.connect(self.permanent_right)
-        self.pushB_counterclockwise_pr1.clicked.connect(self.permanent_left)
-        self.pushB_stop_pr.clicked.connect(self.stop_motor)
+        self.pushB_clockwise_pr1.clicked.connect(lambda: self.multi_module_control(self.permanent_right))
+        self.pushB_counterclockwise_pr1.clicked.connect(lambda: self.multi_module_control(self.permanent_left))
+        self.pushB_stop_pr.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
         # CR:
-        self.pushB_clockwise_cr1.clicked.connect(self.permanent_right)
-        self.pushB_counterclockwise_cr1.clicked.connect(self.permanent_left)
-        self.pushB_stop_cr.clicked.connect(self.stop_motor)
+        self.pushB_clockwise_cr1.clicked.connect(lambda: self.multi_module_control(self.permanent_right))
+        self.pushB_counterclockwise_cr1.clicked.connect(lambda: self.multi_module_control(self.permanent_left))
+        self.pushB_stop_cr.clicked.connect(lambda: self.multi_module_control(self.stop_motor))
         
         ##  WHEN PUSHED MOVE  ##
         # Z:
@@ -300,20 +300,20 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_downwards2.pressed.connect(lambda: self.multi_module_control(self.permanent_left))
         self.pushB_downwards2.released.connect(lambda: self.multi_module_control(self.stop_motor))
         # X:
-        self.pushB_forwards2.pressed.connect(self.permanent_right)
-        self.pushB_forwards2.released.connect(self.stop_motor)
-        self.pushB_backwards2.pressed.connect(self.permanent_left)
-        self.pushB_backwards2.released.connect(self.stop_motor)
+        self.pushB_forwards2.pressed.connect(lambda: self.multi_module_control(self.permanent_right))
+        self.pushB_forwards2.released.connect(lambda: self.multi_module_control(self.stop_motor))
+        self.pushB_backwards2.pressed.connect(lambda: self.multi_module_control(self.permanent_left))
+        self.pushB_backwards2.released.connect(lambda: self.multi_module_control(self.stop_motor))
         # PR:
-        self.pushB_clockwise_pr2.pressed.connect(self.permanent_right)
-        self.pushB_clockwise_pr2.released.connect(self.stop_motor)
-        self.pushB_counterclockwise_pr2.pressed.connect(self.permanent_left)
-        self.pushB_counterclockwise_pr2.released.connect(self.stop_motor)
+        self.pushB_clockwise_pr2.pressed.connect(lambda: self.multi_module_control(self.permanent_right))
+        self.pushB_clockwise_pr2.released.connect(lambda: self.multi_module_control(self.stop_motor))
+        self.pushB_counterclockwise_pr2.pressed.connect(lambda: self.multi_module_control(self.permanent_left))
+        self.pushB_counterclockwise_pr2.released.connect(lambda: self.multi_module_control(self.stop_motor))
         # CR:
-        self.pushB_clockwise_cr2.pressed.connect(self.permanent_right)
-        self.pushB_clockwise_cr2.released.connect(self.stop_motor)
-        self.pushB_counterclockwise_cr2.pressed.connect(self.permanent_left)
-        self.pushB_counterclockwise_cr2.released.connect(self.stop_motor)
+        self.pushB_clockwise_cr2.pressed.connect(lambda: self.multi_module_control(self.permanent_right))
+        self.pushB_clockwise_cr2.released.connect(lambda: self.multi_module_control(self.stop_motor))
+        self.pushB_counterclockwise_cr2.pressed.connect(lambda: self.multi_module_control(self.permanent_left))
+        self.pushB_counterclockwise_cr2.released.connect(lambda: self.multi_module_control(self.stop_motor))
     
         ##  MOTOR SELECTION  ##
         # Activate correct module(s) on tab change:
