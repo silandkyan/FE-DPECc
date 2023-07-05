@@ -4,7 +4,8 @@ Created on Tue Feb 21 17:38:27 2023
 
 @author: pschw
 """
-# TODO:
+# TODO
+# go_to_zero and keyboard_cont do not switch back from red to black font after use
 # die microstep resolution muss anpassbar werden 
 # invert direction
 # (Einheit des Stroms: 255 für 100% (2.8 und 5.5A))
