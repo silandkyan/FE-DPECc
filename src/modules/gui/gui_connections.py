@@ -5,13 +5,12 @@ Created on Tue Feb 21 17:38:27 2023
 @author: pschw
 """
 # TODO
-# go_to_zero and keyboard_cont do not switch back from red to black font after use
 # die microstep resolution muss anpassbar werden 
 # invert direction
 # (Einheit des Stroms: 255 für 100% (2.8 und 5.5A))
 # Einheiten werden aktuell noch nicht angezeigt!!
 
-# Save and load pos nur nötig beim start des Programms um, alte Positionen 
+# Save and load pos nur nötig beim start des Programms, um alte Positionen 
 # wieder zu bekommen die resetet wurden?
 
 # TODO: try if the program works with all 8 motors connected
@@ -29,6 +28,8 @@ Created on Tue Feb 21 17:38:27 2023
     #
         
     fixed: 
+        # go_to_zero and keyboard_cont do not switch back from red to black font after use
+        #
 '''
 #
 ''' test runs:
@@ -82,7 +83,7 @@ module_zdc = module_list[3]
 # hardware_config takes the mm or deg done on specific axis with one revolution of a motor
 # the order follows the scheme from module_list
 # pr and cr ([5], [6]) have deg units, the rest has mm
-hardware_config = [0.5, 0.2, 0.5, 0.5, 0.2, 0.3, 0.3, 0.1]
+hardware_config = [0.5, 0.5, 0.5, 0.5, 0.2, 0.3, 0.3, 0.1]
 
 # TODO: probably better with inst_var module_name or so...
 # for testing:
@@ -182,6 +183,29 @@ class Window(QMainWindow, Ui_MainWindow):
     def save_pos(self):
         '''Save stored module positions (displayed in store_lcds) to external file.'''
         with open('saved_positions.txt', 'w') as f:
+            f.write("ModuleID last_pos \n")
+            for module in module_list:
+                f.write("{} {} \n".format(module.moduleID, module.motor.actual_position))
+        print('Saved all positions as msteps to file!') 
+        
+    def load_pos(self):
+        '''Load last motor positions from external file; overwrites actual position.'''
+        with open('saved_positions.txt', 'r') as f:
+            next(f) # skip the first row (=header)
+            for row in f:
+                rowlist = row[:-2].split() # drop trailing '\n' and split at '\s'
+                # print(rowlist)
+                for module in module_list:
+                    # print(module.moduleID, rowlist[0])
+                    if module.moduleID == int(rowlist[0]):
+                        module.motor.actual_position = int(rowlist[1])
+                        print('set:', module.motor.actual_position, rowlist[1])
+        self.refresh_lcd_displays()
+        print('Loaded all saved positions as msteps from file!')
+    
+    def save_pos_old(self):
+        '''Save last motor positions to external file.'''
+        with open('saved_positions.txt', 'w') as f:
             for row in self.store_lcds:
                 for col in row:
                     # print(col.value())
@@ -189,7 +213,7 @@ class Window(QMainWindow, Ui_MainWindow):
                 f.write("\n")
         print('Saved all positions to file!') #TODO: fix store to save msteps, not mm/deg!
         
-    def load_pos(self):
+    def load_pos_old(self):
         '''Load module positions from external file:'''
         with open('saved_positions.txt', 'r') as f:
             i = 0
@@ -396,6 +420,7 @@ class Window(QMainWindow, Ui_MainWindow):
             
     def refresh_lcd_displays(self):
         '''Update the status LCDs.'''
+        # print('refresh lcds')
         self.lcd_current_zbr.display(module_zbr.factor*module_zbr.motor.actual_position)
         self.lcd_current_zbc.display(module_zbc.factor*module_zbc.motor.actual_position)
         self.lcd_current_zdr.display(module_zdr.factor*module_zdr.motor.actual_position)
@@ -582,18 +607,23 @@ class Window(QMainWindow, Ui_MainWindow):
             self.motor = module.motor
             action()
             # final refresh:
-            self.refresh_lcd_displays()
+            # self.refresh_lcd_displays()
         # iterate over all active modules and refresh LCDs:
         for module in self.active_modules:
-            print(module.motor.get_position_reached())
+            # print(module.motor.get_position_reached())
             # Check if motor is active:
-            while not (module.motor.get_position_reached() == 1):
+            while not module.motor.get_position_reached() == 1:
                 # Prevent blocking of the application by the while loop:
                 QApplication.processEvents()
                 # Refresh LCD
                 self.refresh_lcd_displays()
-            for label in self.active_label_list:
-                label.setStyleSheet('color: red')
+                print('pos not reached') # TODO: this loop does not end when position is reached...
+            # for label in self.active_label_list:
+            #     label.setStyleSheet('color: red')
+            if module.motor.get_position_reached() == 1:
+                for label in self.active_label_list:
+                    label.setStyleSheet('color: black')
+            print('pos reached')
                 
     def abs_pos(self, motor): # TODO: check if this works
         for label in self.active_label_list:
@@ -629,16 +659,16 @@ class Window(QMainWindow, Ui_MainWindow):
         #   label.setStyleSheet('color: black')
     
     def permanent_left(self):
-        for label in self.active_label_list:    
-          label.setStyleSheet('color: red')
+        # for label in self.active_label_list:    
+        #   label.setStyleSheet('color: red')
         if self.radioB_permanent_when_pushed.isChecked() == True:
             # correct calling of motor...
             self.motor.rotate(-self.module.pps)
             print('Rotating left with', str(self.spinB_RPM.value()), 'rpm')
     
     def permanent_right(self):
-        for label in self.active_label_list:    
-          label.setStyleSheet('color: red')
+        # for label in self.active_label_list:    
+        #   label.setStyleSheet('color: red')
         if self.radioB_permanent_when_pushed.isChecked() == True:
             self.motor.rotate(self.module.pps)
             print('Rotating right with', str(self.spinB_RPM.value()), 'rpm')
