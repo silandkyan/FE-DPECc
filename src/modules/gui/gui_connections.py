@@ -182,21 +182,21 @@ class Window(QMainWindow, Ui_MainWindow):
         
     ###   SAVE AND LOAD POSITIONS   ###
     
-    def save_pos(self):
-        '''Save stored module positions (displayed in store_lcds) to external file.'''
-        print('save_pos')
-        with open('saved_positions.txt', 'w') as f:
+    def save_last_pos(self):
+        '''Save last motor positions to external file.'''
+        print('save_last_pos')
+        with open('last_positions.txt', 'w') as f:
             f.write("ModuleID last_pos \n")
             for module in module_list:
                 f.write("{} {} \n".format(module.moduleID, module.motor.actual_position))
-        print('Saved all positions as msteps to file!') 
+        print('Saved all current positions as msteps to file!') 
         
-    def load_pos(self):
+    def load_last_pos(self):
         '''Load last motor positions from external file; overwrites actual position.'''
-        print('load_pos')
-        for module in module_list: # loop prevents strange motor rotation when load_pos() is called
+        print('load_last_pos')
+        for module in module_list: # loop prevents strange motor rotation when load_last_pos() is called
             module.motor.stop()
-        with open('saved_positions.txt', 'r') as f:
+        with open('last_positions.txt', 'r') as f:
             next(f) # skip the first row (=header)
             for row in f:
                 rowlist = row[:-2].split() # drop trailing '\n' and split at '\s'
@@ -207,12 +207,12 @@ class Window(QMainWindow, Ui_MainWindow):
                         module.motor.actual_position = int(rowlist[1])
                         print('set:', module.motor.actual_position, rowlist[1])
         self.refresh_lcd_displays()
-        print('Loaded all saved positions as msteps from file!')
+        print('Loaded all last positions as msteps from file!')
     
-    def save_pos_old(self):
-        '''Save last motor positions to external file.'''
-        print('save_pos_old')
-        with open('saved_positions.txt', 'w') as f:
+    def save_pos_list(self):
+        '''Save position list to external file.'''
+        print('save_pos_list')
+        with open('position_list.txt', 'w') as f:
             for row in self.store_lcds:
                 for col in row:
                     # print(col.value())
@@ -220,10 +220,10 @@ class Window(QMainWindow, Ui_MainWindow):
                 f.write("\n")
         print('Saved all positions to file!') #TODO: fix store to save msteps, not mm/deg!
         
-    def load_pos_old(self):
-        '''Load module positions from external file:'''
-        print('load_pos_old')
-        with open('saved_positions.txt', 'r') as f:
+    def load_pos_list(self):
+        '''Load position list from external file:'''
+        print('load_pos_list')
+        with open('position_list.txt', 'r') as f:
             i = 0
             for row in f:
                 rowlist = row[:-2].split() # drop trailing '\n' and split at '\s'
@@ -305,8 +305,11 @@ class Window(QMainWindow, Ui_MainWindow):
         self.pushB_start_cr.clicked.connect(lambda: self.abs_pos(2))
         
         ## SAVE AND LOAD POSITIONS TO FILE BUTTONS ##
-        self.pushB_savepos.clicked.connect(self.save_pos)
-        self.pushB_loadpos.clicked.connect(self.load_pos)
+        self.pushB_saveposlist.clicked.connect(self.save_pos_list)
+        self.pushB_loadposlist.clicked.connect(self.load_pos_list)
+        self.pushB_savelastpos.clicked.connect(self.save_last_pos)
+        self.pushB_loadlastpos.clicked.connect(self.load_last_pos)
+        self.pushB_set_to_0.clicked.connect(self.goto_zero_setup)
                 
         ##  PERMANENT MOVE  ##
         # Z: 
@@ -432,10 +435,10 @@ class Window(QMainWindow, Ui_MainWindow):
     def refresh_lcd_displays(self):
         '''Update the status LCDs.'''
         print('refresh_lcd_displays')
-        self.lcd_current_zbr.display(module_zbr.factor*module_zbr.motor.actual_position())
-        self.lcd_current_zbc.display(module_zbc.factor*module_zbc.motor.actual_position())
-        self.lcd_current_zdr.display(module_zdr.factor*module_zdr.motor.actual_position())
-        self.lcd_current_zdc.display(module_zdc.factor*module_zdc.motor.actual_position())
+        self.lcd_current_zbr.display(module_zbr.factor*module_zbr.motor.actual_position)
+        self.lcd_current_zbc.display(module_zbc.factor*module_zbc.motor.actual_position)
+        self.lcd_current_zdr.display(module_zdr.factor*module_zdr.motor.actual_position)
+        self.lcd_current_zdc.display(module_zdc.factor*module_zdc.motor.actual_position)
         # self.lcd_current_x.display(module_x.factor*module_x.motor.actual_position)
         # self.lcd_current_pr.display(module_pr.factor*module_pr.motor.actual_position)
         # self.lcd_current_cr.displaymodule_cr.factor*(module_cr.motor.actual_position)
