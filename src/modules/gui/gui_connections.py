@@ -205,7 +205,7 @@ class Window(QMainWindow, Ui_MainWindow):
                     # print(module.moduleID, rowlist[0])
                     if module.moduleID == int(rowlist[0]):
                         module.motor.actual_position = int(rowlist[1])
-                        print('set:', module.motor.get_actual_position(), rowlist[1])
+                        print('set:', module.motor.actual_position, rowlist[1])
         self.refresh_lcd_displays()
         print('Loaded all saved positions as msteps from file!')
     
@@ -432,10 +432,10 @@ class Window(QMainWindow, Ui_MainWindow):
     def refresh_lcd_displays(self):
         '''Update the status LCDs.'''
         print('refresh_lcd_displays')
-        self.lcd_current_zbr.display(module_zbr.factor*module_zbr.motor.get_actual_position())
-        self.lcd_current_zbc.display(module_zbc.factor*module_zbc.motor.get_actual_position())
-        self.lcd_current_zdr.display(module_zdr.factor*module_zdr.motor.get_actual_position())
-        self.lcd_current_zdc.display(module_zdc.factor*module_zdc.motor.get_actual_position())
+        self.lcd_current_zbr.display(module_zbr.factor*module_zbr.motor.actual_position())
+        self.lcd_current_zbc.display(module_zbc.factor*module_zbc.motor.actual_position())
+        self.lcd_current_zdr.display(module_zdr.factor*module_zdr.motor.actual_position())
+        self.lcd_current_zdc.display(module_zdc.factor*module_zdc.motor.actual_position())
         # self.lcd_current_x.display(module_x.factor*module_x.motor.actual_position)
         # self.lcd_current_pr.display(module_pr.factor*module_pr.motor.actual_position)
         # self.lcd_current_cr.displaymodule_cr.factor*(module_cr.motor.actual_position)
