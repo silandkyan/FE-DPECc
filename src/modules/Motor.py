@@ -77,6 +77,7 @@ class Motor(TMCM1260):
         self.interface, self.module, self.motor = self.setup_motor(self.port)
         # list of stored positions [A, B, C]:
         self.module_positions = [0, 0, 0]
+        self.last_position = 0
         self.__class__.instances.append(self)
     
     
