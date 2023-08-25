@@ -188,7 +188,8 @@ class Window(QMainWindow, Ui_MainWindow):
         with open('last_positions.txt', 'w') as f:
             f.write("ModuleID last_pos \n")
             for module in module_list:
-                f.write("{} {} \n".format(module.moduleID, module.motor.actual_position))
+                module.last_pos = module.motor.actual_position
+                f.write("{} {} \n".format(module.moduleID, module.last_pos))
         print('Saved all current positions as msteps to file!') 
         
     def load_last_pos(self):
@@ -205,7 +206,8 @@ class Window(QMainWindow, Ui_MainWindow):
                     # print(module.moduleID, rowlist[0])
                     if module.moduleID == int(rowlist[0]):
                         module.motor.actual_position = int(rowlist[1])
-                        print('set:', module.motor.actual_position, rowlist[1])
+                        module.last_pos = int(rowlist[1])
+                        # print('set:', module.last_pos, rowlist[1])
         self.refresh_lcd_displays()
         print('Loaded all last positions as msteps from file!')
     
