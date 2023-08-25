@@ -5,13 +5,18 @@ Created on Tue Feb 21 17:38:27 2023
 @author: pschw
 """
 # TODO
-# die microstep resolution muss anpassbar werden 
-# invert direction
+# die microstep resolution muss anpassbar werden... Warum? macht nur Probleme...
+# invert direction... Warum? macht nur Probleme...
 # (Einheit des Stroms: 255 für 100% (2.8 und 5.5A))
 # Einheiten werden aktuell noch nicht angezeigt!!
 
 # Save and load pos nur nötig beim start des Programms, um alte Positionen 
-# wieder zu bekommen die resetet wurden?
+# wieder zu bekommen die resetet wurden? Ist jetzt mit Buttons eingebaut, aber
+# ist eigentlich nicht nötig, weil die Positionen nur vergessen werden, wenn
+# die Hauptstromversorgung unterbrochen wurde (nicht bei Programmneustart, 
+# auch nicht bei Unterbrechung der USB-Verbindung). Ohne Strom haben die 
+# Motoren aber eh keine Haltekraft mehr und die Achsen (Beine!) verschieben 
+# sich vermutlich, so dass der Tisch sowieso neu kalibriert werden muss.
 
 # TODO: try if the program works with all 8 motors connected
 
@@ -121,6 +126,7 @@ class Window(QMainWindow, Ui_MainWindow):
         self.connectSignalsSlots()
         self.show()
         
+        
     ###   SETUP DEFAULTS   ###
     
     def setup_default_values(self):
@@ -180,6 +186,7 @@ class Window(QMainWindow, Ui_MainWindow):
                            [self.lcd_A_cr, self.lcd_B_cr, self.lcd_C_cr],
                            [self.lcd_A_s, self.lcd_B_s, self.lcd_C_s]]
         
+        
     ###   SAVE AND LOAD POSITIONS   ###
     
     def save_last_pos(self):
@@ -215,56 +222,32 @@ class Window(QMainWindow, Ui_MainWindow):
         '''Save position list to external file.'''
         print('save_pos_list')
         with open('position_list.txt', 'w') as f:
-            for row in self.store_lcds:
-                for col in row:
-                    # print(col.value())
-                    f.write("%s " % int(col.value()))
-                f.write("\n")
-        print('Saved all positions to file!') #TODO: fix store to save msteps, not mm/deg!
+            f.write("ModuleID pos_list \n")
+            for module in module_list:
+                f.write('%s ' % str(module.moduleID))
+                for pos in module.module_positions:
+                    f.write('%s ' % str(pos))
+                f.write('\n')
+        print('Saved all positions as msteps to file!')
         
     def load_pos_list(self):
         '''Load position list from external file:'''
         print('load_pos_list')
         with open('position_list.txt', 'r') as f:
-            i = 0
+            next(f) # skip the first row (=header)
             for row in f:
                 rowlist = row[:-2].split() # drop trailing '\n' and split at '\s'
-                for j in range(0, len(self.store_lcds[0])):
-                    self.store_lcds[i][j].display(rowlist[j]) # update lcd
-                i += 1 # set counter for next module_idx
-        # update module positions from the values in store_lcds:
-        for pos_idx in range (0, len(self.store_lcds[0])):
-            self.update_pos(pos_idx)
-        # Status message:
-        print('Loaded all saved positions from file!')
-        
-    def update_pos(self, pos_idx):
-        '''Update module positions from store_lcds values.'''
-        print('update_pos')
-        for module in module_list:
-        #TODO: when connected motors are changed
-        #TODO: store module_positions as msteps, not in real units
-            if module.motor == module_zbr.motor:
-                module.module_positions[pos_idx] = int(self.store_lcds[0][pos_idx].value())
-            elif module.motor == module_zbc.motor:
-                module.module_positions[pos_idx] = int(self.store_lcds[1][pos_idx].value())
-            elif module.motor == module_zdr.motor:
-                module.module_positions[pos_idx] = int(self.store_lcds[2][pos_idx].value())
-            elif module.motor == module_zdc.motor:
-                module.module_positions[pos_idx] = int(self.store_lcds[3][pos_idx].value())
-            # if module.motor == module_x.motor:
-            # elif module.motor == module_x.motor:
-            #     module.module_positions[pos_idx] = int(self.store_lcds[4][pos_idx].value())
-            # elif module.motor == module_pr.motor:
-            #     module.module_positions[pos_idx] = int(self.store_lcds[5][pos_idx].value())
-            # elif module.motor == module_cr.motor:
-            #     module.module_positions[pos_idx] = int(self.store_lcds[6][pos_idx].value())
-            # elif module.motor == module_s.motor:
-            #     module.module_positions[pos_idx] = int(self.store_lcds[7][pos_idx].value())
-            # for testing:
-            # print(self.active_modules, module.module_positions[pos_idx])
-            
-        
+                # print(rowlist)
+                for module in module_list:
+                    i = 0
+                    if module.moduleID == int(rowlist[0]):
+                        for col in rowlist[1:]:
+                            module.module_positions[i] = int(col)
+                            i += 1 # set counter for next module_idx
+        self.update_store_lcds()
+        print('Loaded all saved positions as msteps from file!')
+
+
     ###   CALCULATORS (for unit conversion to pps)   ###
         
     def pps_calculator(self):
@@ -281,6 +264,7 @@ class Window(QMainWindow, Ui_MainWindow):
         for module in module_list:
             module.factor = hardware_config[i]/module.msteps_per_rev
             i += 1
+    
     
     ###   BUTTON SIGNAL AND SLOT CONNECTIONS   ###
     
@@ -415,15 +399,15 @@ class Window(QMainWindow, Ui_MainWindow):
             # find correct LCD for display of saved position value using the
             # store_lcds matrix-like list:
             # 1st dimension = row_idx (= module_idx),
-            # 2nd dimension = col_idx (= pos_idx)
-            if module.motor == module_zbr.motor:
-                self.store_lcds[0][pos_idx].display(module_zbr.factor*module.module_positions[pos_idx])
-            elif module.motor == module_zbc.motor:
-                self.store_lcds[1][pos_idx].display(module_zbc.factor*module.module_positions[pos_idx])
-            elif module.motor == module_zdr.motor:
-                self.store_lcds[2][pos_idx].display(module_zdr.factor*module.module_positions[pos_idx])
-            elif module.motor == module_zdc.motor:
-                self.store_lcds[3][pos_idx].display(module_zdc.factor*module.module_positions[pos_idx])
+            # # 2nd dimension = col_idx (= pos_idx)
+            # if module.motor == module_zbr.motor:
+            #     self.store_lcds[0][pos_idx].display(module_zbr.factor*module.module_positions[pos_idx])
+            # elif module.motor == module_zbc.motor:
+            #     self.store_lcds[1][pos_idx].display(module_zbc.factor*module.module_positions[pos_idx])
+            # elif module.motor == module_zdr.motor:
+            #     self.store_lcds[2][pos_idx].display(module_zdr.factor*module.module_positions[pos_idx])
+            # elif module.motor == module_zdc.motor:
+            #     self.store_lcds[3][pos_idx].display(module_zdc.factor*module.module_positions[pos_idx])
             # elif module.motor == module_x.motor:
             #     self.store_lcds[4][pos_idx].display(module_x.factor*module.module_positions[pos_idx])
 
@@ -433,18 +417,55 @@ class Window(QMainWindow, Ui_MainWindow):
             #     self.store_lcds[7][pos_idx].display(module_cr.factor*module.module_positions[pos_idx])
             # elif module.motor == module_s.motor:
             #     self.store_lcds[8][pos_idx].display(module_s.factor*module.module_positions[pos_idx])
+        self.update_store_lcds()
+        
+    def update_store_lcds(self):
+        '''Updates the store_lcds with the current mstep values in module_positions.'''
+        print('update_store_lcds')
+        for pos_idx in range(0, len(self.store_lcds[0])):
+            for module in module_list:
+                #TODO: when connected motors are changed
+                # print(type(module.module_positions), module.module_positions)
+                if module.motor == module_zbr.motor:
+                    val = module_zbr.factor*module_zbr.module_positions[pos_idx]
+                    self.store_lcds[0][pos_idx].display("{:.3f}".format(val)) # TODO: alle felder in qt umstellen
+                elif module.motor == module_zbc.motor:
+                    val = module_zbc.factor*module_zbc.module_positions[pos_idx]
+                    self.store_lcds[1][pos_idx].display("{:.3f}".format(val))
+                elif module.motor == module_zdr.motor:
+                    val = module_zdr.factor*module_zdr.module_positions[pos_idx]
+                    self.store_lcds[2][pos_idx].display("{:.3f}".format(val))
+                elif module.motor == module_zdc.motor:
+                    val = module_zdc.factor*module_zdc.module_positions[pos_idx]
+                    self.store_lcds[3][pos_idx].display("{:.3f}".format(val))
+                # if module.motor == module_x.motor:
+                # elif module.motor == module_x.motor:
+                #     val = module_x.factor*module_x.module_positions[pos_idx]
+                #     self.store_lcds[4][pos_idx].display("{:.3f}".format(val))
+                # elif module.motor == module_pr.motor:
+                #     val = module_pr.factor*module_pr.module_positions[pos_idx]
+                #     self.store_lcds[5][pos_idx].display("{:.3f}".format(val))
+                # elif module.motor == module_cr.motor:
+                #     val = module_cr.factor*module_cr.module_positions[pos_idx]
+                #     self.store_lcds[6][pos_idx].display("{:.3f}".format(val))
+                # elif module.motor == module_s.motor:
+                #     val = module_s.factor*module_s.module_positions[pos_idx]
+                #     self.store_lcds[7][pos_idx].display("{:.3f}".format(val))
+                # for testing:
+                # print(self.active_modules, module.module_positions[pos_idx])
             
     def refresh_lcd_displays(self):
-        '''Update the status LCDs.'''
+        '''Update the status LCDs displaying the current motor positions.'''
         print('refresh_lcd_displays')
-        self.lcd_current_zbr.display(module_zbr.factor*module_zbr.motor.actual_position)
-        self.lcd_current_zbc.display(module_zbc.factor*module_zbc.motor.actual_position)
-        self.lcd_current_zdr.display(module_zdr.factor*module_zdr.motor.actual_position)
-        self.lcd_current_zdc.display(module_zdc.factor*module_zdc.motor.actual_position)
-        # self.lcd_current_x.display(module_x.factor*module_x.motor.actual_position)
-        # self.lcd_current_pr.display(module_pr.factor*module_pr.motor.actual_position)
-        # self.lcd_current_cr.displaymodule_cr.factor*(module_cr.motor.actual_position)
-        # self.lcd_current_s.display(module_s.factor*module_s.motor.actual_position)
+        #TODO: when connected motors are changed
+        self.lcd_current_zbr.display("{:.3f}".format(module_zbr.factor*module_zbr.motor.actual_position))
+        self.lcd_current_zbc.display("{:.3f}".format(module_zbc.factor*module_zbc.motor.actual_position))
+        self.lcd_current_zdr.display("{:.3f}".format(module_zdr.factor*module_zdr.motor.actual_position))
+        self.lcd_current_zdc.display("{:.3f}".format(module_zdc.factor*module_zdc.motor.actual_position))
+        # self.lcd_current_x.display("{:.3f}".format(module_x.factor*module_x.motor.actual_position))
+        # self.lcd_current_pr.display("{:.3f}".format(module_pr.factor*module_pr.motor.actual_position))
+        # self.lcd_current_cr.display("{:.3f}".format(module_cr.factor*(module_cr.motor.actual_position))
+        # self.lcd_current_s.display("{:.3f}".format(module_s.factor*module_s.motor.actual_position))
             
         
     def goto(self, pos_idx):
@@ -463,13 +484,12 @@ class Window(QMainWindow, Ui_MainWindow):
             print('go to', pos)
             
     def goto_zero_setup(self):
+        '''Sets active module positions to 0. Why is this even needed???'''
         print('goto zero setup')
-        for module in module_list:
+        for module in self.active_modules:
             # Save zero module position.
-            module.pos_zero = 0
-            #TODO: add set_zero button and add save last position, both in same file
-            #TODO: add initialization that restores all positions after module disconnect; 
-            # maybe there is a way to save the last pos on the module and restore automatically?
+            module.pos_zero = 0 # dummy function because I think it is not needed...
+        # TODO: discuss necessity of this function
 
     
     
@@ -528,7 +548,7 @@ class Window(QMainWindow, Ui_MainWindow):
 
         # TODO when connected motors are changed
         # TODO: after switching from single to all legs, motors do not respond 
-        # even though they are in the list of active_modules... fix!
+        # even though they are in the list of active_modules... WTF? fix!
                         
         if select == 0:
             self.active_modules.append(module_zbr)
@@ -651,7 +671,7 @@ class Window(QMainWindow, Ui_MainWindow):
                     label.setStyleSheet('color: black')
             print(module.moduleID, 'pos reached')
                 
-    def abs_pos(self, motor): # TODO: check if this works
+    def abs_pos(self, motor): # TODO: check if this works, why is this needed?
         print('abs_pos')
         for label in self.active_label_list:
             label.setStyleSheet('color: red')

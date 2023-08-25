@@ -163,4 +163,5 @@ cython_debug/
 desktop.ini
 
 # Project-related
-saved_positions.txt
+last_positions.txt
+position_list.txt
