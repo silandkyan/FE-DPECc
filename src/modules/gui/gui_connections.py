@@ -42,6 +42,7 @@ Created on Tue Feb 21 17:38:27 2023
     # also tested the other 4 motors, works as expected.
 '''
 
+# TODO: delete unneccessary imports
 import sys
 from PyQt5.QtWidgets import (QMainWindow, QApplication)
 from PyQt5.QtGui import QKeyEvent, QTextFormat, QKeySequence, QKeySequence, QFont, QColor
@@ -62,7 +63,7 @@ for port in port_list:
     Motor(port)
     
 # # define list of all moduleIDs and sort connected modules accordingly:
-ID_list = [11, 12, 13, 14, 15, 21, 22, 23, 24]
+ID_list = [11, 12, 13, 14, 15, 21, 22, 24, 25]
 module_list = Motor.sort_module_list(ID_list)
 # print(module_list)
 
@@ -78,10 +79,10 @@ module_zbr = module_list[0]
 module_zbc = module_list[1]
 module_zdr = module_list[2]
 module_zdc = module_list[3]
-# module_x = module_list[4]
-# module_pr = module_list[5]
-# module_cr = module_list[6]
-# module_s = module_list[7]
+module_x = module_list[4]
+module_pr = module_list[5]
+module_cr = module_list[6]
+module_s = module_list[7]
 # expand list as needed...
 
 
@@ -400,23 +401,23 @@ class Window(QMainWindow, Ui_MainWindow):
             # store_lcds matrix-like list:
             # 1st dimension = row_idx (= module_idx),
             # # 2nd dimension = col_idx (= pos_idx)
-            # if module.motor == module_zbr.motor:
-            #     self.store_lcds[0][pos_idx].display(module_zbr.factor*module.module_positions[pos_idx])
-            # elif module.motor == module_zbc.motor:
-            #     self.store_lcds[1][pos_idx].display(module_zbc.factor*module.module_positions[pos_idx])
-            # elif module.motor == module_zdr.motor:
-            #     self.store_lcds[2][pos_idx].display(module_zdr.factor*module.module_positions[pos_idx])
-            # elif module.motor == module_zdc.motor:
-            #     self.store_lcds[3][pos_idx].display(module_zdc.factor*module.module_positions[pos_idx])
-            # elif module.motor == module_x.motor:
-            #     self.store_lcds[4][pos_idx].display(module_x.factor*module.module_positions[pos_idx])
+            if module.motor == module_zbr.motor:
+                self.store_lcds[0][pos_idx].display(module_zbr.factor*module.module_positions[pos_idx])
+            elif module.motor == module_zbc.motor:
+                self.store_lcds[1][pos_idx].display(module_zbc.factor*module.module_positions[pos_idx])
+            elif module.motor == module_zdr.motor:
+                self.store_lcds[2][pos_idx].display(module_zdr.factor*module.module_positions[pos_idx])
+            elif module.motor == module_zdc.motor:
+                self.store_lcds[3][pos_idx].display(module_zdc.factor*module.module_positions[pos_idx])
+            elif module.motor == module_x.motor:
+                self.store_lcds[4][pos_idx].display(module_x.factor*module.module_positions[pos_idx])
 
-            # elif module.motor == module_pr.motor:
-            #     self.store_lcds[5][pos_idx].display(module_pr.factor*module.module_positions[pos_idx])
-            # elif module.motor == module_cr.motor:
-            #     self.store_lcds[7][pos_idx].display(module_cr.factor*module.module_positions[pos_idx])
-            # elif module.motor == module_s.motor:
-            #     self.store_lcds[8][pos_idx].display(module_s.factor*module.module_positions[pos_idx])
+            elif module.motor == module_pr.motor:
+                self.store_lcds[5][pos_idx].display(module_pr.factor*module.module_positions[pos_idx])
+            elif module.motor == module_cr.motor:
+                self.store_lcds[7][pos_idx].display(module_cr.factor*module.module_positions[pos_idx])
+            elif module.motor == module_s.motor:
+                self.store_lcds[8][pos_idx].display(module_s.factor*module.module_positions[pos_idx])
         self.update_store_lcds()
         
     def update_store_lcds(self):
@@ -439,18 +440,18 @@ class Window(QMainWindow, Ui_MainWindow):
                     val = module_zdc.factor*module_zdc.module_positions[pos_idx]
                     self.store_lcds[3][pos_idx].display("{:.3f}".format(val))
                 # if module.motor == module_x.motor:
-                # elif module.motor == module_x.motor:
-                #     val = module_x.factor*module_x.module_positions[pos_idx]
-                #     self.store_lcds[4][pos_idx].display("{:.3f}".format(val))
-                # elif module.motor == module_pr.motor:
-                #     val = module_pr.factor*module_pr.module_positions[pos_idx]
-                #     self.store_lcds[5][pos_idx].display("{:.3f}".format(val))
-                # elif module.motor == module_cr.motor:
-                #     val = module_cr.factor*module_cr.module_positions[pos_idx]
-                #     self.store_lcds[6][pos_idx].display("{:.3f}".format(val))
-                # elif module.motor == module_s.motor:
-                #     val = module_s.factor*module_s.module_positions[pos_idx]
-                #     self.store_lcds[7][pos_idx].display("{:.3f}".format(val))
+                elif module.motor == module_x.motor:
+                    val = module_x.factor*module_x.module_positions[pos_idx]
+                    self.store_lcds[4][pos_idx].display("{:.3f}".format(val))
+                elif module.motor == module_pr.motor:
+                    val = module_pr.factor*module_pr.module_positions[pos_idx]
+                    self.store_lcds[5][pos_idx].display("{:.3f}".format(val))
+                elif module.motor == module_cr.motor:
+                    val = module_cr.factor*module_cr.module_positions[pos_idx]
+                    self.store_lcds[6][pos_idx].display("{:.3f}".format(val))
+                elif module.motor == module_s.motor:
+                    val = module_s.factor*module_s.module_positions[pos_idx]
+                    self.store_lcds[7][pos_idx].display("{:.3f}".format(val))
                 # for testing:
                 # print(self.active_modules, module.module_positions[pos_idx])
             
@@ -462,10 +463,10 @@ class Window(QMainWindow, Ui_MainWindow):
         self.lcd_current_zbc.display("{:.3f}".format(module_zbc.factor*module_zbc.motor.actual_position))
         self.lcd_current_zdr.display("{:.3f}".format(module_zdr.factor*module_zdr.motor.actual_position))
         self.lcd_current_zdc.display("{:.3f}".format(module_zdc.factor*module_zdc.motor.actual_position))
-        # self.lcd_current_x.display("{:.3f}".format(module_x.factor*module_x.motor.actual_position))
-        # self.lcd_current_pr.display("{:.3f}".format(module_pr.factor*module_pr.motor.actual_position))
-        # self.lcd_current_cr.display("{:.3f}".format(module_cr.factor*(module_cr.motor.actual_position))
-        # self.lcd_current_s.display("{:.3f}".format(module_s.factor*module_s.motor.actual_position))
+        self.lcd_current_x.display("{:.3f}".format(module_x.factor*module_x.motor.actual_position))
+        self.lcd_current_pr.display("{:.3f}".format(module_pr.factor*module_pr.motor.actual_position))
+        self.lcd_current_cr.display("{:.3f}".format(module_cr.factor*module_cr.motor.actual_position))
+        self.lcd_current_s.display("{:.3f}".format(module_s.factor*module_s.motor.actual_position))
             
         
     def goto(self, pos_idx):
@@ -584,25 +585,25 @@ class Window(QMainWindow, Ui_MainWindow):
                         print('ZDC appended')
                     
         if select == 2:
-            # self.select_module(module_x) # TODO
+            self.select_module(module_x) # TODO
             self.active_label_list = [self.label_x]
             # print('moduleID', module_x.moduleID, 'selected')
             print('X selected')
                     
         if select == 3:
-            # self.select_module(module_pr) # TODO
+            self.select_module(module_pr) # TODO
             self.active_label_list = [self.label_pr]
             # print('moduleID', module_pr.moduleID, 'selected')
             print('PR selected')
             
         if select == 4:
-            # self.select_module(module_cr) # TODO
+            self.select_module(module_cr) # TODO
             self.active_label_list = [self.label_cr]
             # print('moduleID', module_cr.moduleID, 'selected')
             print('CR selected')
                     
         if select == 5:
-            # self.select_module(module_s) # TODO
+            self.select_module(module_s) # TODO
             self.active_label_list = [self.label_s]
             # print('moduleID', module_s.moduleID, 'selected')
             print('S selected')
@@ -675,18 +676,18 @@ class Window(QMainWindow, Ui_MainWindow):
         print('abs_pos')
         for label in self.active_label_list:
             label.setStyleSheet('color: red')
-        # if motor == 0:
-        #     # self.mm_deg_to_steps(self.dspinB_deg_axis_x.value(), 4)
-        #     # self.motor.move_to(self.msteps, self.module.pps)
-        #     print('Motor x moving to position:', str(self.dspinB_mm_axis_x.value()))
-        # elif motor == 1:
-        #     # self.mm_deg_to_steps(self.dspinB_deg_axis_pr.value(), 5)
-        #     # self.motor.move_to(self.msteps, self.module.pps)
-        #     print('Motor pr moving to position:', str(self.dspinB_deg_axis_pr.value()))
-        # elif motor == 2:
-        #     # self.mm_deg_to_steps(self.dspinB_deg_axis_cr.value(), 6)
-        #     # self.motor.move_to(self.msteps, self.module.pps)
-        #     print('Motor cr moving to position:', str(self.dspinB_deg_axis_cr.value()))
+        if motor == 0:
+            # self.mm_deg_to_steps(self.dspinB_deg_axis_x.value(), 4)
+            # self.motor.move_to(self.msteps, self.module.pps)
+            print('Motor x moving to position:', str(self.dspinB_mm_axis_x.value()))
+        elif motor == 1:
+            # self.mm_deg_to_steps(self.dspinB_deg_axis_pr.value(), 5)
+            # self.motor.move_to(self.msteps, self.module.pps)
+            print('Motor pr moving to position:', str(self.dspinB_deg_axis_pr.value()))
+        elif motor == 2:
+            # self.mm_deg_to_steps(self.dspinB_deg_axis_cr.value(), 6)
+            # self.motor.move_to(self.msteps, self.module.pps)
+            print('Motor cr moving to position:', str(self.dspinB_deg_axis_cr.value()))
         
     ###   MOTOR CONTROL FUNCTIONS   ###
     
